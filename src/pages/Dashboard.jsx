@@ -4,15 +4,19 @@ import { motion } from 'framer-motion';
 import {
   AlertCircle,
   ArrowRight,
+  BookOpen,
   CalendarClock,
   CheckCircle2,
+  ChevronRight,
   Clock,
-  Quote,
+  NotebookPen,
   Sparkles,
 } from 'lucide-react';
 import { PageTransition } from '../components/PageTransition';
 import { ProgressRing } from '../components/ProgressRing';
 import { WeeklyChart } from '../components/WeeklyChart';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { getCoverTheme } from '../utils/notebookPresets';
 import {
   formatDeadlineCountdown,
   formatShortDate,
@@ -23,21 +27,6 @@ import {
   isTaskOverdue,
 } from '../utils/taskDates';
 import { getSubjectStyle, PRIORITY_CONFIG } from '../utils/taskStyles';
-
-const QUOTES = [
-  {
-    text: 'Small consistent study blocks beat last-minute cramming every single time.',
-    author: 'Focus Principle',
-  },
-  {
-    text: 'Clarity comes from action. Pick the smallest next step and start.',
-    author: 'Study Flow',
-  },
-  {
-    text: 'Protect your deep work hours like your hardest deadline depends on it.',
-    author: 'Academic Craft',
-  },
-];
 
 const containerVariants = {
   hidden: {},
@@ -82,7 +71,18 @@ export function Dashboard({ tasks }) {
       .slice(0, 4);
   }, [tasks]);
 
-  const quote = QUOTES[now.getDate() % QUOTES.length];
+  const [notebooks] = useLocalStorage('superapp_notebooks_v1', []);
+
+  const handleOpenNotebook = (notebookId) => {
+    if (notebookId) {
+      try {
+        window.sessionStorage.setItem('superapp_active_notebook_id_v1', notebookId);
+      } catch {
+        // Ignore
+      }
+    }
+    navigate('/notes');
+  };
 
   return (
     <PageTransition>
@@ -310,28 +310,88 @@ export function Dashboard({ tasks }) {
           )}
         </motion.section>
 
-        {/* 5. Motivational Quote Card (#4E51BF Cobalt Signature Card) */}
+        {/* 5. Study Notes Card (Replaces the static quote card) */}
         <motion.section
           variants={cardVariants}
-          className="md:col-span-6 xl:col-span-3 relative overflow-hidden rounded-panel bg-[#4E51BF] text-white p-5 sm:p-6 flex flex-col justify-between shadow-lg shadow-[#4E51BF]/20"
+          className="md:col-span-6 xl:col-span-3 glass-card rounded-panel p-5 sm:p-6 flex flex-col justify-between"
         >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[#FF92A4]/35 blur-2xl"
-          />
-
-          <div className="relative">
-            <div className="w-9 h-9 rounded-xl bg-[#FFE9CE] flex items-center justify-center mb-4">
-              <Quote className="w-4 h-4 text-[#24252A]" />
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-[#FFE9CE] flex items-center justify-center shrink-0">
+                  <NotebookPen className="w-4 h-4 text-[#4E51BF]" />
+                </div>
+                <div>
+                  <h3 className="font-display text-sm sm:text-base font-semibold text-[#24252A]">
+                    Study Notes
+                  </h3>
+                  <p className="text-[11px] text-[#5C6070]">
+                    {notebooks.length} notebook{notebooks.length !== 1 ? 's' : ''} active
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/notes')}
+                className="text-xs font-semibold text-[#4E51BF] hover:text-[#3B3E9E] transition-colors cursor-pointer"
+              >
+                All
+              </button>
             </div>
-            <p className="font-display text-base sm:text-lg font-medium leading-snug text-white">
-              “{quote.text}”
-            </p>
+
+            {notebooks.length > 0 ? (
+              <div className="space-y-2 mt-3">
+                {notebooks.slice(0, 3).map((nb) => {
+                  const theme = getCoverTheme(nb.coverColor);
+                  return (
+                    <motion.button
+                      key={nb.id}
+                      type="button"
+                      whileHover={{ x: 2 }}
+                      whileTap={{ scale: 0.985 }}
+                      onClick={() => handleOpenNotebook(nb.id)}
+                      className="w-full text-left rounded-xl bg-[#F6F7FC] hover:bg-[#ECEEF9] border border-[#24252A]/[0.06] p-2.5 flex items-center gap-2.5 transition-colors cursor-pointer group"
+                    >
+                      <div
+                        className={`w-3.5 h-7 rounded-sm bg-gradient-to-br ${theme.coverBg} shrink-0 shadow-xs`}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-[#24252A] truncate group-hover:text-[#4E51BF] transition-colors">
+                          {nb.title}
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] text-[#8A8F9E] mt-0.5">
+                          <span>{nb.subject || 'General'}</span>
+                          <span>•</span>
+                          <span>{nb.pages?.length || 1} p.</span>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-[#8A8F9E] group-hover:text-[#4E51BF] group-hover:translate-x-0.5 transition-all" />
+                    </motion.button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="py-6 text-center">
+                <BookOpen className="w-6 h-6 text-[#4E51BF] mx-auto mb-2 opacity-75" />
+                <p className="text-xs font-semibold text-[#24252A]">No notebooks yet</p>
+                <p className="text-[11px] text-[#8A8F9E] mt-0.5">
+                  Create a notebook to begin sketching
+                </p>
+              </div>
+            )}
           </div>
 
-          <div className="relative pt-5 mt-5 border-t border-white/15 flex items-center justify-between text-xs text-white/75">
-            <span>Daily Mindframe</span>
-            <span className="text-[#FFE9CE] font-semibold">{quote.author}</span>
+          <div className="pt-4 mt-3 border-t border-[#24252A]/[0.06]">
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/notes')}
+              className="w-full py-2 px-3 rounded-xl bg-[#4E51BF] hover:bg-[#3E41A5] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm shadow-[#4E51BF]/20"
+            >
+              <NotebookPen className="w-3.5 h-3.5 text-[#FFE9CE]" />
+              Open Notebooks
+            </motion.button>
           </div>
         </motion.section>
       </motion.div>
