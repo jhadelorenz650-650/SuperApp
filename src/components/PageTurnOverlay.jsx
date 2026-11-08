@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Bookmark } from 'lucide-react';
+import { NotebookImageLayer, getImagesBottomPx } from './NotebookImageLayer';
 import {
   formatNoteTimestamp,
   getFontMeta,
@@ -37,6 +38,7 @@ function StaticSheetSurface({ page, bodyWidth, bodyHeight }) {
   const fontMeta = getFontMeta(page.fontStyle);
   const subjectStyle = getSubjectStyle(page.subject || 'Discussion');
   const strokes = page.strokes || [];
+  const images = page.images || [];
   const safeWidth = Math.max(1, bodyWidth);
   const maxStrokeY = strokes.reduce((maxY, s) => {
     const strokeMax = (s.points || []).reduce(
@@ -45,7 +47,13 @@ function StaticSheetSurface({ page, bodyWidth, bodyHeight }) {
     );
     return Math.max(maxY, strokeMax);
   }, 0);
-  const svgHeight = Math.max(MIN_PAGE_HEIGHT, bodyHeight, maxStrokeY + 24);
+  const imagesBottom = getImagesBottomPx(images, safeWidth);
+  const sheetHeight = Math.max(
+    MIN_PAGE_HEIGHT,
+    bodyHeight,
+    maxStrokeY + 24,
+    imagesBottom > 0 ? imagesBottom + LINE_HEIGHT : 0
+  );
 
   return (
     <>
@@ -103,18 +111,26 @@ function StaticSheetSurface({ page, bodyWidth, bodyHeight }) {
           style={{
             lineHeight: `${LINE_HEIGHT}px`,
             color: page.textInkColor || '#24252A',
-            minHeight: `${MIN_PAGE_HEIGHT}px`,
+            minHeight: `${sheetHeight}px`,
           }}
           className={`relative z-10 whitespace-pre-wrap break-words pl-10 sm:pl-14 pr-5 sm:pr-8 py-0 ${fontMeta.bodyClass}`}
         >
           {page.content || ''}
         </div>
 
+        {images.length > 0 && (
+          <NotebookImageLayer
+            images={images}
+            interactive={false}
+            width={safeWidth}
+          />
+        )}
+
         {strokes.length > 0 && (
           <svg
-            viewBox={`0 0 ${safeWidth} ${svgHeight}`}
+            viewBox={`0 0 ${safeWidth} ${sheetHeight}`}
             preserveAspectRatio="none"
-            style={{ height: `${svgHeight}px` }}
+            style={{ height: `${sheetHeight}px` }}
             className="absolute inset-x-0 top-0 w-full z-20 pointer-events-none"
           >
             {strokes.map((stroke) => {

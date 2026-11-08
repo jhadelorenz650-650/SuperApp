@@ -15,6 +15,7 @@ import {
   FileText,
   HelpCircle,
   Highlighter,
+  ImagePlus,
   List,
   NotebookPen,
   PenTool,
@@ -30,6 +31,11 @@ import {
 } from 'lucide-react';
 import { EmptyState } from '../components/EmptyState';
 import { NotebookCreator } from '../components/NotebookCreator';
+import {
+  getImageHeightPx,
+  getImagesBottomPx,
+  NotebookImageLayer,
+} from '../components/NotebookImageLayer';
 import { NotebookInkCanvas } from '../components/NotebookInkCanvas';
 import { PageTransition } from '../components/PageTransition';
 import { PageTurnOverlay } from '../components/PageTurnOverlay';
@@ -45,6 +51,14 @@ import {
   NOTEBOOK_FONTS,
   PAPER_STYLES,
 } from '../utils/notebookPresets';
+import {
+  createImageId,
+  loadImageUrl,
+  prepareImageFile,
+  pruneUnusedImages,
+  requestPersistentStorage,
+  saveImageBlob,
+} from '../utils/notebookImageStore';
 import {
   playPageTurnSound,
   playPenTapSound,
@@ -75,6 +89,7 @@ function createNoteSnapshot(note, cursor = null) {
     subject: note.subject || '',
     content: note.content || '',
     strokes: note.strokes || [],
+    images: note.images || [],
     paperStyle: note.paperStyle || 'ruled',
     fontStyle: note.fontStyle || 'handwriting',
     textInkColor: note.textInkColor || '#24252A',
@@ -88,6 +103,24 @@ function countWords(text) {
   const trimmed = (text || '').trim();
   if (!trimmed) return 0;
   return trimmed.split(/\s+/).length;
+}
+
+function isImageFile(file) {
+  if (!file) return false;
+  if (file.type?.startsWith('image/')) return true;
+  return /\.(png|jpe?g|webp|gif|bmp|avif|heic|heif)$/i.test(file.name || '');
+}
+
+function extractClipboardImageFiles(clipboardData) {
+  if (!clipboardData) return [];
+  const fromItems = [];
+  for (const item of Array.from(clipboardData.items || [])) {
+    if (item.kind !== 'file') continue;
+    const file = item.getAsFile();
+    if (isImageFile(file)) fromItems.push(file);
+  }
+  if (fromItems.length > 0) return fromItems;
+  return Array.from(clipboardData.files || []).filter(isImageFile);
 }
 
 const ACTIVE_NOTEBOOK_STORAGE_KEY = 'superapp_active_notebook_id_v1';
@@ -197,6 +230,14 @@ export function Notes() {
   const [drawColor, setDrawColor] = useState('#24252A');
   const [copiedId, setCopiedId] = useState(null);
   const [, setHistoryTick] = useState(0);
+
+  // Pasted / uploaded notebook photos
+  const [selectedImageId, setSelectedImageId] = useState(null);
+  const [imageError, setImageError] = useState(null);
+  const [isInsertingImage, setIsInsertingImage] = useState(false);
+  const [isDragOverSheet, setIsDragOverSheet] = useState(false);
+  const photoInputRef = useRef(null);
+  const insertImagesRef = useRef(null);
 
   // 3D Page-turn overlay state
   const [turningSheet, setTurningSheet] = useState(null);
@@ -326,17 +367,88 @@ export function Notes() {
   const activeNote =
     activePageIndex >= 0 ? activePages[activePageIndex] : null;
 
-  // Sync ruled sheet height to exact multiples of 32px lines
+  // Clear photo selection and transient upload banners when flipping pages or drawing
   useEffect(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = 'auto';
-    const nextHeight = Math.max(
-      MIN_PAGE_HEIGHT,
-      Math.ceil(el.scrollHeight / LINE_HEIGHT) * LINE_HEIGHT
-    );
-    el.style.height = `${nextHeight}px`;
-  }, [activeNote?.id, activeNote?.content, activeNote?.fontStyle]);
+    setSelectedImageId(null);
+    setImageError(null);
+    setIsDragOverSheet(false);
+  }, [activeNotebookId, activePageId]);
+
+  useEffect(() => {
+    if (editorMode === 'draw') {
+      setSelectedImageId(null);
+    }
+  }, [editorMode]);
+
+  // Warm-cache adjacent page photos so 3D page turns display them on frame 1
+  useEffect(() => {
+    if (!activeNotebook?.pages?.length || activePageIndex < 0) return;
+    const neighbors = [
+      activeNotebook.pages[activePageIndex - 1],
+      activeNotebook.pages[activePageIndex + 1],
+    ];
+    for (const pg of neighbors) {
+      for (const img of pg?.images || []) {
+        if (img?.blobId) loadImageUrl(img.blobId).catch(() => {});
+      }
+    }
+  }, [activeNotebook, activePageIndex]);
+
+  // Clean up orphaned photo blobs that are no longer referenced anywhere
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const referenced = new Set();
+      const collectPageImages = (pg) => {
+        for (const img of pg?.images || []) {
+          if (img?.blobId) referenced.add(img.blobId);
+        }
+      };
+      for (const nb of notebooksRef.current) {
+        for (const pg of nb.pages || []) collectPageImages(pg);
+      }
+      for (const hist of Object.values(historyMapRef.current)) {
+        for (const snap of hist?.past || []) collectPageImages(snap);
+        for (const snap of hist?.future || []) collectPageImages(snap);
+      }
+      for (const stack of Object.values(deletedPageStackMapRef.current)) {
+        for (const entry of stack || []) {
+          collectPageImages(entry?.page);
+          for (const snap of entry?.history?.past || []) collectPageImages(snap);
+          for (const snap of entry?.history?.future || []) collectPageImages(snap);
+        }
+      }
+      for (const entry of deletedNotebookStackRef.current) {
+        for (const pg of entry?.notebook?.pages || []) collectPageImages(pg);
+      }
+      pruneUnusedImages(referenced).catch(() => {});
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Sync ruled sheet height to exact multiples of 32px lines (grows to fit photos too)
+  const activeImages = activeNote?.images;
+  useEffect(() => {
+    const syncSheetHeight = () => {
+      const el = textareaRef.current;
+      if (!el) return;
+      el.style.height = 'auto';
+      const bodyWidth = paperBodyRef.current?.clientWidth || el.clientWidth || 0;
+      const imagesBottom = getImagesBottomPx(activeImages, bodyWidth);
+      const nextHeight = Math.max(
+        MIN_PAGE_HEIGHT,
+        Math.ceil(el.scrollHeight / LINE_HEIGHT) * LINE_HEIGHT,
+        imagesBottom > 0
+          ? Math.ceil((imagesBottom + LINE_HEIGHT) / LINE_HEIGHT) * LINE_HEIGHT
+          : 0
+      );
+      el.style.height = `${nextHeight}px`;
+    };
+
+    syncSheetHeight();
+    if (!activeImages?.length) return undefined;
+    window.addEventListener('resize', syncSheetHeight);
+    return () => window.removeEventListener('resize', syncSheetHeight);
+  }, [activeNote?.id, activeNote?.content, activeNote?.fontStyle, activeImages]);
 
   const filteredNotebooks = useMemo(() => {
     const q = shelfSearch.trim().toLowerCase();
@@ -830,6 +942,159 @@ export function Notes() {
     updateActiveNote({ strokes: [] }, nb.id, page.id);
   };
 
+  // Where a pasted/uploaded photo lands: under the drop point, or near the
+  // top of the part of the page currently visible on screen.
+  const getImageInsertY = (clientY = null) => {
+    const body = paperBodyRef.current;
+    if (!body) return LINE_HEIGHT;
+    const rect = body.getBoundingClientRect();
+    if (clientY !== null) {
+      const dropY = Math.max(0, clientY - rect.top);
+      return Math.round(dropY / LINE_HEIGHT) * LINE_HEIGHT;
+    }
+    const visibleY = window.innerHeight * 0.28 - rect.top;
+    const maxY = Math.max(LINE_HEIGHT, rect.height - LINE_HEIGHT * 3);
+    const y = Math.min(Math.max(LINE_HEIGHT, visibleY), maxY);
+    return Math.round(y / LINE_HEIGHT) * LINE_HEIGHT;
+  };
+
+  const handleInsertImages = async (files, { clientY = null } = {}) => {
+    const imageFiles = Array.from(files || [])
+      .filter(isImageFile)
+      .slice(0, 8);
+    if (imageFiles.length === 0) return;
+
+    const { nb, page } = getActiveNoteSnapshotTarget();
+    if (!nb || !page) return;
+    const targetNbId = nb.id;
+    const targetPageId = page.id;
+
+    setImageError(null);
+    setIsInsertingImage(true);
+    if (editorMode === 'draw') setEditorMode('type');
+
+    const bodyWidth = paperBodyRef.current?.clientWidth || 680;
+    const existingPositions = (page.images || []).map((img) => ({
+      x: img.x || 0,
+      y: img.y || 0,
+    }));
+    let nextY = getImageInsertY(clientY);
+    const added = [];
+    let failures = 0;
+
+    for (const file of imageFiles) {
+      try {
+        const prepared = await prepareImageFile(file);
+        const blobId = createImageId();
+        await saveImageBlob(blobId, prepared.blob);
+
+        const aspect = prepared.height / prepared.width;
+        const defaultPx = Math.min(prepared.width, bodyWidth * 0.62, 520);
+        const w = Math.min(1, Math.max(defaultPx, Math.min(140, bodyWidth)) / bodyWidth);
+        let placedX = Math.max(0, (1 - w) / 2);
+        let placedY = nextY;
+        let guard = 0;
+        while (
+          guard < 8 &&
+          existingPositions.some(
+            (pos) =>
+              Math.abs(pos.y - placedY) < 28 &&
+              Math.abs(pos.x - placedX) < 0.06
+          )
+        ) {
+          placedY += LINE_HEIGHT;
+          placedX = Math.min(Math.max(0, 1 - w), placedX + 0.03);
+          guard += 1;
+        }
+        existingPositions.push({ x: placedX, y: placedY });
+
+        const image = {
+          id: createImageId(),
+          blobId,
+          x: placedX,
+          y: placedY,
+          w,
+          aspect,
+          addedAt: Date.now(),
+        };
+        added.push(image);
+        nextY =
+          placedY +
+          Math.ceil((getImageHeightPx(image, bodyWidth) + LINE_HEIGHT) / LINE_HEIGHT) *
+            LINE_HEIGHT;
+      } catch {
+        failures += 1;
+      }
+    }
+
+    setIsInsertingImage(false);
+
+    if (failures > 0) {
+      setImageError(
+        added.length > 0
+          ? `${failures} photo${failures > 1 ? 's' : ''} couldn't be added.`
+          : "That photo couldn't be added. Try a JPG, PNG, or screenshot."
+      );
+    }
+    if (added.length === 0) return;
+
+    // Re-read the page after async work so concurrent edits are not lost
+    const latestNb = notebooksRef.current.find((n) => n.id === targetNbId);
+    const latestPage = latestNb?.pages?.find((p) => p.id === targetPageId);
+    if (!latestPage) return;
+
+    typingGroupRef.current = null;
+    const hist = getNoteHistory(latestPage.id);
+    hist.past = [
+      ...hist.past.slice(-(MAX_HISTORY - 1)),
+      createNoteSnapshot(latestPage),
+    ];
+    hist.future = [];
+    setHistoryTick((t) => t + 1);
+
+    updateActiveNote(
+      (p) => ({ images: [...(p.images || []), ...added] }),
+      targetNbId,
+      targetPageId
+    );
+    if (activePageIdRef.current === targetPageId) {
+      setSelectedImageId(added[added.length - 1].id);
+    }
+    playPenTapSound();
+    requestPersistentStorage();
+  };
+  insertImagesRef.current = handleInsertImages;
+
+  const handleCommitImage = (imageId, patch) => {
+    const { nb, page } = getActiveNoteSnapshotTarget();
+    if (!nb || !page) return;
+    typingGroupRef.current = null;
+    pushUndoSnapshot(page);
+    updateActiveNote(
+      (p) => ({
+        images: (p.images || []).map((img) =>
+          img.id === imageId ? { ...img, ...patch } : img
+        ),
+      }),
+      nb.id,
+      page.id
+    );
+  };
+
+  const handleDeleteImage = (imageId) => {
+    const { nb, page } = getActiveNoteSnapshotTarget();
+    if (!nb || !page) return;
+    typingGroupRef.current = null;
+    pushUndoSnapshot(page);
+    playTaskDeleteSound();
+    setSelectedImageId(null);
+    updateActiveNote(
+      (p) => ({ images: (p.images || []).filter((img) => img.id !== imageId) }),
+      nb.id,
+      page.id
+    );
+  };
+
   const handleUndo = () => {
     typingGroupRef.current = null;
     const { nb, page } = getActiveNoteSnapshotTarget();
@@ -928,6 +1193,7 @@ export function Notes() {
         subject: target.subject,
         content: target.content,
         strokes: target.strokes,
+        images: target.images || [],
         paperStyle: target.paperStyle,
         fontStyle: target.fontStyle,
         textInkColor: target.textInkColor,
@@ -1055,6 +1321,7 @@ export function Notes() {
         subject: target.subject,
         content: target.content,
         strokes: target.strokes,
+        images: target.images || [],
         paperStyle: target.paperStyle,
         fontStyle: target.fontStyle,
         textInkColor: target.textInkColor,
@@ -1110,6 +1377,33 @@ export function Notes() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Global clipboard image paste (Ctrl+V / Cmd+V) onto the open notebook page
+  useEffect(() => {
+    const handlePaste = (e) => {
+      if (creatorModalOpenRef.current) return;
+      if (!activeNotebookIdRef.current || !activePageIdRef.current) return;
+
+      const activeEl = document.activeElement;
+      const tag = activeEl?.tagName;
+      const isExternalInput =
+        (tag === 'INPUT' ||
+          tag === 'TEXTAREA' ||
+          tag === 'SELECT' ||
+          activeEl?.isContentEditable) &&
+        activeEl?.dataset?.notebookEditor !== 'true';
+      if (isExternalInput) return;
+
+      const files = extractClipboardImageFiles(e.clipboardData);
+      if (files.length === 0) return;
+
+      e.preventDefault();
+      insertImagesRef.current?.(files);
+    };
+
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, []);
+
   const handleCopyPage = async () => {
     if (!activeNote) return;
     const formatted = `${activeNote.title || 'Discussion Note'} (${activeNote.subject || 'General'})\n\n${activeNote.content || ''}`.trim();
@@ -1131,6 +1425,7 @@ export function Notes() {
     : getCoverTheme('indigo');
   const wordCount = countWords(activeNote?.content);
   const strokeCount = activeNote?.strokes?.length || 0;
+  const imageCount = activeNote?.images?.length || 0;
   const activeHistory = activeNote ? historyMapRef.current[activeNote.id] : null;
   const activeNbDeletedPages = activeNotebook
     ? deletedPageStackMapRef.current[activeNotebook.id] || []
@@ -1170,6 +1465,26 @@ export function Notes() {
               type="button"
               onClick={() => setDismissedStorageWarning(true)}
               aria-label="Dismiss storage warning"
+              className="p-1 rounded-md hover:bg-[#9F1239]/10 shrink-0 cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
+        {imageError && (
+          <div
+            role="alert"
+            className="rounded-xl bg-[#FFE1E6] border border-[#FF92A4]/60 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs text-[#9F1239]"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span className="truncate">{imageError}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setImageError(null)}
+              aria-label="Dismiss photo error"
               className="p-1 rounded-md hover:bg-[#9F1239]/10 shrink-0 cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
@@ -1723,11 +2038,15 @@ export function Notes() {
 
                             <p className="text-[11px] text-[#5C6070] line-clamp-2 mt-1 min-h-[1rem]">
                               {snippet ||
-                                (page.strokes?.length
-                                  ? `${page.strokes.length} handwritten stroke${
-                                      page.strokes.length === 1 ? '' : 's'
-                                    }`
-                                  : 'Blank ruled page — ready for notes')}
+                                (page.images?.length && page.strokes?.length
+                                  ? `${page.images.length} photo${page.images.length === 1 ? '' : 's'} · ${page.strokes.length} ink`
+                                  : page.images?.length
+                                    ? `${page.images.length} photo${page.images.length === 1 ? '' : 's'} attached`
+                                    : page.strokes?.length
+                                      ? `${page.strokes.length} handwritten stroke${
+                                          page.strokes.length === 1 ? '' : 's'
+                                        }`
+                                      : 'Blank ruled page — ready for notes')}
                             </p>
 
                             <div className="flex items-center justify-between gap-2 mt-2">
@@ -1869,6 +2188,38 @@ export function Notes() {
                             </div>
                           )}
                         </div>
+
+                        {/* Add Photo / Paste Image Control */}
+                        <input
+                          ref={photoInputRef}
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="hidden"
+                          onChange={(e) => {
+                            const selected = e.target.files
+                              ? Array.from(e.target.files)
+                              : [];
+                            e.target.value = '';
+                            if (selected.length > 0) {
+                              handleInsertImages(selected);
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            playPenTapSound();
+                            setFontMenuOpen(false);
+                            photoInputRef.current?.click();
+                          }}
+                          disabled={isInsertingImage}
+                          title="Add photo or paste screenshot (Ctrl+V)"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 hover:bg-[#FFE9CE]/80 border border-[#24252A]/[0.08] text-xs font-semibold text-[#24252A] transition-colors cursor-pointer disabled:opacity-60"
+                        >
+                          <ImagePlus className="w-3.5 h-3.5 text-[#4E51BF]" />
+                          <span>{isInsertingImage ? 'Adding...' : 'Photo'}</span>
+                        </button>
 
                         {/* Type Stamps or Draw Controls */}
                         {editorMode === 'type' ? (
@@ -2197,6 +2548,12 @@ export function Notes() {
 
                                 <div className="flex items-center gap-2 text-[11px] text-[#8A8F9E]">
                                   <span>{wordCount} words</span>
+                                  {imageCount > 0 && (
+                                    <span>
+                                      · {imageCount} photo
+                                      {imageCount === 1 ? '' : 's'}
+                                    </span>
+                                  )}
                                   {strokeCount > 0 && (
                                     <span>· {strokeCount} ink</span>
                                   )}
@@ -2221,10 +2578,41 @@ export function Notes() {
                             </div>
                           </div>
 
-                          {/* Ruled / Grid / Dot Lined Writing Body + Ink Canvas */}
+                          {/* Ruled / Grid / Dot Lined Writing Body + Photos + Ink Canvas */}
                           <div
                             ref={paperBodyRef}
-                            className="relative"
+                            onDragOver={(e) => {
+                              if (
+                                Array.from(e.dataTransfer?.types || []).includes(
+                                  'Files'
+                                )
+                              ) {
+                                e.preventDefault();
+                                e.dataTransfer.dropEffect = 'copy';
+                                if (!isDragOverSheet) setIsDragOverSheet(true);
+                              }
+                            }}
+                            onDragLeave={(e) => {
+                              if (!e.currentTarget.contains(e.relatedTarget)) {
+                                setIsDragOverSheet(false);
+                              }
+                            }}
+                            onDrop={(e) => {
+                              const dropped = Array.from(
+                                e.dataTransfer?.files || []
+                              ).filter(isImageFile);
+                              setIsDragOverSheet(false);
+                              if (dropped.length === 0) return;
+                              e.preventDefault();
+                              handleInsertImages(dropped, {
+                                clientY: e.clientY,
+                              });
+                            }}
+                            className={`relative transition-shadow ${
+                              isDragOverSheet
+                                ? 'ring-2 ring-inset ring-[#4E51BF]/45 bg-[#4E51BF]/[0.03]'
+                                : ''
+                            }`}
                             style={getPaperBackgroundStyle(
                               activeNote.paperStyle || 'ruled'
                             )}
@@ -2263,7 +2651,7 @@ export function Notes() {
                               placeholder={
                                 editorMode === 'draw'
                                   ? 'Freehand Pen Mode active — write or sketch right on the page...'
-                                  : 'Start jotting discussion points here... (Change fonts or flip pages anytime)'
+                                  : 'Start jotting discussion points or paste (Ctrl+V) a photo right on the page...'
                               }
                               aria-label="Notebook page content"
                               style={{
@@ -2271,6 +2659,16 @@ export function Notes() {
                                 color: activeNote.textInkColor || '#24252A',
                               }}
                               className={`relative z-10 block w-full min-h-[704px] bg-transparent pl-10 sm:pl-14 pr-5 sm:pr-8 py-0 resize-none overflow-hidden focus:outline-none placeholder:text-[#8A8F9E]/65 ${activeFontMeta.bodyClass}`}
+                            />
+
+                            {/* Resizable / Movable Discussion Photos Layer */}
+                            <NotebookImageLayer
+                              images={activeNote.images || []}
+                              interactive={editorMode === 'type'}
+                              selectedId={selectedImageId}
+                              onSelect={setSelectedImageId}
+                              onCommit={handleCommitImage}
+                              onDelete={handleDeleteImage}
                             />
 
                             {/* Freehand Sketch & Writing Ink Layer */}
@@ -2323,7 +2721,7 @@ export function Notes() {
                                 </div>
                               )}
                               <span className="text-[#8A8F9E]">
-                                Ctrl+Z undo · Font: {activeFontMeta.label}
+                                Ctrl+V paste photo · Ctrl+Z undo · Font: {activeFontMeta.label}
                               </span>
                             </div>
 

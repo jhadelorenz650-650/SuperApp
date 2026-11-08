@@ -199,6 +199,7 @@ export function createBlankPage({
     bookmarked: false,
     content: '',
     strokes: [],
+    images: [],
     createdAt: now,
     updatedAt: now,
   };
