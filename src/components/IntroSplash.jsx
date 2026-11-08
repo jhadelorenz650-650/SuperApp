@@ -10,7 +10,6 @@ import {
 import {
   playIntroOpeningSound,
   playLiquidWaveSound,
-  unlockAudioContext,
 } from '../utils/soundEffects';
 
 const CONVERGE_MODULES = [
@@ -288,10 +287,8 @@ export function DefaultIntroSplash({ show, onDismiss }) {
 
 // Custom Super App kinetic shake + pop burst + morphing liquid wave transition
 export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
-  const [isLaunched, setIsLaunched] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [clickOrigin, setClickOrigin] = useState(null);
-  const launchedRef = useRef(false);
   const exitingRef = useRef(false);
   const timersRef = useRef([]);
   const openingSoundStopRef = useRef(null);
@@ -301,27 +298,20 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
   useEffect(() => {
     return () => {
       timersRef.current.forEach(clearTimeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!show) return undefined;
+    splashRootRef.current?.focus();
+    openingSoundStopRef.current = playIntroOpeningSound({ variant: 'superapp' });
+    return () => {
       if (openingSoundStopRef.current) {
         openingSoundStopRef.current();
         openingSoundStopRef.current = null;
       }
     };
-  }, []);
-
-  const handleLaunch = () => {
-    if (launchedRef.current || exitingRef.current) return;
-    launchedRef.current = true;
-    setIsLaunched(true);
-
-    unlockAudioContext();
-    openingSoundStopRef.current = playIntroOpeningSound({ variant: 'superapp' });
-
-    // Automatically transition into the app after the fanfare finishes (~1.9s)
-    const autoExitTimer = setTimeout(() => {
-      triggerLiquidTransition();
-    }, 1900);
-    timersRef.current.push(autoExitTimer);
-  };
+  }, [show]);
 
   const triggerLiquidTransition = (event) => {
     if (exitingRef.current) return;
@@ -353,32 +343,12 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
     timersRef.current.push(revealTimer, doneTimer);
   };
 
-  const handleInteraction = (event) => {
-    if (!launchedRef.current) {
-      handleLaunch(event);
-    } else {
-      triggerLiquidTransition(event);
-    }
-  };
-
   useEffect(() => {
     if (!show) return undefined;
-    splashRootRef.current?.focus();
-
-    // Check if the browser allows autoplay without gesture (e.g. desktop after user interaction)
-    try {
-      const testCtx = unlockAudioContext();
-      if (testCtx && testCtx.state === 'running') {
-        handleLaunch();
-      }
-    } catch {
-      // Ignore
-    }
-
     const handleKeyDown = (e) => {
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
         e.preventDefault();
-        handleInteraction();
+        triggerLiquidTransition();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -393,15 +363,11 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
       className={`fixed inset-0 z-50 overflow-hidden select-none outline-none ${
         isExiting ? 'pointer-events-none' : 'cursor-pointer'
       }`}
-      onClick={handleInteraction}
+      onClick={triggerLiquidTransition}
       role="dialog"
       aria-modal="true"
       tabIndex={0}
-      aria-label={
-        !isLaunched
-          ? 'Welcome to Pulse. Tap anywhere or press Enter to launch with sound'
-          : 'Welcome splash screen. Click anywhere to continue into Pulse'
-      }
+      aria-label="Welcome splash screen. Click anywhere or press Enter to continue into Pulse"
     >
       {/* Splash Backdrop + Content Layer */}
       <motion.div
@@ -428,45 +394,139 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
           className="pointer-events-none absolute w-[28rem] h-[28rem] rounded-full bg-gradient-to-tr from-[#FFE9CE] via-[#FF92A4]/35 to-[#4E51BF]/30 blur-3xl"
         />
 
-        {!isLaunched ? (
-          <div className="relative flex flex-col items-center justify-center text-center max-w-md z-10">
-            {/* Breathing Ambient Vector Emblem */}
+        {/* Central Super App Emblem Stage */}
+        <div className="relative flex items-center justify-center w-36 h-36 mb-4">
+          {CONVERGE_MODULES.map(({ icon: Icon, x, y, bg, fg, delay }, idx) => (
             <motion.div
-              animate={{ scale: [1, 1.05, 1], y: [0, -4, 0] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative w-20 h-20 rounded-[1.5rem] bg-[#4E51BF] p-[3px] shadow-xl shadow-[#4E51BF]/25 flex items-center justify-center mb-5"
+              key={idx}
+              initial={{ x, y, scale: 0.9, opacity: 0, rotate: idx % 2 === 0 ? -25 : 25 }}
+              animate={{
+                x: [x, x * 0.25, 0],
+                y: [y, y * 0.25, 0],
+                scale: [0.85, 1.05, 0.2],
+                opacity: [0, 1, 0],
+                rotate: 0,
+              }}
+              transition={{
+                duration: 0.5,
+                delay,
+                times: [0, 0.55, 1],
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className={`absolute w-10 h-10 rounded-xl ${bg} ${fg} flex items-center justify-center shadow-md`}
             >
-              <div className="w-full h-full rounded-[1.35rem] bg-gradient-to-br from-[#4E51BF] via-[#5F62CF] to-[#24252A] flex items-center justify-center relative overflow-hidden">
-                <span className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-[#FFE9CE]/90" />
-                <span className="absolute -bottom-3 -left-3 w-8 h-8 rounded-full bg-[#FF92A4]/85" />
-                <svg
-                  viewBox="0 0 48 48"
-                  className="relative z-10 w-10 h-10"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <rect x="7" y="7" width="14" height="14" rx="4.5" fill="#FFE9CE" />
-                  <rect x="27" y="7" width="14" height="14" rx="7" fill="#FF92A4" />
-                  <rect
-                    x="7"
-                    y="27"
-                    width="14"
-                    height="14"
-                    rx="7"
-                    fill="#FFFFFF"
-                    fillOpacity="0.92"
-                  />
-                  <path
-                    d="M28 34l4.5 4.5L41 29.5"
-                    stroke="#FFE9CE"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+              <Icon className="w-5 h-5" />
             </motion.div>
+          ))}
 
+          {/* Expanding Pop-Burst Shockwave Rings */}
+          <motion.span
+            initial={{ scale: 0.3, opacity: 0 }}
+            animate={{ scale: [0.3, 3.2], opacity: [0, 0.9, 0] }}
+            transition={{ delay: 0.84, duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+            className="pointer-events-none absolute w-20 h-20 rounded-full border-2 border-[#4E51BF]"
+          />
+          <motion.span
+            initial={{ scale: 0.3, opacity: 0 }}
+            animate={{ scale: [0.3, 2.5], opacity: [0, 0.85, 0] }}
+            transition={{ delay: 0.9, duration: 0.65, ease: 'easeOut' }}
+            className="pointer-events-none absolute w-20 h-20 rounded-full border-2 border-[#FF92A4]"
+          />
+
+          {/* Pop Burst Particles */}
+          {POP_BURST_PARTICLES.map((p, idx) => {
+            const rad = (p.angle * Math.PI) / 180;
+            const tx = Math.cos(rad) * p.dist;
+            const ty = Math.sin(rad) * p.dist;
+            const shapeClass =
+              p.shape === 'diamond' ? 'rounded-[2px] rotate-45' : 'rounded-full';
+
+            return (
+              <motion.span
+                key={idx}
+                initial={{ x: 0, y: 0, scale: 0, opacity: 0 }}
+                animate={{
+                  x: [0, tx],
+                  y: [0, ty],
+                  scale: [0, 1.3, 0],
+                  opacity: [0, 1, 0],
+                  rotate: p.shape === 'circle' ? 0 : 180,
+                }}
+                transition={{
+                  delay: 0.84,
+                  duration: 0.78,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                style={{
+                  width: p.shape === 'pill' ? p.size + 6 : p.size,
+                  height: p.shape === 'pill' ? Math.max(4, p.size - 4) : p.size,
+                  backgroundColor: p.color,
+                }}
+                className={`pointer-events-none absolute ${shapeClass}`}
+              />
+            );
+          })}
+
+          {/* Custom Super App Vector Graphic Emblem */}
+          <motion.div
+            initial={{ scale: 0.25, opacity: 0 }}
+            animate={{
+              scale: [0.25, 1, 1.04, 0.96, 1.07, 0.97, 1.32, 0.95, 1],
+              x: [0, 0, -7, 7, -6, 6, -3, 0, 0],
+              rotate: [0, 0, -6, 6, -5, 5, 0, 0, 0],
+              opacity: [0, 1, 1, 1, 1, 1, 1, 1, 1],
+            }}
+            transition={{
+              duration: 1.15,
+              delay: 0.22,
+              times: [0, 0.22, 0.32, 0.4, 0.48, 0.56, 0.68, 0.84, 1],
+              ease: 'easeInOut',
+            }}
+            className="relative w-20 h-20 rounded-[1.5rem] bg-[#4E51BF] p-[3px] shadow-xl shadow-[#4E51BF]/25 flex items-center justify-center"
+          >
+            <div className="w-full h-full rounded-[1.35rem] bg-gradient-to-br from-[#4E51BF] via-[#5F62CF] to-[#24252A] flex items-center justify-center relative overflow-hidden">
+              <span className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-[#FFE9CE]/90" />
+              <span className="absolute -bottom-3 -left-3 w-8 h-8 rounded-full bg-[#FF92A4]/85" />
+              <svg
+                viewBox="0 0 48 48"
+                className="relative z-10 w-10 h-10"
+                fill="none"
+                aria-hidden="true"
+              >
+                <rect x="7" y="7" width="14" height="14" rx="4.5" fill="#FFE9CE" />
+                <rect x="27" y="7" width="14" height="14" rx="7" fill="#FF92A4" />
+                <rect
+                  x="7"
+                  y="27"
+                  width="14"
+                  height="14"
+                  rx="7"
+                  fill="#FFFFFF"
+                  fillOpacity="0.92"
+                />
+                <path
+                  d="M28 34l4.5 4.5L41 29.5"
+                  stroke="#FFE9CE"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Personalized Pop Reveal */}
+        <div className="relative text-center max-w-md">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.75, y: 12 }}
+            animate={{ opacity: 1, scale: [0.75, 1.07, 1], y: 0 }}
+            transition={{
+              delay: 0.88,
+              duration: 0.5,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFE9CE] border border-[#F2CFA4]/80 text-[11px] font-semibold text-[#24252A] mb-3">
               <Sparkles className="w-3 h-3 text-[#4E51BF]" />
               Pulse Super App
@@ -475,207 +535,44 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
             <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#24252A]">
               Hello, <span className="text-[#4E51BF]">Jhade</span>
             </h1>
+          </motion.div>
 
-            <p className="text-sm sm:text-base text-[#5C6070] mt-2 font-medium">
-              Ready to crush today?
-            </p>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="text-sm sm:text-base text-[#5C6070] mt-2 font-medium"
+          >
+            Welcome. Ready to crush today?
+          </motion.p>
+        </div>
 
-            <motion.div
-              animate={{ scale: [1, 1.04, 1] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-              className="mt-7 inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#4E51BF] text-white font-semibold text-sm shadow-lg shadow-[#4E51BF]/30 cursor-pointer"
-            >
-              <Sparkles className="w-4 h-4 text-[#FFE9CE]" />
-              Tap to Launch
-            </motion.div>
+        {/* Animated Progress Bar */}
+        <div className="mt-6 w-44 h-[3px] rounded-full bg-[#24252A]/10 overflow-hidden">
+          <motion.div
+            initial={{ x: '-100%' }}
+            animate={{ x: '0%' }}
+            transition={{ delay: 0.25, duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
+            className="h-full w-full bg-gradient-to-r from-[#4E51BF] via-[#FF92A4] to-[#FFE9CE]"
+          />
+        </div>
 
-            <span className="mt-3.5 text-[11px] text-[#8A8F9E]">
-              Tap anywhere to begin with sound
-            </span>
-          </div>
-        ) : (
-          <>
-            {/* Central Super App Emblem Stage */}
-            <div className="relative flex items-center justify-center w-36 h-36 mb-4">
-              {CONVERGE_MODULES.map(({ icon: Icon, x, y, bg, fg, delay }, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ x, y, scale: 0.9, opacity: 0, rotate: idx % 2 === 0 ? -25 : 25 }}
-                  animate={{
-                    x: [x, x * 0.25, 0],
-                    y: [y, y * 0.25, 0],
-                    scale: [0.85, 1.05, 0.2],
-                    opacity: [0, 1, 0],
-                    rotate: 0,
-                  }}
-                  transition={{
-                    duration: 0.5,
-                    delay,
-                    times: [0, 0.55, 1],
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  className={`absolute w-10 h-10 rounded-xl ${bg} ${fg} flex items-center justify-center shadow-md`}
-                >
-                  <Icon className="w-5 h-5" />
-                </motion.div>
-              ))}
-
-              {/* Expanding Pop-Burst Shockwave Rings */}
-              <motion.span
-                initial={{ scale: 0.3, opacity: 0 }}
-                animate={{ scale: [0.3, 3.2], opacity: [0, 0.9, 0] }}
-                transition={{ delay: 0.84, duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute w-20 h-20 rounded-full border-2 border-[#4E51BF]"
-              />
-              <motion.span
-                initial={{ scale: 0.3, opacity: 0 }}
-                animate={{ scale: [0.3, 2.5], opacity: [0, 0.85, 0] }}
-                transition={{ delay: 0.9, duration: 0.65, ease: 'easeOut' }}
-                className="pointer-events-none absolute w-20 h-20 rounded-full border-2 border-[#FF92A4]"
-              />
-
-              {/* Pop Burst Particles */}
-              {POP_BURST_PARTICLES.map((p, idx) => {
-                const rad = (p.angle * Math.PI) / 180;
-                const tx = Math.cos(rad) * p.dist;
-                const ty = Math.sin(rad) * p.dist;
-                const shapeClass =
-                  p.shape === 'diamond' ? 'rounded-[2px] rotate-45' : 'rounded-full';
-
-                return (
-                  <motion.span
-                    key={idx}
-                    initial={{ x: 0, y: 0, scale: 0, opacity: 0 }}
-                    animate={{
-                      x: [0, tx],
-                      y: [0, ty],
-                      scale: [0, 1.3, 0],
-                      opacity: [0, 1, 0],
-                      rotate: p.shape === 'circle' ? 0 : 180,
-                    }}
-                    transition={{
-                      delay: 0.84,
-                      duration: 0.78,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    style={{
-                      width: p.shape === 'pill' ? p.size + 6 : p.size,
-                      height: p.shape === 'pill' ? Math.max(4, p.size - 4) : p.size,
-                      backgroundColor: p.color,
-                    }}
-                    className={`pointer-events-none absolute ${shapeClass}`}
-                  />
-                );
-              })}
-
-              {/* Custom Super App Vector Graphic Emblem */}
-              <motion.div
-                initial={{ scale: 0.25, opacity: 0 }}
-                animate={{
-                  scale: [0.25, 1, 1.04, 0.96, 1.07, 0.97, 1.32, 0.95, 1],
-                  x: [0, 0, -7, 7, -6, 6, -3, 0, 0],
-                  rotate: [0, 0, -6, 6, -5, 5, 0, 0, 0],
-                  opacity: [0, 1, 1, 1, 1, 1, 1, 1, 1],
-                }}
-                transition={{
-                  duration: 1.15,
-                  delay: 0.22,
-                  times: [0, 0.22, 0.32, 0.4, 0.48, 0.56, 0.68, 0.84, 1],
-                  ease: 'easeInOut',
-                }}
-                className="relative w-20 h-20 rounded-[1.5rem] bg-[#4E51BF] p-[3px] shadow-xl shadow-[#4E51BF]/25 flex items-center justify-center"
-              >
-                <div className="w-full h-full rounded-[1.35rem] bg-gradient-to-br from-[#4E51BF] via-[#5F62CF] to-[#24252A] flex items-center justify-center relative overflow-hidden">
-                  <span className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-[#FFE9CE]/90" />
-                  <span className="absolute -bottom-3 -left-3 w-8 h-8 rounded-full bg-[#FF92A4]/85" />
-                  <svg
-                    viewBox="0 0 48 48"
-                    className="relative z-10 w-10 h-10"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <rect x="7" y="7" width="14" height="14" rx="4.5" fill="#FFE9CE" />
-                    <rect x="27" y="7" width="14" height="14" rx="7" fill="#FF92A4" />
-                    <rect
-                      x="7"
-                      y="27"
-                      width="14"
-                      height="14"
-                      rx="7"
-                      fill="#FFFFFF"
-                      fillOpacity="0.92"
-                    />
-                    <path
-                      d="M28 34l4.5 4.5L41 29.5"
-                      stroke="#FFE9CE"
-                      strokeWidth="3.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Personalized Pop Reveal */}
-            <div className="relative text-center max-w-md">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.75, y: 12 }}
-                animate={{ opacity: 1, scale: [0.75, 1.07, 1], y: 0 }}
-                transition={{
-                  delay: 0.88,
-                  duration: 0.5,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFE9CE] border border-[#F2CFA4]/80 text-[11px] font-semibold text-[#24252A] mb-3">
-                  <Sparkles className="w-3 h-3 text-[#4E51BF]" />
-                  Pulse Super App
-                </div>
-
-                <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#24252A]">
-                  Hello, <span className="text-[#4E51BF]">Jhade</span>
-                </h1>
-              </motion.div>
-
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="text-sm sm:text-base text-[#5C6070] mt-2 font-medium"
-              >
-                Welcome. Ready to crush today?
-              </motion.p>
-            </div>
-
-            {/* Animated Progress Bar */}
-            <div className="mt-6 w-44 h-[3px] rounded-full bg-[#24252A]/10 overflow-hidden">
-              <motion.div
-                initial={{ x: '-100%' }}
-                animate={{ x: '0%' }}
-                transition={{ delay: 0.25, duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
-                className="h-full w-full bg-gradient-to-r from-[#4E51BF] via-[#FF92A4] to-[#FFE9CE]"
-              />
-            </div>
-
-            {/* Interactive Click-to-Continue Prompt */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.25, duration: 0.4 }}
-              className="mt-6"
-            >
-              <motion.span
-                animate={{ opacity: [0.65, 1, 0.65], y: [0, -2, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/85 border border-[#24252A]/[0.08] text-xs font-medium text-[#24252A] shadow-sm"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4E51BF]" />
-                Click anywhere to continue
-              </motion.span>
-            </motion.div>
-          </>
-        )}
+        {/* Interactive Click-to-Continue Prompt */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.25, duration: 0.4 }}
+          className="mt-6"
+        >
+          <motion.span
+            animate={{ opacity: [0.65, 1, 0.65], y: [0, -2, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/85 border border-[#24252A]/[0.08] text-xs font-medium text-[#24252A] shadow-sm"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4E51BF]" />
+            Click anywhere to continue
+          </motion.span>
+        </motion.div>
       </motion.div>
 
       {/* Rich Morphing Liquid Wave + Splash Ripple Exit Transition */}
