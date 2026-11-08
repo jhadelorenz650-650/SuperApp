@@ -95,7 +95,7 @@ export function Dashboard({ tasks }) {
         {/* 1. Greeting Hero Card (#4E51BF + #FFE9CE signature pairing) */}
         <motion.section
           variants={cardVariants}
-          className="md:col-span-6 xl:col-span-8 glass-card glass-card-interactive relative overflow-hidden rounded-panel p-5 sm:p-6 flex flex-col justify-between gap-5"
+          className="md:col-span-6 xl:col-span-8 glass-card relative overflow-hidden rounded-panel p-5 sm:p-6 flex flex-col justify-between gap-5"
         >
           {/* Top-right cobalt accent block matching reference */}
           <div
@@ -222,7 +222,7 @@ export function Dashboard({ tasks }) {
         {/* 3. Weekly Activity Bar Chart (Recharts) */}
         <motion.section
           variants={cardVariants}
-          className="md:col-span-3 xl:col-span-5 glass-card glass-card-interactive rounded-panel p-5 sm:p-6 min-h-[260px]"
+          className="md:col-span-3 xl:col-span-5 glass-card rounded-panel p-5 sm:p-6 min-h-[260px]"
         >
           <WeeklyChart data={weeklyData} />
         </motion.section>
@@ -230,7 +230,7 @@ export function Dashboard({ tasks }) {
         {/* 4. Upcoming Deadlines Card */}
         <motion.section
           variants={cardVariants}
-          className="md:col-span-6 xl:col-span-4 glass-card glass-card-interactive rounded-panel p-5 sm:p-6 flex flex-col"
+          className="md:col-span-6 xl:col-span-4 glass-card rounded-panel p-5 sm:p-6 flex flex-col"
         >
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -313,7 +313,6 @@ export function Dashboard({ tasks }) {
         {/* 5. Motivational Quote Card (#4E51BF Cobalt Signature Card) */}
         <motion.section
           variants={cardVariants}
-          whileHover={{ y: -2 }}
           className="md:col-span-6 xl:col-span-3 relative overflow-hidden rounded-panel bg-[#4E51BF] text-white p-5 sm:p-6 flex flex-col justify-between shadow-lg shadow-[#4E51BF]/20"
         >
           <div

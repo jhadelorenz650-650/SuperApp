@@ -217,8 +217,7 @@ export function Tasks({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05, duration: 0.25 }}
-              whileHover={{ y: -2 }}
-              className="glass-card glass-card-interactive rounded-2xl p-3.5 sm:p-4 flex items-center gap-3"
+              className="glass-card rounded-2xl p-3.5 sm:p-4 flex items-center gap-3"
             >
               <div
                 className={`w-9 h-9 rounded-xl ${chip.iconBg} flex items-center justify-center shrink-0`}

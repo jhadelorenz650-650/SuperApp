@@ -605,7 +605,7 @@ export function playIntroOpeningSound({ variant = 'superapp' } = {}) {
       } else if (ctx.state === 'suspended') {
         resumeTimeoutId = window.setTimeout(() => {
           cancelled = true;
-        }, 350);
+        }, 2500);
 
         ctx
           .resume()
@@ -614,9 +614,8 @@ export function playIntroOpeningSound({ variant = 'superapp' } = {}) {
               window.clearTimeout(resumeTimeoutId);
               resumeTimeoutId = null;
             }
-            const elapsedSec = (performance.now() - startedAt) / 1000;
-            if (!cancelled && ctx.state === 'running' && elapsedSec <= 0.35) {
-              scheduleSequence(ctx, elapsedSec);
+            if (!cancelled && ctx.state === 'running') {
+              scheduleSequence(ctx, 0);
             }
           })
           .catch(() => {});

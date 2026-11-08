@@ -12,8 +12,7 @@ export function ComingSoonCard({
         initial={{ opacity: 0, scale: 0.96, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        whileHover={{ y: -2 }}
-        className="glass-card glass-card-interactive relative w-full max-w-md overflow-hidden rounded-panel p-8 text-center"
+        className="glass-card relative w-full max-w-md overflow-hidden rounded-panel p-8 text-center"
       >
         <div
           className={`pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-gradient-to-br ${accentClass} blur-3xl opacity-80`}
