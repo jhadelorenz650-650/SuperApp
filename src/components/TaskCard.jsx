@@ -1,5 +1,10 @@
 import { useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useTransform,
+} from 'framer-motion';
 import { Calendar, Clock, Trash2 } from 'lucide-react';
 import {
   formatDeadlineCountdown,
@@ -40,6 +45,8 @@ const BURST_PARTICLES = [
 export function TaskCard({ task, now, onToggle, onDelete }) {
   const [burstId, setBurstId] = useState(0);
   const deleteBtnRef = useRef(null);
+  const dragX = useMotionValue(0);
+  const swipeBackdropOpacity = useTransform(dragX, [0, -14, -72], [0, 0.85, 1]);
   const countdown = formatDeadlineCountdown(task.dueDate, task.completed, now);
   const progress = getDeadlineProgress(task, now);
   const shortDate = formatShortDate(task.dueDate);
@@ -73,13 +80,17 @@ export function TaskCard({ task, now, onToggle, onDelete }) {
       }}
       className="relative rounded-card overflow-hidden"
     >
-      {/* Swipe-to-delete reveal backdrop */}
-      <div className="absolute inset-0 rounded-card bg-[#FF92A4]/30 border border-[#FF92A4]/50 flex items-center justify-end pr-5">
+      {/* Swipe-to-delete reveal backdrop (hidden until swiped left so it never bleeds behind the card) */}
+      <motion.div
+        aria-hidden="true"
+        style={{ opacity: swipeBackdropOpacity }}
+        className="pointer-events-none absolute inset-0 rounded-card bg-[#FFE1E6] border border-[#FF92A4]/50 flex items-center justify-end pr-5"
+      >
         <div className="flex items-center gap-1.5 text-[#9F1239] text-xs font-semibold">
           <Trash2 className="w-4 h-4" />
           <span>Delete</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* Foreground interactive glass card */}
       <motion.div
@@ -90,10 +101,8 @@ export function TaskCard({ task, now, onToggle, onDelete }) {
         whileHover={{ y: -1 }}
         animate={burstId > 0 ? { scale: [1, 1.02, 1] } : { scale: 1 }}
         transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-        style={{ touchAction: 'pan-y' }}
-        className={`glass-card glass-card-interactive relative rounded-card p-4 sm:p-4.5 pl-5 overflow-hidden ${
-          task.completed ? 'opacity-75' : ''
-        }`}
+        style={{ x: dragX, touchAction: 'pan-y' }}
+        className="glass-card glass-card-interactive relative rounded-card !bg-white/[0.97] hover:!bg-white p-4 sm:p-4.5 pl-5 overflow-hidden"
       >
         {/* Completion Sweep Shimmer */}
         <AnimatePresence>
@@ -115,7 +124,11 @@ export function TaskCard({ task, now, onToggle, onDelete }) {
           className={`absolute left-0 top-3 bottom-3 w-1 rounded-r-full ${priorityMeta.stripClass}`}
         />
 
-        <div className="flex items-start gap-3.5">
+        <div
+          className={`flex items-start gap-3.5 transition-opacity ${
+            task.completed ? 'opacity-75' : ''
+          }`}
+        >
           {/* Particle-Burst Animated Circular Check */}
           <div className="relative mt-0.5 shrink-0">
             <AnimatePresence>

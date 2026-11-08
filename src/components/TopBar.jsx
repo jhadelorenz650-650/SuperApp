@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Calendar, Plus, Search, Sparkles, X } from 'lucide-react';
-import { formatTodayHeader } from '../utils/taskDates';
+import { formatTodayHeader, toDateInputString } from '../utils/taskDates';
 
 const PAGE_TITLES = {
   '/': 'Dashboard',
@@ -18,8 +19,45 @@ export function TopBar({
 }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const [today, setToday] = useState(() => new Date());
+
+  useEffect(() => {
+    let timerId = null;
+    const scheduleNextMidnight = () => {
+      const now = new Date();
+      const nextMidnight = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1,
+        0,
+        0,
+        1
+      );
+      const msUntilMidnight = Math.max(1000, nextMidnight.getTime() - now.getTime());
+      timerId = window.setTimeout(() => {
+        setToday(new Date());
+        scheduleNextMidnight();
+      }, msUntilMidnight);
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState !== 'visible') return;
+      const current = new Date();
+      setToday((prev) =>
+        toDateInputString(prev) === toDateInputString(current) ? prev : current
+      );
+    };
+
+    scheduleNextMidnight();
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      if (timerId !== null) window.clearTimeout(timerId);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
+
   const title = PAGE_TITLES[pathname] || 'Dashboard';
-  const todayText = formatTodayHeader(new Date());
+  const todayText = formatTodayHeader(today);
 
   const handleSearchInput = (e) => {
     const val = e.target.value;

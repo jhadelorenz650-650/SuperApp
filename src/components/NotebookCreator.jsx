@@ -117,7 +117,10 @@ export function NotebookCreator({
                   : 'New Student Notebook'}
               </span>
             </div>
-            <h2 className="font-display text-lg sm:text-xl font-bold text-[#24252A] tracking-tight">
+            <h2
+              id={variant === 'modal' ? 'notebook-creator-title' : undefined}
+              className="font-display text-lg sm:text-xl font-bold text-[#24252A] tracking-tight"
+            >
               Create a Notebook
             </h2>
             <p className="text-xs text-[#5C6070] mt-0.5">
@@ -351,6 +354,9 @@ export function NotebookCreator({
         onClick={onClose}
       >
         <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="notebook-creator-title"
           initial={{ opacity: 0, y: 20, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 12, scale: 0.97 }}

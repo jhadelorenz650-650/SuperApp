@@ -37,7 +37,7 @@ export function NavBar({
         initial={false}
         animate={{ width: collapsed ? 84 : 264 }}
         transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-        className="hidden md:flex md:flex-col md:shrink-0 md:sticky md:top-0 md:h-dvh bg-white/85 backdrop-blur-2xl border-r border-[#24252A]/[0.07] py-5 px-3 z-30 select-none"
+        className="hidden md:flex md:flex-col md:shrink-0 md:self-start md:sticky md:top-0 md:h-dvh md:overflow-y-auto bg-white/85 backdrop-blur-2xl border-r border-[#24252A]/[0.07] py-5 px-3 z-30 select-none"
       >
         {/* Brand + Collapse Toggle */}
         <div

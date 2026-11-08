@@ -46,12 +46,49 @@ export function Tasks({
   const burstTimersRef = useRef([]);
 
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
     return () => {
-      clearInterval(id);
       burstTimersRef.current.forEach(clearTimeout);
     };
   }, []);
+
+  const hasDueToday = useMemo(
+    () => tasks.some((t) => isTaskDueToday(t, now)),
+    [tasks, now]
+  );
+  const isFinalHourCountdown = hasDueToday && now.getHours() === 23;
+
+  useEffect(() => {
+    if (isFinalHourCountdown) {
+      const id = setInterval(() => setNow(new Date()), 1000);
+      return () => clearInterval(id);
+    }
+    if (tasks.length > 0) {
+      const intervalMs = hasDueToday ? 15000 : 30000;
+      const id = setInterval(() => setNow(new Date()), intervalMs);
+      return () => clearInterval(id);
+    }
+
+    let midnightTimer = null;
+    const scheduleMidnight = () => {
+      const current = new Date();
+      const nextMidnight = new Date(
+        current.getFullYear(),
+        current.getMonth(),
+        current.getDate() + 1,
+        0,
+        0,
+        1
+      );
+      midnightTimer = setTimeout(() => {
+        setNow(new Date());
+        scheduleMidnight();
+      }, Math.max(1000, nextMidnight.getTime() - current.getTime()));
+    };
+    scheduleMidnight();
+    return () => {
+      if (midnightTimer !== null) clearTimeout(midnightTimer);
+    };
+  }, [isFinalHourCountdown, hasDueToday, tasks.length]);
 
   const spawnBurst = (event, variant) => {
     const rect = event?.rect || event?.currentTarget?.getBoundingClientRect?.();

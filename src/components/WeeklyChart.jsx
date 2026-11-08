@@ -50,8 +50,8 @@ export function WeeklyChart({ data }) {
         </div>
       </div>
 
-      <div className="relative flex-1 min-h-[180px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="relative h-[196px] sm:h-[212px] w-full min-w-0">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={180}>
           <BarChart
             data={data}
             margin={{ top: 8, right: 4, left: -24, bottom: 0 }}

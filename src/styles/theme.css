@@ -174,3 +174,10 @@
     9px 0 0 #d5cbb9,
     0 18px 34px -16px rgba(36, 37, 42, 0.24);
 }
+
+/* Ensure hover-revealed icon buttons remain accessible on touch devices */
+@media (hover: none), (pointer: coarse) {
+  .touch-reveal {
+    opacity: 0.9 !important;
+  }
+}

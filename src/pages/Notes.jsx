@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  AlertTriangle,
   ArrowLeft,
   BookOpen,
   Bookmark,
@@ -89,6 +90,31 @@ function countWords(text) {
   return trimmed.split(/\s+/).length;
 }
 
+const ACTIVE_NOTEBOOK_STORAGE_KEY = 'superapp_active_notebook_id_v1';
+const ACTIVE_PAGE_MAP_STORAGE_KEY = 'superapp_active_page_map_v1';
+
+function readSavedPageMap() {
+  try {
+    const raw = window.sessionStorage.getItem(ACTIVE_PAGE_MAP_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeSavedPageMap(map) {
+  try {
+    window.sessionStorage.setItem(
+      ACTIVE_PAGE_MAP_STORAGE_KEY,
+      JSON.stringify(map)
+    );
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 function readCustomLegacyNotes() {
   try {
     const raw = window.localStorage.getItem('superapp_notes_v1');
@@ -117,13 +143,17 @@ export function Notes() {
   const spiralPatternId = useId();
   const spiralMetalId = useId();
 
-  const [notebooks, setNotebooks] = useLocalStorage('superapp_notebooks_v1', []);
+  const [notebooks, setNotebooks, notebooksStorageError] = useLocalStorage(
+    'superapp_notebooks_v1',
+    []
+  );
+  const [dismissedStorageWarning, setDismissedStorageWarning] = useState(false);
   const [legacyNotes, setLegacyNotes] = useState(() => readCustomLegacyNotes());
 
   const [activeNotebookId, setActiveNotebookId] = useState(() => {
     try {
       const savedNbId = window.sessionStorage.getItem(
-        'superapp_active_notebook_id_v1'
+        ACTIVE_NOTEBOOK_STORAGE_KEY
       );
       if (savedNbId && notebooks.some((nb) => nb.id === savedNbId)) {
         return savedNbId;
@@ -134,7 +164,24 @@ export function Notes() {
     return null;
   });
 
-  const [activePageId, setActivePageId] = useState(null);
+  const [activePageId, setActivePageId] = useState(() => {
+    try {
+      const savedNbId = window.sessionStorage.getItem(
+        ACTIVE_NOTEBOOK_STORAGE_KEY
+      );
+      if (!savedNbId) return null;
+      const nb = notebooks.find((item) => item.id === savedNbId);
+      if (!nb) return null;
+      const pageMap = readSavedPageMap();
+      const savedPgId = pageMap[savedNbId];
+      if (savedPgId && (nb.pages || []).some((p) => p.id === savedPgId)) {
+        return savedPgId;
+      }
+      return nb.pages?.[0]?.id || null;
+    } catch {
+      return null;
+    }
+  });
   const [shelfSearch, setShelfSearch] = useState('');
   const [pageSearch, setPageSearch] = useState('');
   const [listFilter, setListFilter] = useState('all'); // 'all' | 'bookmarked'
@@ -171,8 +218,10 @@ export function Notes() {
   creatorModalOpenRef.current = isCreatorModalOpen;
 
   const historyMapRef = useRef({});
-  const deletedPageStackRef = useRef([]);
+  const deletedPageStackMapRef = useRef({});
+  const redoPageDeleteStackMapRef = useRef({});
   const deletedNotebookStackRef = useRef([]);
+  const redoDeletedNotebookStackRef = useRef([]);
   const typingGroupRef = useRef(null);
   const lastTextareaCursorRef = useRef(null);
   const eraseStartSnapshotRef = useRef(null);
@@ -186,21 +235,28 @@ export function Notes() {
     };
   }, []);
 
-  // Persist current open notebook in sessionStorage for seamless tab switching
+  // Persist current open notebook & page per notebook in sessionStorage for seamless tab switching
   useEffect(() => {
     try {
       if (activeNotebookId) {
         window.sessionStorage.setItem(
-          'superapp_active_notebook_id_v1',
+          ACTIVE_NOTEBOOK_STORAGE_KEY,
           activeNotebookId
         );
       } else {
-        window.sessionStorage.removeItem('superapp_active_notebook_id_v1');
+        window.sessionStorage.removeItem(ACTIVE_NOTEBOOK_STORAGE_KEY);
       }
     } catch {
       // Ignore storage errors
     }
   }, [activeNotebookId]);
+
+  useEffect(() => {
+    if (!activeNotebookId || !activePageId) return;
+    const prevMap = readSavedPageMap();
+    if (prevMap[activeNotebookId] === activePageId) return;
+    writeSavedPageMap({ ...prevMap, [activeNotebookId]: activePageId });
+  }, [activeNotebookId, activePageId]);
 
   // Close popovers on outside pointerdown or Escape
   useEffect(() => {
@@ -240,7 +296,7 @@ export function Notes() {
     [notebooks, activeNotebookId]
   );
 
-  // Validate activeNotebookId & activePageId cleanly
+  // Validate activeNotebookId & restore remembered activePageId cleanly
   useEffect(() => {
     if (activeNotebookId && !notebooks.some((nb) => nb.id === activeNotebookId)) {
       setActiveNotebookId(null);
@@ -257,7 +313,11 @@ export function Notes() {
       return;
     }
     if (!pages.some((p) => p.id === activePageId)) {
-      setActivePageId(pages[0].id);
+      const savedMap = readSavedPageMap();
+      const rememberedId = savedMap[activeNotebook.id];
+      const targetPage =
+        (rememberedId && pages.find((p) => p.id === rememberedId)) || pages[0];
+      setActivePageId(targetPage.id);
     }
   }, [notebooks, activeNotebookId, activeNotebook, activePageId]);
 
@@ -376,6 +436,10 @@ export function Notes() {
       createNoteSnapshot(note, cursor),
     ];
     hist.future = [];
+    const nbId = activeNotebookIdRef.current;
+    if (nbId && redoPageDeleteStackMapRef.current[nbId]?.length) {
+      redoPageDeleteStackMapRef.current[nbId] = [];
+    }
     setHistoryTick((t) => t + 1);
   };
 
@@ -507,6 +571,7 @@ export function Notes() {
     };
 
     commitNotebooksUpdate((prev) => [newNotebook, ...prev]);
+    redoDeletedNotebookStackRef.current = [];
     setActiveNotebookId(newNotebook.id);
     setActivePageId(firstPage.id);
     setTurningSheet(null);
@@ -549,7 +614,12 @@ export function Notes() {
     setListFilter('all');
     setTurningSheet(null);
     setActiveNotebookId(notebook.id);
-    setActivePageId(notebook.pages?.[0]?.id || null);
+    const savedMap = readSavedPageMap();
+    const rememberedId = savedMap[notebook.id];
+    const pages = notebook.pages || [];
+    const targetPage =
+      (rememberedId && pages.find((p) => p.id === rememberedId)) || pages[0];
+    setActivePageId(targetPage?.id || null);
     playPageTurnSound();
   };
 
@@ -569,6 +639,7 @@ export function Notes() {
         deletedAt: Date.now(),
       },
     ];
+    redoDeletedNotebookStackRef.current = [];
     setHistoryTick((t) => t + 1);
     playTaskDeleteSound();
     commitNotebooksUpdate((prev) => prev.filter((nb) => nb.id !== nbId));
@@ -631,8 +702,9 @@ export function Notes() {
     if (index === -1) return;
 
     const deletedPage = pages[index];
-    deletedPageStackRef.current = [
-      ...deletedPageStackRef.current.slice(-19),
+    const currentStack = deletedPageStackMapRef.current[nb.id] || [];
+    deletedPageStackMapRef.current[nb.id] = [
+      ...currentStack.slice(-19),
       {
         notebookId: nb.id,
         page: deletedPage,
@@ -641,6 +713,7 @@ export function Notes() {
         deletedAt: Date.now(),
       },
     ];
+    redoPageDeleteStackMapRef.current[nb.id] = [];
     setHistoryTick((t) => t + 1);
 
     playTaskDeleteSound();
@@ -742,6 +815,9 @@ export function Notes() {
     const hist = getNoteHistory(drag.noteId);
     hist.past = [...hist.past.slice(-(MAX_HISTORY - 1)), drag.snapshot];
     hist.future = [];
+    if (drag.notebookId && redoPageDeleteStackMapRef.current[drag.notebookId]?.length) {
+      redoPageDeleteStackMapRef.current[drag.notebookId] = [];
+    }
     setHistoryTick((t) => t + 1);
   };
 
@@ -757,26 +833,15 @@ export function Notes() {
   const handleUndo = () => {
     typingGroupRef.current = null;
     const { nb, page } = getActiveNoteSnapshotTarget();
-    const hist = page ? getNoteHistory(page.id) : null;
-    const lastPastTime = hist?.past?.length
-      ? hist.past[hist.past.length - 1].savedAt
-      : -1;
-    const lastDeletedPage =
-      deletedPageStackRef.current[deletedPageStackRef.current.length - 1];
-    const lastDeletedNb =
-      deletedNotebookStackRef.current[
-        deletedNotebookStackRef.current.length - 1
-      ];
 
-    const lastPageDelTime = lastDeletedPage?.deletedAt ?? -1;
-    const lastNbDelTime = lastDeletedNb?.deletedAt ?? -1;
+    // Outside an open notebook: restore deleted notebook from bookshelf/empty view
+    if (!nb) {
+      const lastDeletedNb =
+        deletedNotebookStackRef.current[
+          deletedNotebookStackRef.current.length - 1
+        ];
+      if (!lastDeletedNb) return;
 
-    // 1. Restore deleted notebook if most recent
-    if (
-      lastDeletedNb &&
-      lastNbDelTime >= lastPageDelTime &&
-      lastNbDelTime >= lastPastTime
-    ) {
       deletedNotebookStackRef.current =
         deletedNotebookStackRef.current.slice(0, -1);
       commitNotebooksUpdate((prev) => {
@@ -785,6 +850,15 @@ export function Notes() {
         next.splice(insertAt, 0, lastDeletedNb.notebook);
         return next;
       });
+      redoDeletedNotebookStackRef.current = [
+        ...redoDeletedNotebookStackRef.current.slice(-9),
+        {
+          notebookId: lastDeletedNb.notebook.id,
+          index: lastDeletedNb.index,
+          wasOpen: lastDeletedNb.wasOpen,
+          restoredAt: Date.now(),
+        },
+      ];
       if (lastDeletedNb.wasOpen) {
         setActiveNotebookId(lastDeletedNb.notebook.id);
         setActivePageId(lastDeletedNb.notebook.pages?.[0]?.id || null);
@@ -794,36 +868,48 @@ export function Notes() {
       return;
     }
 
-    // 2. Restore deleted page if more recent than active page edit
+    const hist = page ? getNoteHistory(page.id) : null;
+    const lastPastTime = hist?.past?.length
+      ? hist.past[hist.past.length - 1].savedAt
+      : -1;
+    const nbDeletedPages = deletedPageStackMapRef.current[nb.id] || [];
+    const lastDeletedPage = nbDeletedPages[nbDeletedPages.length - 1];
+    const lastPageDelTime = lastDeletedPage?.deletedAt ?? -1;
+
+    // 1. Restore deleted page scoped strictly to the active notebook
     if (lastDeletedPage && lastPageDelTime >= lastPastTime) {
-      const targetNbExists = notebooksRef.current.some(
-        (n) => n.id === lastDeletedPage.notebookId
+      deletedPageStackMapRef.current[nb.id] = nbDeletedPages.slice(0, -1);
+      commitNotebooksUpdate((prev) =>
+        prev.map((item) => {
+          if (item.id !== nb.id) return item;
+          const nextPages = [...(item.pages || [])];
+          const insertAt = Math.min(lastDeletedPage.index, nextPages.length);
+          nextPages.splice(insertAt, 0, lastDeletedPage.page);
+          return { ...item, updatedAt: Date.now(), pages: nextPages };
+        })
       );
-      if (targetNbExists) {
-        deletedPageStackRef.current = deletedPageStackRef.current.slice(0, -1);
-        commitNotebooksUpdate((prev) =>
-          prev.map((item) => {
-            if (item.id !== lastDeletedPage.notebookId) return item;
-            const nextPages = [...(item.pages || [])];
-            const insertAt = Math.min(lastDeletedPage.index, nextPages.length);
-            nextPages.splice(insertAt, 0, lastDeletedPage.page);
-            return { ...item, updatedAt: Date.now(), pages: nextPages };
-          })
-        );
-        if (lastDeletedPage.history) {
-          historyMapRef.current[lastDeletedPage.page.id] =
-            lastDeletedPage.history;
-        }
-        setActiveNotebookId(lastDeletedPage.notebookId);
-        setActivePageId(lastDeletedPage.page.id);
-        playPageTurnSound();
-        setHistoryTick((t) => t + 1);
-        return;
+      if (lastDeletedPage.history) {
+        historyMapRef.current[lastDeletedPage.page.id] =
+          lastDeletedPage.history;
       }
+      const currRedoPages = redoPageDeleteStackMapRef.current[nb.id] || [];
+      redoPageDeleteStackMapRef.current[nb.id] = [
+        ...currRedoPages.slice(-19),
+        {
+          notebookId: nb.id,
+          pageId: lastDeletedPage.page.id,
+          index: lastDeletedPage.index,
+          restoredAt: Date.now(),
+        },
+      ];
+      setActivePageId(lastDeletedPage.page.id);
+      playPageTurnSound();
+      setHistoryTick((t) => t + 1);
+      return;
     }
 
-    // 3. Undo active page change (strokes, typing, fonts, stamps, paper, etc.)
-    if (!nb || !page || !hist || hist.past.length === 0) return;
+    // 2. Undo active page change (strokes, typing, fonts, stamps, paper, etc.)
+    if (!page || !hist || hist.past.length === 0) return;
 
     const target = hist.past[hist.past.length - 1];
     hist.past = hist.past.slice(0, -1);
@@ -867,10 +953,90 @@ export function Notes() {
   const handleRedo = () => {
     typingGroupRef.current = null;
     const { nb, page } = getActiveNoteSnapshotTarget();
-    if (!nb || !page) return;
 
-    const hist = getNoteHistory(page.id);
-    if (hist.future.length === 0) return;
+    // Outside an open notebook: redo notebook deletion if recently undone
+    if (!nb) {
+      const lastRedoNb =
+        redoDeletedNotebookStackRef.current[
+          redoDeletedNotebookStackRef.current.length - 1
+        ];
+      if (!lastRedoNb) return;
+
+      redoDeletedNotebookStackRef.current =
+        redoDeletedNotebookStackRef.current.slice(0, -1);
+      const nbIdx = notebooksRef.current.findIndex(
+        (item) => item.id === lastRedoNb.notebookId
+      );
+      if (nbIdx === -1) {
+        setHistoryTick((t) => t + 1);
+        return;
+      }
+
+      const targetNb = notebooksRef.current[nbIdx];
+      deletedNotebookStackRef.current = [
+        ...deletedNotebookStackRef.current.slice(-9),
+        {
+          notebook: targetNb,
+          index: nbIdx,
+          wasOpen: lastRedoNb.wasOpen,
+          deletedAt: Date.now(),
+        },
+      ];
+      playTaskDeleteSound();
+      commitNotebooksUpdate((prev) =>
+        prev.filter((item) => item.id !== targetNb.id)
+      );
+      setHistoryTick((t) => t + 1);
+      return;
+    }
+
+    const hist = page ? getNoteHistory(page.id) : null;
+    const lastFutureTime = hist?.future?.length
+      ? hist.future[hist.future.length - 1].savedAt
+      : -1;
+    const nbRedoPages = redoPageDeleteStackMapRef.current[nb.id] || [];
+    const lastRedoPageDel = nbRedoPages[nbRedoPages.length - 1];
+    const lastRedoPageTime = lastRedoPageDel?.restoredAt ?? -1;
+
+    // 1. Redo restored page deletion if more recent than active page future edit
+    if (lastRedoPageDel && lastRedoPageTime >= lastFutureTime) {
+      redoPageDeleteStackMapRef.current[nb.id] = nbRedoPages.slice(0, -1);
+      const pages = nb.pages || [];
+      const currentIdx = pages.findIndex((p) => p.id === lastRedoPageDel.pageId);
+      if (currentIdx !== -1) {
+        const pageToDelete = pages[currentIdx];
+        const currDeleted = deletedPageStackMapRef.current[nb.id] || [];
+        deletedPageStackMapRef.current[nb.id] = [
+          ...currDeleted.slice(-19),
+          {
+            notebookId: nb.id,
+            page: pageToDelete,
+            index: currentIdx,
+            history: getNoteHistory(pageToDelete.id),
+            deletedAt: Date.now(),
+          },
+        ];
+        playTaskDeleteSound();
+        const remaining = pages.filter((p) => p.id !== pageToDelete.id);
+        commitNotebooksUpdate((prev) =>
+          prev.map((item) =>
+            item.id === nb.id
+              ? { ...item, updatedAt: Date.now(), pages: remaining }
+              : item
+          )
+        );
+        if (activePageIdRef.current === pageToDelete.id) {
+          const fallback =
+            remaining[Math.min(currentIdx, remaining.length - 1)] || null;
+          setActivePageId(fallback?.id || null);
+        }
+        setHistoryTick((t) => t + 1);
+        return;
+      }
+    }
+
+    // 2. Redo active page change
+    if (!page || !hist || hist.future.length === 0) return;
 
     const target = hist.future[hist.future.length - 1];
     hist.future = hist.future.slice(0, -1);
@@ -966,19 +1132,51 @@ export function Notes() {
   const wordCount = countWords(activeNote?.content);
   const strokeCount = activeNote?.strokes?.length || 0;
   const activeHistory = activeNote ? historyMapRef.current[activeNote.id] : null;
-  const canUndo = Boolean(
-    (activeHistory?.past?.length || 0) > 0 ||
-      deletedPageStackRef.current.length > 0 ||
-      deletedNotebookStackRef.current.length > 0
-  );
-  const canRedo = Boolean((activeHistory?.future?.length || 0) > 0);
+  const activeNbDeletedPages = activeNotebook
+    ? deletedPageStackMapRef.current[activeNotebook.id] || []
+    : [];
+  const activeNbRedoPages = activeNotebook
+    ? redoPageDeleteStackMapRef.current[activeNotebook.id] || []
+    : [];
+  const canUndo = activeNotebook
+    ? Boolean(
+        (activeHistory?.past?.length || 0) > 0 ||
+          activeNbDeletedPages.length > 0
+      )
+    : deletedNotebookStackRef.current.length > 0;
+  const canRedo = activeNotebook
+    ? Boolean(
+        (activeHistory?.future?.length || 0) > 0 ||
+          activeNbRedoPages.length > 0
+      )
+    : redoDeletedNotebookStackRef.current.length > 0;
   const hasPrevPage = activePageIndex > 0;
   const hasNextPage =
     activePageIndex >= 0 && activePageIndex < activePages.length - 1;
 
   return (
     <PageTransition>
-      <div className="space-y-5 overflow-x-clip">
+      <div className="space-y-5">
+        {notebooksStorageError && !dismissedStorageWarning && (
+          <div
+            role="alert"
+            className="rounded-xl bg-[#FFE1E6] border border-[#FF92A4]/60 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs text-[#9F1239]"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span className="truncate">{notebooksStorageError.message}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setDismissedStorageWarning(true)}
+              aria-label="Dismiss storage warning"
+              className="p-1 rounded-md hover:bg-[#9F1239]/10 shrink-0 cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
         {/* CASE 1: No notebooks yet — require creating the first notebook */}
         {notebooks.length === 0 ? (
           <div className="space-y-5">
@@ -991,7 +1189,7 @@ export function Notes() {
                   Organize lecture & discussion notes in separate spiral notebooks. Create your first one below to begin.
                 </p>
               </div>
-              {deletedNotebookStackRef.current.length > 0 && (
+              {canUndo && (
                 <button
                   type="button"
                   onClick={handleUndo}
@@ -1051,7 +1249,7 @@ export function Notes() {
                   )}
                 </div>
 
-                {deletedNotebookStackRef.current.length > 0 && (
+                {canUndo && (
                   <button
                     type="button"
                     onClick={handleUndo}
@@ -1060,6 +1258,18 @@ export function Notes() {
                   >
                     <Undo2 className="w-3.5 h-3.5 text-[#4E51BF]" />
                     <span className="hidden sm:inline">Undo</span>
+                  </button>
+                )}
+
+                {canRedo && (
+                  <button
+                    type="button"
+                    onClick={handleRedo}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-[#24252A]/10 px-3 py-2 text-xs font-semibold text-[#24252A] hover:bg-[#FFE9CE]/50 cursor-pointer"
+                    title="Redo notebook deletion (Ctrl+Y)"
+                  >
+                    <Redo2 className="w-3.5 h-3.5 text-[#4E51BF]" />
+                    <span className="hidden sm:inline">Redo</span>
                   </button>
                 )}
 
@@ -1130,7 +1340,7 @@ export function Notes() {
                         onClick={(e) => handleDeleteNotebook(nb.id, e)}
                         aria-label={`Delete ${nb.name} notebook`}
                         title="Delete notebook (Ctrl+Z to undo)"
-                        className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1.5 rounded-lg bg-black/20 hover:bg-black/35 text-white transition-all cursor-pointer"
+                        className="touch-reveal opacity-0 group-hover:opacity-100 focus:opacity-100 p-1.5 rounded-lg bg-black/20 hover:bg-black/35 text-white transition-all cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -1374,7 +1584,7 @@ export function Notes() {
 
               {/* Left Notebook Pages Index Sidebar */}
               <aside
-                className={`w-full lg:w-72 xl:w-80 shrink-0 glass-card rounded-panel p-4 flex-col gap-3.5 lg:sticky lg:top-20 ${
+                className={`w-full lg:w-72 xl:w-80 shrink-0 glass-card rounded-panel p-4 flex-col gap-3.5 lg:sticky lg:top-24 ${
                   mobileListOpen ? 'flex' : 'hidden lg:flex'
                 }`}
               >
@@ -1454,7 +1664,7 @@ export function Notes() {
                 </div>
 
                 {/* Numbered Notebook Page Cards */}
-                <div className="flex flex-col gap-2 max-h-[340px] lg:max-h-[calc(100dvh-23rem)] overflow-y-auto pr-0.5">
+                <div className="flex flex-col gap-2 max-h-[340px] lg:max-h-[calc(100dvh-20rem)] overflow-y-auto pr-0.5">
                   {filteredPages.length > 0 ? (
                     filteredPages.map(({ page, pageNumber }) => {
                       const isSelected = page.id === activePageId;
@@ -1504,7 +1714,7 @@ export function Notes() {
                                   type="button"
                                   onClick={(e) => handleDeletePage(page.id, e)}
                                   aria-label={`Delete ${page.title || 'page'}`}
-                                  className="opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded-md text-[#8A8F9E] hover:text-[#9F1239] hover:bg-[#FF92A4]/15 transition-all cursor-pointer"
+                                  className="touch-reveal opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded-md text-[#8A8F9E] hover:text-[#9F1239] hover:bg-[#FF92A4]/15 transition-all cursor-pointer"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -1714,7 +1924,7 @@ export function Notes() {
                             ))}
 
                             {drawTool !== 'eraser' && (
-                              <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/90 border border-[#24252A]/[0.08]">
+                              <div className="inline-flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg bg-white/90 border border-[#24252A]/[0.08]">
                                 {INK_SWATCHES.map((swatch) => (
                                   <button
                                     key={swatch.color}
@@ -1728,7 +1938,7 @@ export function Notes() {
                                     style={{ backgroundColor: swatch.color }}
                                     className={`w-4 h-4 rounded-full transition-transform cursor-pointer ${
                                       drawColor === swatch.color
-                                        ? 'scale-125 ring-2 ring-[#4E51BF] ring-offset-1'
+                                        ? 'scale-110 ring-2 ring-[#4E51BF] ring-offset-2'
                                         : 'hover:scale-110 opacity-85'
                                     }`}
                                   />
@@ -1851,7 +2061,7 @@ export function Notes() {
                     </div>
 
                     {/* Physical Spiral-Bound Notebook with 3D Page-Turn Stage */}
-                    <div className="notebook-paper relative rounded-r-3xl rounded-l-xl border border-[#E6DEC8] flex overflow-x-clip">
+                    <div className="notebook-paper relative rounded-r-3xl rounded-l-xl border border-[#E6DEC8] flex overflow-hidden">
                       {/* Hardcover Back Lip Accent Matching Chosen Cover */}
                       <div
                         aria-hidden="true"
@@ -2078,36 +2288,38 @@ export function Notes() {
 
                           {/* Paper Footer: Text Ink Colors + Tactile Page Flipper + Folded Dog-Ear */}
                           <div className="relative px-5 sm:px-8 py-3 bg-[#FAF4E8]/85 border-t border-[#E6DEC8]/80 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#5C6070]">
-                            <div className="flex items-center gap-3 flex-wrap">
+                            <div className="flex items-center gap-3.5 flex-wrap">
                               {editorMode === 'type' && (
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-2.5">
                                   <span className="text-[#8A8F9E]">
                                     Text ink:
                                   </span>
-                                  {[
-                                    { color: '#24252A', label: 'Charcoal' },
-                                    { color: '#3B3E9E', label: 'Blue Pen' },
-                                  ].map((ink) => (
-                                    <button
-                                      key={ink.color}
-                                      type="button"
-                                      onClick={() => {
-                                        playPenTapSound();
-                                        handleRecordedPatch({
-                                          textInkColor: ink.color,
-                                        });
-                                      }}
-                                      aria-label={`${ink.label} text color`}
-                                      title={ink.label}
-                                      style={{ backgroundColor: ink.color }}
-                                      className={`w-3.5 h-3.5 rounded-full cursor-pointer transition-transform ${
-                                        (activeNote.textInkColor || '#24252A') ===
-                                        ink.color
-                                          ? 'scale-125 ring-2 ring-[#4E51BF] ring-offset-1'
-                                          : 'opacity-75 hover:opacity-100'
-                                      }`}
-                                    />
-                                  ))}
+                                  <div className="inline-flex items-center gap-2.5 px-0.5">
+                                    {[
+                                      { color: '#24252A', label: 'Charcoal' },
+                                      { color: '#3B3E9E', label: 'Blue Pen' },
+                                    ].map((ink) => (
+                                      <button
+                                        key={ink.color}
+                                        type="button"
+                                        onClick={() => {
+                                          playPenTapSound();
+                                          handleRecordedPatch({
+                                            textInkColor: ink.color,
+                                          });
+                                        }}
+                                        aria-label={`${ink.label} text color`}
+                                        title={ink.label}
+                                        style={{ backgroundColor: ink.color }}
+                                        className={`w-3.5 h-3.5 rounded-full cursor-pointer transition-transform ${
+                                          (activeNote.textInkColor || '#24252A') ===
+                                          ink.color
+                                            ? 'scale-110 ring-2 ring-[#4E51BF] ring-offset-2'
+                                            : 'opacity-75 hover:opacity-100'
+                                        }`}
+                                      />
+                                    ))}
+                                  </div>
                                 </div>
                               )}
                               <span className="text-[#8A8F9E]">

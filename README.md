@@ -1,6 +1,15 @@
-# Pulse — Student OS (v1.0.0)
+# Pulse — Student OS (v1.0.1 — Version 1 Polished)
 
 A tactile, animated student productivity workspace built with React, Vite, Tailwind CSS v4, Framer Motion, and the Web Audio API.
+
+## Version 1 Polished (`v1.0.1`)
+
+Builds on `v1.0.0` with UI polish and stability fixes:
+
+- Clean task swipe-to-delete backdrops, overflow-clipped notebook ink swatches, and sticky sidebar/topbar layout across routes.
+- Explicit responsive container constraints for the dashboard weekly activity chart.
+- Per-notebook scoped page undo/redo stacks, session-persisted active page memory (`sessionStorage`), touch-visible delete controls, and fixed-scale ink rendering during 3D page turns.
+- Adaptive midnight-rollover timers for deadlines/calendar headers, `Escape`/dialog accessibility trapping across splash and modals, and surfaced `localStorage` quota/write warnings.
 
 ## Included in Version 1
 
@@ -34,4 +43,4 @@ npm run build
 
 ## Storage
 
-All tasks and notebooks persist locally in browser `localStorage` (`superapp_tasks_v1`, `superapp_notebooks_v1`, `superapp_sidebar_collapsed`) with zero external backend dependencies.
+All tasks and notebooks persist locally in browser `localStorage` (`superapp_tasks_v1`, `superapp_notebooks_v1`, `superapp_sidebar_collapsed`), with active notebook pages remembered per session in `sessionStorage` (`superapp_active_page_map_v1`), with zero external backend dependencies.

@@ -63,7 +63,10 @@ export function TaskForm({ onAddTask, onClose }) {
     >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-display text-base font-semibold text-[#24252A] tracking-tight">
+          <h2
+            id="task-modal-title"
+            className="font-display text-base font-semibold text-[#24252A] tracking-tight"
+          >
             New Assignment
           </h2>
           <p className="text-xs text-[#5C6070] mt-0.5">

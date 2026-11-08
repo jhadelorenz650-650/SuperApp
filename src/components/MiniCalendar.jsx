@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getMonthCalendarDays, toDateInputString } from '../utils/taskDates';
@@ -6,12 +6,47 @@ import { getMonthCalendarDays, toDateInputString } from '../utils/taskDates';
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
 export function MiniCalendar({ tasks }) {
-  const today = new Date();
-  const todayKey = toDateInputString(today);
-  const [cursor, setCursor] = useState({
-    year: today.getFullYear(),
-    month: today.getMonth(),
+  const [todayKey, setTodayKey] = useState(() => toDateInputString(new Date()));
+  const [cursor, setCursor] = useState(() => {
+    const initial = new Date();
+    return {
+      year: initial.getFullYear(),
+      month: initial.getMonth(),
+    };
   });
+
+  useEffect(() => {
+    let timerId = null;
+    const scheduleNextMidnight = () => {
+      const now = new Date();
+      const nextMidnight = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1,
+        0,
+        0,
+        1
+      );
+      const msUntilMidnight = Math.max(1000, nextMidnight.getTime() - now.getTime());
+      timerId = window.setTimeout(() => {
+        setTodayKey(toDateInputString(new Date()));
+        scheduleNextMidnight();
+      }, msUntilMidnight);
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState !== 'visible') return;
+      const currentKey = toDateInputString(new Date());
+      setTodayKey((prev) => (prev === currentKey ? prev : currentKey));
+    };
+
+    scheduleNextMidnight();
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      if (timerId !== null) window.clearTimeout(timerId);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
 
   const cells = useMemo(
     () => getMonthCalendarDays(cursor.year, cursor.month),

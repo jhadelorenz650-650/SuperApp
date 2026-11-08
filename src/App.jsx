@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { AlertTriangle, X } from 'lucide-react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { BackgroundMesh } from './components/BackgroundMesh';
 import { IntroSplash } from './components/IntroSplash';
@@ -16,7 +17,11 @@ import { initAudioUnlock } from './utils/soundEffects';
 
 export default function App() {
   const location = useLocation();
-  const [tasks, setTasks] = useLocalStorage('superapp_tasks_v1', []);
+  const [tasks, setTasks, tasksStorageError] = useLocalStorage(
+    'superapp_tasks_v1',
+    []
+  );
+  const [dismissedStorageWarning, setDismissedStorageWarning] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useLocalStorage(
     'superapp_sidebar_collapsed',
     false
@@ -25,6 +30,7 @@ export default function App() {
   const [isNewTaskOpen, setIsNewTaskOpen] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const [appRevealed, setAppRevealed] = useState(false);
+  const [introSettled, setIntroSettled] = useState(false);
   const introVariant = 'superapp'; // Switch to 'default' to revert to DefaultIntroSplash
 
   useEffect(() => {
@@ -79,11 +85,25 @@ export default function App() {
       />
 
       <motion.div
+        inert={showIntro && !appRevealed}
+        aria-hidden={showIntro && !appRevealed}
         initial={{ opacity: 0, y: 14, scale: 0.985 }}
-        animate={{
-          opacity: appRevealed ? 1 : 0,
-          y: appRevealed ? 0 : 14,
-          scale: appRevealed ? 1 : 0.985,
+        animate={
+          introSettled
+            ? { opacity: 1 }
+            : {
+                opacity: appRevealed ? 1 : 0,
+                y: appRevealed ? 0 : 14,
+                scale: appRevealed ? 1 : 0.985,
+              }
+        }
+        transformTemplate={(_latest, generated) =>
+          introSettled ? 'none' : generated
+        }
+        onAnimationComplete={() => {
+          if (appRevealed && !introSettled) {
+            setIntroSettled(true);
+          }
         }}
         transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 flex flex-1 min-w-0 min-h-dvh"
@@ -101,6 +121,26 @@ export default function App() {
             onSearchChange={setSearchQuery}
             onOpenNewTask={() => setIsNewTaskOpen(true)}
           />
+
+          {tasksStorageError && !dismissedStorageWarning && (
+            <div
+              role="alert"
+              className="mx-4 sm:mx-6 lg:mx-8 mt-4 rounded-xl bg-[#FFE1E6] border border-[#FF92A4]/60 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs text-[#9F1239]"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <span className="truncate">{tasksStorageError.message}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDismissedStorageWarning(true)}
+                aria-label="Dismiss storage warning"
+                className="p-1 rounded-md hover:bg-[#9F1239]/10 shrink-0 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           <main className="flex-1 w-full px-4 sm:px-6 lg:px-8 pt-6 pb-28 md:pb-10">
             <AnimatePresence mode="wait">

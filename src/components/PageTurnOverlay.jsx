@@ -37,6 +37,15 @@ function StaticSheetSurface({ page, bodyWidth, bodyHeight }) {
   const fontMeta = getFontMeta(page.fontStyle);
   const subjectStyle = getSubjectStyle(page.subject || 'Discussion');
   const strokes = page.strokes || [];
+  const safeWidth = Math.max(1, bodyWidth);
+  const maxStrokeY = strokes.reduce((maxY, s) => {
+    const strokeMax = (s.points || []).reduce(
+      (ptMax, pt) => Math.max(ptMax, pt.y || 0),
+      0
+    );
+    return Math.max(maxY, strokeMax);
+  }, 0);
+  const svgHeight = Math.max(MIN_PAGE_HEIGHT, bodyHeight, maxStrokeY + 24);
 
   return (
     <>
@@ -103,16 +112,17 @@ function StaticSheetSurface({ page, bodyWidth, bodyHeight }) {
 
         {strokes.length > 0 && (
           <svg
-            viewBox={`0 0 ${Math.max(1, bodyWidth)} ${Math.max(1, bodyHeight)}`}
+            viewBox={`0 0 ${safeWidth} ${svgHeight}`}
             preserveAspectRatio="none"
-            className="absolute inset-0 w-full h-full z-20 pointer-events-none"
+            style={{ height: `${svgHeight}px` }}
+            className="absolute inset-x-0 top-0 w-full z-20 pointer-events-none"
           >
             {strokes.map((stroke) => {
               const isHighlighter = stroke.tool === 'highlighter';
               return (
                 <path
                   key={stroke.id}
-                  d={buildStrokeSvgPath(stroke.points, bodyWidth)}
+                  d={buildStrokeSvgPath(stroke.points, safeWidth)}
                   fill="none"
                   stroke={stroke.color || '#24252A'}
                   strokeWidth={

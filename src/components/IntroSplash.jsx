@@ -172,10 +172,21 @@ const LIQUID_DROPLETS = [
 export function DefaultIntroSplash({ show, onDismiss }) {
   const openingSoundStopRef = useRef(null);
 
+  const splashRootRef = useRef(null);
+
   useEffect(() => {
     if (!show) return undefined;
+    splashRootRef.current?.focus();
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+        e.preventDefault();
+        handleDismiss();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
     openingSoundStopRef.current = playIntroOpeningSound({ variant: 'default' });
     return () => {
+      window.removeEventListener('keydown', handleKeyDown);
       if (openingSoundStopRef.current) {
         openingSoundStopRef.current();
         openingSoundStopRef.current = null;
@@ -195,12 +206,17 @@ export function DefaultIntroSplash({ show, onDismiss }) {
     <AnimatePresence>
       {show && (
         <motion.div
+          ref={splashRootRef}
           key="default-intro-splash"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.03, filter: 'blur(8px)' }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           onClick={handleDismiss}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 bg-[#F1F2F9]/95 backdrop-blur-2xl select-none cursor-pointer"
+          role="dialog"
+          aria-modal="true"
+          tabIndex={0}
+          aria-label="Click anywhere to continue into Pulse"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 bg-[#F1F2F9]/95 backdrop-blur-2xl select-none cursor-pointer outline-none"
         >
           <motion.div
             initial={{ scale: 0.45, opacity: 0 }}
@@ -277,6 +293,8 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
   const timersRef = useRef([]);
   const openingSoundStopRef = useRef(null);
 
+  const splashRootRef = useRef(null);
+
   useEffect(() => {
     return () => {
       timersRef.current.forEach(clearTimeout);
@@ -285,6 +303,7 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
 
   useEffect(() => {
     if (!show) return undefined;
+    splashRootRef.current?.focus();
     openingSoundStopRef.current = playIntroOpeningSound({ variant: 'superapp' });
     return () => {
       if (openingSoundStopRef.current) {
@@ -327,7 +346,7 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
   useEffect(() => {
     if (!show) return undefined;
     const handleKeyDown = (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
         e.preventDefault();
         triggerLiquidTransition();
       }
@@ -340,13 +359,15 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 overflow-hidden select-none ${
+      ref={splashRootRef}
+      className={`fixed inset-0 z-50 overflow-hidden select-none outline-none ${
         isExiting ? 'pointer-events-none' : 'cursor-pointer'
       }`}
       onClick={triggerLiquidTransition}
-      role="button"
+      role="dialog"
+      aria-modal="true"
       tabIndex={0}
-      aria-label="Click anywhere to continue into Pulse"
+      aria-label="Welcome splash screen. Click anywhere or press Enter to continue into Pulse"
     >
       {/* Splash Backdrop + Content Layer */}
       <motion.div
