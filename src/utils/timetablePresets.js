@@ -1,0 +1,415 @@
+// Color themes for class cards matching Pulse - Student OS visual palette
+export const CLASS_COLORS = {
+  indigo: {
+    key: 'indigo',
+    label: 'Cobalt Blue',
+    bg: 'bg-[#4E51BF]',
+    lightBg: 'bg-[#4E51BF]/10',
+    border: 'border-[#4E51BF]/25',
+    text: 'text-[#4E51BF]',
+    darkText: 'text-[#373A9B]',
+    gradient: 'from-[#4E51BF] to-[#3B3E9E]',
+    bannerBg: 'bg-[#ECEFFD]',
+    accentHex: '#4E51BF',
+  },
+  coral: {
+    key: 'coral',
+    label: 'Coral Rose',
+    bg: 'bg-[#FF92A4]',
+    lightBg: 'bg-[#FF92A4]/15',
+    border: 'border-[#FF92A4]/40',
+    text: 'text-[#E11D48]',
+    darkText: 'text-[#9F1239]',
+    gradient: 'from-[#FF92A4] to-[#F43F5E]',
+    bannerBg: 'bg-[#FFEBEF]',
+    accentHex: '#FF92A4',
+  },
+  peach: {
+    key: 'peach',
+    label: 'Warm Amber',
+    bg: 'bg-[#F59E0B]',
+    lightBg: 'bg-[#FFE9CE]',
+    border: 'border-[#F6D1A2]',
+    text: 'text-[#B45309]',
+    darkText: 'text-[#78350F]',
+    gradient: 'from-[#F59E0B] to-[#D97706]',
+    bannerBg: 'bg-[#FFF7ED]',
+    accentHex: '#F59E0B',
+  },
+  emerald: {
+    key: 'emerald',
+    label: 'Forest Emerald',
+    bg: 'bg-[#10B981]',
+    lightBg: 'bg-emerald-500/12',
+    border: 'border-emerald-500/25',
+    text: 'text-emerald-700',
+    darkText: 'text-emerald-900',
+    gradient: 'from-[#10B981] to-[#059669]',
+    bannerBg: 'bg-[#ECFDF5]',
+    accentHex: '#10B981',
+  },
+  sky: {
+    key: 'sky',
+    label: 'Ocean Cyan',
+    bg: 'bg-[#0284C7]',
+    lightBg: 'bg-sky-500/12',
+    border: 'border-sky-500/25',
+    text: 'text-sky-700',
+    darkText: 'text-sky-900',
+    gradient: 'from-[#0284C7] to-[#0369A1]',
+    bannerBg: 'bg-[#F0F9FF]',
+    accentHex: '#0284C7',
+  },
+  plum: {
+    key: 'plum',
+    label: 'Royal Plum',
+    bg: 'bg-[#7C4DFF]',
+    lightBg: 'bg-[#7C4DFF]/12',
+    border: 'border-[#7C4DFF]/25',
+    text: 'text-[#7C4DFF]',
+    darkText: 'text-[#4A148C]',
+    gradient: 'from-[#7C4DFF] to-[#651FFF]',
+    bannerBg: 'bg-[#F3E8FF]',
+    accentHex: '#7C4DFF',
+  },
+  charcoal: {
+    key: 'charcoal',
+    label: 'Matte Ink',
+    bg: 'bg-[#24252A]',
+    lightBg: 'bg-[#24252A]/[0.08]',
+    border: 'border-[#24252A]/15',
+    text: 'text-[#24252A]',
+    darkText: 'text-[#18181B]',
+    gradient: 'from-[#2D2F36] to-[#18181B]',
+    bannerBg: 'bg-[#F4F4F5]',
+    accentHex: '#24252A',
+  },
+};
+
+export const CLASS_TYPES = [
+  { key: 'lecture', label: 'Lecture', icon: 'BookOpen', badgeClass: 'bg-[#4E51BF]/10 text-[#4E51BF]' },
+  { key: 'lab', label: 'Lab', icon: 'FlaskConical', badgeClass: 'bg-emerald-500/12 text-emerald-700' },
+  { key: 'tutorial', label: 'Tutorial', icon: 'Users', badgeClass: 'bg-[#FFE9CE] text-[#B45309]' },
+  { key: 'seminar', label: 'Seminar', icon: 'MessageSquare', badgeClass: 'bg-[#FF92A4]/20 text-[#9F1239]' },
+  { key: 'studio', label: 'Studio', icon: 'Palette', badgeClass: 'bg-[#7C4DFF]/15 text-[#7C4DFF]' },
+  { key: 'quiz', label: 'Quiz / Exam', icon: 'Award', badgeClass: 'bg-rose-500/15 text-rose-700 font-bold' },
+];
+
+export const DAYS_OF_WEEK = [
+  { index: 1, short: 'Mon', full: 'Monday' },
+  { index: 2, short: 'Tue', full: 'Tuesday' },
+  { index: 3, short: 'Wed', full: 'Wednesday' },
+  { index: 4, short: 'Thu', full: 'Thursday' },
+  { index: 5, short: 'Fri', full: 'Friday' },
+  { index: 6, short: 'Sat', full: 'Saturday' },
+  { index: 0, short: 'Sun', full: 'Sunday' },
+];
+
+export function getClassColor(colorKey) {
+  return CLASS_COLORS[colorKey] || CLASS_COLORS.indigo;
+}
+
+// Convert "09:30" string to minutes from midnight
+export function timeToMinutes(timeStr) {
+  if (!timeStr) return 0;
+  const [h, m] = timeStr.split(':').map((n) => parseInt(n, 10) || 0);
+  return h * 60 + m;
+}
+
+// Convert minutes from midnight to "9:30 AM" or "09:30"
+export function minutesToTime(minutes, format24 = false) {
+  const h = Math.floor(minutes / 60) % 24;
+  const m = minutes % 60;
+  if (format24) {
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+  const period = h >= 12 ? 'PM' : 'AM';
+  const displayH = h % 12 === 0 ? 12 : h % 12;
+  return `${displayH}:${String(m).padStart(2, '0')} ${period}`;
+}
+
+export function formatTimeRange(startStr, endStr) {
+  if (!startStr || !endStr) return '';
+  return `${minutesToTime(timeToMinutes(startStr))} – ${minutesToTime(timeToMinutes(endStr))}`;
+}
+
+// Format duration into readable string like "1h 30m"
+export function formatDuration(startStr, endStr) {
+  const diff = timeToMinutes(endStr) - timeToMinutes(startStr);
+  if (diff <= 0) return '0m';
+  const h = Math.floor(diff / 60);
+  const m = diff % 60;
+  if (h === 0) return `${m}m`;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}m`;
+}
+
+// Find if any class conflicts with new timeslot on a given day
+export function findTimeConflict(existingClasses, candidate, candidateId = null) {
+  const candidateDays = candidate.days || [];
+  const startMin = timeToMinutes(candidate.startTime);
+  const endMin = timeToMinutes(candidate.endTime);
+
+  for (const cls of existingClasses) {
+    if (candidateId && cls.id === candidateId) continue;
+    const commonDays = (cls.days || []).filter((d) => candidateDays.includes(d));
+    if (commonDays.length === 0) continue;
+
+    const clsStart = timeToMinutes(cls.startTime);
+    const clsEnd = timeToMinutes(cls.endTime);
+
+    // Overlap condition: start < otherEnd && end > otherStart
+    if (startMin < clsEnd && endMin > clsStart) {
+      const dayNames = commonDays.map((d) => DAYS_OF_WEEK.find((item) => item.index === d)?.short).join(', ');
+      return {
+        conflictWith: cls,
+        dayNames,
+      };
+    }
+  }
+  return null;
+}
+
+// Live Status: determines current class, next class, and free break
+export function getLiveClassStatus(classes, currentDateTime = new Date()) {
+  const dayIndex = currentDateTime.getDay(); // 0 = Sun, 1 = Mon ...
+  const currentMinutes = currentDateTime.getHours() * 60 + currentDateTime.getMinutes();
+
+  // Filter classes happening today
+  const todayClasses = classes
+    .filter((c) => (c.days || []).includes(dayIndex))
+    .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+
+  if (todayClasses.length === 0) {
+    return {
+      status: 'no_classes_today',
+      todayClassesCount: 0,
+      activeClass: null,
+      nextClass: null,
+      breakMinutes: 0,
+    };
+  }
+
+  // Check if currently inside a class
+  const activeClass = todayClasses.find((c) => {
+    const s = timeToMinutes(c.startTime);
+    const e = timeToMinutes(c.endTime);
+    return currentMinutes >= s && currentMinutes < e;
+  });
+
+  if (activeClass) {
+    const s = timeToMinutes(activeClass.startTime);
+    const e = timeToMinutes(activeClass.endTime);
+    const progress = Math.min(100, Math.max(0, ((currentMinutes - s) / (e - s)) * 100));
+    const remainingMinutes = e - currentMinutes;
+
+    // Find class immediately after this one
+    const subsequentClasses = todayClasses.filter((c) => timeToMinutes(c.startTime) >= e);
+    const nextClass = subsequentClasses[0] || null;
+
+    return {
+      status: 'in_class',
+      activeClass,
+      progress: Math.round(progress),
+      remainingMinutes,
+      nextClass,
+      todayClassesCount: todayClasses.length,
+    };
+  }
+
+  // Not in class. Check for next upcoming class today
+  const upcomingClasses = todayClasses.filter((c) => timeToMinutes(c.startTime) > currentMinutes);
+
+  if (upcomingClasses.length > 0) {
+    const nextClass = upcomingClasses[0];
+    const minutesUntil = timeToMinutes(nextClass.startTime) - currentMinutes;
+
+    return {
+      status: 'before_class',
+      activeClass: null,
+      nextClass,
+      minutesUntil,
+      todayClassesCount: todayClasses.length,
+    };
+  }
+
+  // All classes today are finished
+  return {
+    status: 'classes_finished',
+    activeClass: null,
+    nextClass: null,
+    todayClassesCount: todayClasses.length,
+  };
+}
+
+// Sample balanced student timetable for 1-click starter template
+export function getSampleTimetable() {
+  const now = Date.now();
+  return [
+    {
+      id: `cls-${now}-1`,
+      subject: 'Computer Science',
+      courseCode: 'CS 201',
+      title: 'Data Structures & Algorithms',
+      instructor: 'Dr. Alan Vance',
+      type: 'lecture',
+      location: 'Turing Hall, Room 304',
+      onlineLink: 'https://meet.google.com',
+      days: [1, 3, 5], // Mon, Wed, Fri
+      startTime: '09:00',
+      endTime: '10:15',
+      colorTheme: 'indigo',
+      notes: 'Weekly problem set due every Friday by 5 PM.',
+      attendance: { attended: 14, missed: 1, targetPct: 80 },
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: `cls-${now}-2`,
+      subject: 'Mathematics',
+      courseCode: 'MATH 204',
+      title: 'Linear Algebra & Applications',
+      instructor: 'Prof. Katherine Bell',
+      type: 'lecture',
+      location: 'Euler Hall, Auditorium B',
+      onlineLink: '',
+      days: [1, 3], // Mon, Wed
+      startTime: '11:00',
+      endTime: '12:30',
+      colorTheme: 'peach',
+      notes: 'Midterm exam coming up on Week 8. Bring calculator.',
+      attendance: { attended: 11, missed: 0, targetPct: 85 },
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: `cls-${now}-3`,
+      subject: 'Physics',
+      courseCode: 'PHYS 102',
+      title: 'Electromagnetism Lab',
+      instructor: 'Dr. Marcus Sterling',
+      type: 'lab',
+      location: 'Curie Science Complex, Lab 210',
+      onlineLink: '',
+      days: [2, 4], // Tue, Thu
+      startTime: '13:00',
+      endTime: '15:00',
+      colorTheme: 'emerald',
+      notes: 'Lab coat and safety goggles required at all times.',
+      attendance: { attended: 8, missed: 1, targetPct: 90 },
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: `cls-${now}-4`,
+      subject: 'Writing & Comm',
+      courseCode: 'ENG 101',
+      title: 'Technical Communication & Seminars',
+      instructor: 'Prof. Diana Ruiz',
+      type: 'seminar',
+      location: 'Humanities Wing, Room 112',
+      onlineLink: '',
+      days: [2, 4], // Tue, Thu
+      startTime: '10:00',
+      endTime: '11:15',
+      colorTheme: 'coral',
+      notes: 'Peer review session next Thursday for draft report.',
+      attendance: { attended: 9, missed: 0, targetPct: 80 },
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: `cls-${now}-5`,
+      subject: 'Artificial Intelligence',
+      courseCode: 'CS 320',
+      title: 'Machine Learning Studio',
+      instructor: 'Dr. Kenji Sato',
+      type: 'studio',
+      location: 'Innovation Hub, Studio 4',
+      onlineLink: 'https://zoom.us',
+      days: [5], // Friday
+      startTime: '13:30',
+      endTime: '16:00',
+      colorTheme: 'plum',
+      notes: 'GPU cluster login credentials on course syllabus portal.',
+      attendance: { attended: 5, missed: 0, targetPct: 80 },
+      createdAt: now,
+      updatedAt: now,
+    },
+  ];
+}
+
+// Generate standard RFC 5545 iCalendar (.ics) export file
+export function exportTimetableToICS(classes) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const now = new Date();
+  const dtStamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
+
+  const icsDaysMap = {
+    0: 'SU',
+    1: 'MO',
+    2: 'TU',
+    3: 'WE',
+    4: 'TH',
+    5: 'FR',
+    6: 'SA',
+  };
+
+  let icsContent = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Pulse Student OS//Student Timetable//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:Pulse Class Timetable',
+  ];
+
+  classes.forEach((cls) => {
+    const daysList = (cls.days || []).map((d) => icsDaysMap[d]).filter(Boolean).join(',');
+    if (!daysList) return;
+
+    // Pick next matching day for DTSTART
+    const firstDayIndex = cls.days[0];
+    const targetDate = new Date();
+    const currentDay = targetDate.getDay();
+    const dayDiff = (firstDayIndex - currentDay + 7) % 7;
+    targetDate.setDate(targetDate.getDate() + dayDiff);
+
+    const [sh, sm] = (cls.startTime || '09:00').split(':').map(Number);
+    const [eh, em] = (cls.endTime || '10:00').split(':').map(Number);
+
+    const dtStart = `${targetDate.getFullYear()}${pad(targetDate.getMonth() + 1)}${pad(targetDate.getDate())}T${pad(sh)}${pad(sm)}00`;
+    const dtEnd = `${targetDate.getFullYear()}${pad(targetDate.getMonth() + 1)}${pad(targetDate.getDate())}T${pad(eh)}${pad(em)}00`;
+
+    icsContent.push(
+      'BEGIN:VEVENT',
+      `UID:${cls.id}@pulse-student-os`,
+      `DTSTAMP:${dtStamp}`,
+      `DTSTART:${dtStart}`,
+      `DTEND:${dtEnd}`,
+      `RRULE:FREQ=WEEKLY;BYDAY=${daysList}`,
+      `SUMMARY:${cls.courseCode ? `${cls.courseCode}: ` : ''}${cls.title || cls.subject}`,
+      `DESCRIPTION:${cls.instructor ? `Instructor: ${cls.instructor}\\n` : ''}${cls.notes || ''}`,
+      `LOCATION:${cls.location || ''}`,
+      'STATUS:CONFIRMED',
+      'END:VEVENT'
+    );
+  });
+
+  icsContent.push('END:VCALENDAR');
+  return icsContent.join('\r\n');
+}
+
+// Trigger browser download of .ics file
+export function downloadICSFile(classes) {
+  const icsString = exportTimetableToICS(classes);
+  const blob = new Blob([icsString], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `pulse_timetable_${new Date().toISOString().slice(0, 10)}.ics`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
