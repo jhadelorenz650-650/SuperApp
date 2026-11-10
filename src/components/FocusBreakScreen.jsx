@@ -17,21 +17,31 @@ export function FocusBreakScreen({ onSkipBreak, onExtendBreak }) {
 
   // Guided 4-7-8 Breathwork cycle
   useEffect(() => {
-    let timerId;
+    let isMounted = true;
+    let timerId = null;
+
     const runCycle = () => {
+      if (!isMounted) return;
       setBreathPhase('Inhale');
       timerId = setTimeout(() => {
+        if (!isMounted) return;
         setBreathPhase('Hold');
         timerId = setTimeout(() => {
+          if (!isMounted) return;
           setBreathPhase('Exhale');
           timerId = setTimeout(() => {
+            if (!isMounted) return;
             runCycle();
           }, 8000);
         }, 7000);
       }, 4000);
     };
+
     runCycle();
-    return () => clearTimeout(timerId);
+    return () => {
+      isMounted = false;
+      if (timerId) clearTimeout(timerId);
+    };
   }, []);
 
   const currentActivity = BREAK_ACTIVITIES[activityIndex % BREAK_ACTIVITIES.length];

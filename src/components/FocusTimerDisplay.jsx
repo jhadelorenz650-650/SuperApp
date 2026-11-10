@@ -180,6 +180,7 @@ export function FocusTimerDisplay({
             onReset();
           }}
           title="Reset Interval"
+          aria-label="Reset Interval"
           className={`p-3 rounded-2xl border transition-colors cursor-pointer ${
             isZenMode
               ? 'bg-white/10 hover:bg-white/20 border-white/10 text-white'
@@ -194,6 +195,13 @@ export function FocusTimerDisplay({
           type="button"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          aria-label={
+            isRunning
+              ? 'Pause Timer'
+              : secondsLeft === totalSeconds && !isFlow
+                ? 'Start Focus'
+                : 'Resume Timer'
+          }
           onClick={() => {
             playLiquidWaveSound();
             onTogglePlay();
@@ -225,6 +233,7 @@ export function FocusTimerDisplay({
             type="button"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
+            aria-label="Finish and log flow session"
             onClick={() => {
               playPenTapSound();
               onFinishFlow();
@@ -246,6 +255,7 @@ export function FocusTimerDisplay({
               onSkip();
             }}
             title={isBreak ? 'End Break early' : 'Skip to Break'}
+            aria-label={isBreak ? 'End Break early' : 'Skip to Break'}
             className={`p-3 rounded-2xl border transition-colors cursor-pointer ${
               isZenMode
                 ? 'bg-white/10 hover:bg-white/20 border-white/10 text-white'
@@ -261,6 +271,7 @@ export function FocusTimerDisplay({
           type="button"
           onClick={onToggleZen}
           title={isZenMode ? 'Exit Zen Mode' : 'Enter Zen Fullscreen Focus'}
+          aria-label={isZenMode ? 'Exit Zen Mode' : 'Enter Zen Fullscreen Focus'}
           className={`p-3 rounded-2xl border transition-colors cursor-pointer ${
             isZenMode
               ? 'bg-white/10 hover:bg-white/20 border-white/10 text-white'

@@ -21,6 +21,9 @@ describe('Timetable Presets - Time Math & Formatting', () => {
     assert.equal(timeToMinutes('23:59'), 1439);
     assert.equal(timeToMinutes(''), 0);
     assert.equal(timeToMinutes(null), 0);
+    assert.equal(timeToMinutes(undefined), 0);
+    assert.equal(timeToMinutes('invalid'), 0);
+    assert.equal(timeToMinutes(123), 0);
   });
 
   it('converts minutes from midnight to readable 12-hour and 24-hour strings', () => {
@@ -32,11 +35,18 @@ describe('Timetable Presets - Time Math & Formatting', () => {
 
     assert.equal(minutesToTime(570, true), '09:30');
     assert.equal(minutesToTime(810, true), '13:30');
+
+    // Edge cases: NaN, negative, non-numeric
+    assert.equal(minutesToTime(NaN), '12:00 AM');
+    assert.equal(minutesToTime(-50), '12:00 AM');
+    assert.equal(minutesToTime(NaN, true), '00:00');
+    assert.equal(minutesToTime(-50, true), '00:00');
   });
 
   it('formats time ranges correctly', () => {
     assert.equal(formatTimeRange('09:00', '10:15'), '9:00 AM – 10:15 AM');
     assert.equal(formatTimeRange('', '10:15'), '');
+    assert.equal(formatTimeRange('09:00', null), '');
   });
 
   it('formats durations in human-friendly format', () => {
@@ -44,6 +54,8 @@ describe('Timetable Presets - Time Math & Formatting', () => {
     assert.equal(formatDuration('09:00', '10:00'), '1h');
     assert.equal(formatDuration('09:00', '09:45'), '45m');
     assert.equal(formatDuration('10:00', '09:00'), '0m');
+    assert.equal(formatDuration('abc', 'def'), '0m');
+    assert.equal(formatDuration(null, null), '0m');
   });
 });
 
@@ -175,6 +187,19 @@ describe('Timetable Presets - Live Class Radar', () => {
     assert.equal(status.status, 'no_classes_today');
     assert.equal(status.todayClassesCount, 0);
   });
+
+  it('handles null, undefined, or string inputs to getLiveClassStatus safely', () => {
+    const statusNull = getLiveClassStatus([], null);
+    assert.equal(statusNull.status, 'no_classes_today');
+
+    const statusUndefined = getLiveClassStatus(null, undefined);
+    assert.equal(statusUndefined.status, 'no_classes_today');
+
+    // String date format input
+    const statusString = getLiveClassStatus(classes, '2026-11-09T09:45:00');
+    assert.equal(statusString.status, 'in_class');
+    assert.equal(statusString.activeClass.id, 'c1');
+  });
 });
 
 describe('Timetable Presets - iCalendar (.ics) Export', () => {
@@ -204,5 +229,26 @@ describe('Timetable Presets - iCalendar (.ics) Export', () => {
     assert.ok(ics.includes('Dr. Vance\\; PhD'));
     assert.ok(ics.includes('END:VEVENT'));
     assert.ok(ics.includes('END:VCALENDAR'));
+  });
+
+  it('handles empty or malformed class entries in exportTimetableToICS', () => {
+    const emptyIcs = exportTimetableToICS([]);
+    assert.ok(emptyIcs.includes('BEGIN:VCALENDAR'));
+    assert.ok(emptyIcs.includes('END:VCALENDAR'));
+
+    // Malformed time entries should not emit NaN into DTSTART/DTEND
+    const malformed = [
+      {
+        id: 'bad-1',
+        title: 'Corrupted Class',
+        days: [1],
+        startTime: 'invalid',
+        endTime: 'bad',
+      },
+    ];
+    const ics = exportTimetableToICS(malformed);
+    assert.ok(!ics.includes('NaN'));
+    assert.ok(!ics.includes('undefined'));
+    assert.ok(ics.includes('DTSTART:'));
   });
 });

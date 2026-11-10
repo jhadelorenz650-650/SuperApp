@@ -127,9 +127,12 @@ export function Focus() {
   // Completion celebratory prompt
   const [completedSessionPrompt, setCompletedSessionPrompt] = useState(null);
 
+  const sessionStartRef = useRef(null);
+
   // Reset timer whenever mode changes
   const handleSelectMode = (modeKey) => {
     playPenTapSound();
+    sessionStartRef.current = null;
     setActiveModeKey(modeKey);
     setIsRunning(false);
     setTimerState('work');
@@ -145,26 +148,54 @@ export function Focus() {
     }
   };
 
-  // Main countdown / stopwatch tick
+  // Sync sessionStartRef when isRunning state toggles
+  useEffect(() => {
+    if (isRunning) {
+      sessionStartRef.current = {
+        startTime: Date.now(),
+        baseSeconds: secondsLeft,
+      };
+    } else {
+      sessionStartRef.current = null;
+    }
+  }, [isRunning]);
+
+  // Main countdown / stopwatch tick with timestamp delta math (immune to background tab throttling)
   useEffect(() => {
     if (!isRunning) return undefined;
 
-    const intervalId = setInterval(() => {
-      if (currentMode.key === 'flow') {
-        // Flow mode counts upward
-        setSecondsLeft((prev) => prev + 1);
-      } else {
-        // Countdown mode
-        setSecondsLeft((prev) => {
-          if (prev <= 1) {
-            return 0;
-          }
-          return prev - 1;
-        });
+    const tick = () => {
+      if (!sessionStartRef.current) {
+        sessionStartRef.current = {
+          startTime: Date.now(),
+          baseSeconds: secondsLeft,
+        };
       }
-    }, 1000);
+      const elapsed = Math.floor((Date.now() - sessionStartRef.current.startTime) / 1000);
+      if (currentMode.key === 'flow') {
+        setSecondsLeft(sessionStartRef.current.baseSeconds + elapsed);
+      } else {
+        const remaining = Math.max(0, sessionStartRef.current.baseSeconds - elapsed);
+        setSecondsLeft(remaining);
+      }
+    };
 
-    return () => clearInterval(intervalId);
+    const intervalId = setInterval(tick, 500);
+
+    const handleVisibilityOrFocus = () => {
+      if (document.visibilityState === 'visible' && isRunning) {
+        tick();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+    window.addEventListener('focus', handleVisibilityOrFocus);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
+      window.removeEventListener('focus', handleVisibilityOrFocus);
+    };
   }, [isRunning, currentMode.key]);
 
   // When countdown hits 0, trigger interval transition safely outside state updater
@@ -176,6 +207,7 @@ export function Focus() {
 
   // When interval finishes
   const handleIntervalFinished = () => {
+    sessionStartRef.current = null;
     setIsRunning(false);
 
     if (timerState === 'work') {
@@ -227,6 +259,7 @@ export function Focus() {
   // Explicitly finish and log a Flow session
   const handleFinishFlowSession = () => {
     if (secondsLeft <= 0) return;
+    sessionStartRef.current = null;
     setIsRunning(false);
     playFocusCompleteGong();
 
@@ -261,6 +294,7 @@ export function Focus() {
 
   // Reset timer
   const handleReset = () => {
+    sessionStartRef.current = null;
     setIsRunning(false);
     if (timerState === 'work') {
       if (currentMode.key === 'flow') {
@@ -281,6 +315,7 @@ export function Focus() {
 
   // Skip interval
   const handleSkip = () => {
+    sessionStartRef.current = null;
     setIsRunning(false);
     if (timerState === 'work') {
       // Skip straight to break
@@ -300,6 +335,9 @@ export function Focus() {
   // Extend break by +2 min
   const handleExtendBreak = () => {
     playPenTapSound();
+    if (sessionStartRef.current) {
+      sessionStartRef.current.baseSeconds += 120;
+    }
     setSecondsLeft((prev) => prev + 120);
     setTotalSeconds((prev) => prev + 120);
   };
@@ -396,16 +434,47 @@ export function Focus() {
 
   const streakDays = useMemo(() => calculateStudyStreak(history), [history]);
 
-  // Handle escape to close Zen mode
+  // Keyboard shortcuts: Space (play/pause), Z (Zen mode toggle), R (reset), Esc (exit Zen)
   useEffect(() => {
-    const handleKey = (e) => {
+    const handleKeyDown = (e) => {
+      // Don't intercept shortcuts when user is typing in form inputs, textareas, or editable elements
+      const target = e.target;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
       if (e.key === 'Escape' && isZenMode) {
         setIsZenMode(false);
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        handleTogglePlay();
+        return;
+      }
+
+      if (e.key === 'z' || e.key === 'Z') {
+        e.preventDefault();
+        setIsZenMode((prev) => !prev);
+        return;
+      }
+
+      if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        handleReset();
+        return;
       }
     };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [isZenMode]);
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isZenMode, isRunning, timerState, currentMode, secondsLeft, totalSeconds]);
 
   return (
     <PageTransition>
@@ -608,6 +677,7 @@ export function Focus() {
               selectedTask={selectedTask}
               onSelectTask={setSelectedTask}
               onOpenNotebookForSubject={handleOpenNotebookForSubject}
+              tasks={tasks}
             />
           </div>
 

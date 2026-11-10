@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   BookOpen,
@@ -29,6 +29,13 @@ export function TimetableWeeklyGrid({
   onOpenNotebookForSubject,
 }) {
   const [hoveredClassId, setHoveredClassId] = useState(null);
+  const [currentNow, setCurrentNow] = useState(() => new Date());
+
+  // Periodically update time indicator every 30 seconds
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentNow(new Date()), 30000);
+    return () => clearInterval(timer);
+  }, []);
 
   const displayedDays = useMemo(() => {
     if (includeWeekends) {
@@ -44,7 +51,7 @@ export function TimetableWeeklyGrid({
     classes.forEach((c) => {
       if (c.startTime) {
         const s = Math.floor(timeToMinutes(c.startTime) / 60);
-        if (s < minH) minH = Math.max(6, s);
+        if (s < minH) minH = Math.max(0, s);
       }
       if (c.endTime) {
         const e = Math.ceil(timeToMinutes(c.endTime) / 60);
@@ -55,11 +62,10 @@ export function TimetableWeeklyGrid({
   }, [classes]);
 
   // Determine today's day index (0 = Sun, 1 = Mon ... 6 = Sat)
-  const todayIndex = new Date().getDay();
-  const currentNow = new Date();
+  const todayIndex = currentNow.getDay();
   const currentMinutes = currentNow.getHours() * 60 + currentNow.getMinutes();
   const startDayMinutes = startHour * 60;
-  const endDayMinutes = endHour * 60;
+  const endGridMinutes = (endHour + 1) * 60;
 
   // Generate hourly rows from startHour to endHour
   const hours = useMemo(() => {
@@ -70,11 +76,11 @@ export function TimetableWeeklyGrid({
     return list;
   }, [startHour, endHour]);
 
-  // Compute position for current time line
+  // Compute position for current time line across the entire rendered height
   const currentTimeTop = useMemo(() => {
-    if (currentMinutes < startDayMinutes || currentMinutes > endDayMinutes) return null;
+    if (currentMinutes < startDayMinutes || currentMinutes > endGridMinutes) return null;
     return ((currentMinutes - startDayMinutes) / 60) * HOUR_HEIGHT;
-  }, [currentMinutes, startDayMinutes, endDayMinutes]);
+  }, [currentMinutes, startDayMinutes, endGridMinutes]);
 
   return (
     <div className="glass-card rounded-panel overflow-hidden border border-[#24252A]/[0.08] shadow-sm">

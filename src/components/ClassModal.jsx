@@ -294,12 +294,14 @@ export function ClassModal({
             {/* Title & Course Code */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="sm:col-span-2 space-y-1">
-                <label className="text-xs font-semibold text-[#24252A]">
+                <label htmlFor="class-title" className="text-xs font-semibold text-[#24252A]">
                   Course Title <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="class-title"
                   type="text"
                   required
+                  aria-required="true"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Data Structures & Algorithms"
@@ -308,8 +310,9 @@ export function ClassModal({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#24252A]">Course Code</label>
+                <label htmlFor="class-course-code" className="text-xs font-semibold text-[#24252A]">Course Code</label>
                 <input
+                  id="class-course-code"
                   type="text"
                   value={courseCode}
                   onChange={(e) => setCourseCode(e.target.value)}
@@ -322,8 +325,9 @@ export function ClassModal({
             {/* Subject Tag & Instructor */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#24252A]">Subject / Department</label>
+                <label htmlFor="class-subject" className="text-xs font-semibold text-[#24252A]">Subject / Department</label>
                 <input
+                  id="class-subject"
                   type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
@@ -333,10 +337,11 @@ export function ClassModal({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#24252A]">Professor / Instructor</label>
+                <label htmlFor="class-instructor" className="text-xs font-semibold text-[#24252A]">Professor / Instructor</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8F9E]" />
                   <input
+                    id="class-instructor"
                     type="text"
                     value={instructor}
                     onChange={(e) => setInstructor(e.target.value)}
@@ -443,20 +448,24 @@ export function ClassModal({
 
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <span className="text-[11px] text-[#8A8F9E] block mb-1">Start Time</span>
+                  <label htmlFor="class-start-time" className="text-[11px] text-[#8A8F9E] block mb-1">Start Time</label>
                   <input
+                    id="class-start-time"
                     type="time"
                     required
+                    aria-required="true"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
                     className="w-full rounded-xl bg-white border border-[#24252A]/[0.08] px-3 py-2 text-xs sm:text-sm font-semibold text-[#24252A] focus:outline-none focus:border-[#4E51BF]"
                   />
                 </div>
                 <div>
-                  <span className="text-[11px] text-[#8A8F9E] block mb-1">End Time</span>
+                  <label htmlFor="class-end-time" className="text-[11px] text-[#8A8F9E] block mb-1">End Time</label>
                   <input
+                    id="class-end-time"
                     type="time"
                     required
+                    aria-required="true"
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
                     className="w-full rounded-xl bg-white border border-[#24252A]/[0.08] px-3 py-2 text-xs sm:text-sm font-semibold text-[#24252A] focus:outline-none focus:border-[#4E51BF]"
@@ -468,10 +477,11 @@ export function ClassModal({
             {/* Location & Online Meeting Link */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#24252A]">Room / Hall Location</label>
+                <label htmlFor="class-location" className="text-xs font-semibold text-[#24252A]">Room / Hall Location</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8F9E]" />
                   <input
+                    id="class-location"
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
@@ -482,10 +492,11 @@ export function ClassModal({
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#24252A]">Online Meeting Link (Optional)</label>
+                <label htmlFor="class-online-link" className="text-xs font-semibold text-[#24252A]">Online Meeting Link (Optional)</label>
                 <div className="relative">
                   <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8F9E]" />
                   <input
+                    id="class-online-link"
                     type="url"
                     value={onlineLink}
                     onChange={(e) => setOnlineLink(e.target.value)}
@@ -527,8 +538,9 @@ export function ClassModal({
 
             {/* Notes & Syllabus Reminders */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#24252A]">Notes & Reminders</label>
+              <label htmlFor="class-notes" className="text-xs font-semibold text-[#24252A]">Notes & Reminders</label>
               <textarea
+                id="class-notes"
                 rows={2}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}

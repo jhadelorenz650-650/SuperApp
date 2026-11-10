@@ -349,7 +349,7 @@ export function TimetableDayAgenda({
             </div>
             <button
               type="button"
-              onClick={onOpenNewClass}
+              onClick={() => onOpenNewClass(selectedDayIndex)}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#4E51BF] hover:bg-[#3B3E9E] text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />

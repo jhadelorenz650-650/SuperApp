@@ -18,12 +18,15 @@ export function FocusSubjectPicker({
   selectedTask,
   onSelectTask,
   onOpenNotebookForSubject,
+  tasks: propTasks = null,
 }) {
   const navigate = useNavigate();
-  const [tasks, setTasks] = useState([]);
+  const [internalTasks, setInternalTasks] = useState([]);
   const [classes, setClasses] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  const tasks = propTasks || internalTasks;
 
   // Close dropdown on outside click or Escape
   useEffect(() => {
@@ -52,15 +55,36 @@ export function FocusSubjectPicker({
   // Read tasks and timetable from localStorage
   useEffect(() => {
     try {
-      const rawTasks = window.localStorage.getItem('superapp_tasks_v1');
-      if (rawTasks) setTasks(JSON.parse(rawTasks) || []);
-
+      if (!propTasks) {
+        const rawTasks = window.localStorage.getItem('superapp_tasks_v1');
+        if (rawTasks) setInternalTasks(JSON.parse(rawTasks) || []);
+      }
       const rawClasses = window.localStorage.getItem('superapp_timetable_v1');
       if (rawClasses) setClasses(JSON.parse(rawClasses) || []);
     } catch {
       // Ignore
     }
-  }, []);
+  }, [propTasks]);
+
+  // Sync reactively with superapp-storage-sync
+  useEffect(() => {
+    const handleSync = (e) => {
+      if (e.detail?.key === 'superapp_timetable_v1') {
+        try {
+          const raw = window.localStorage.getItem('superapp_timetable_v1');
+          if (raw) setClasses(JSON.parse(raw) || []);
+        } catch {}
+      }
+      if (e.detail?.key === 'superapp_tasks_v1' && !propTasks) {
+        try {
+          const raw = window.localStorage.getItem('superapp_tasks_v1');
+          if (raw) setInternalTasks(JSON.parse(raw) || []);
+        } catch {}
+      }
+    };
+    window.addEventListener('superapp-storage-sync', handleSync);
+    return () => window.removeEventListener('superapp-storage-sync', handleSync);
+  }, [propTasks]);
 
   // Distinct subjects from timetable and tasks
   const availableSubjects = useMemo(() => {

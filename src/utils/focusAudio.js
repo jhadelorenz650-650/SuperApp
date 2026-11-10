@@ -290,6 +290,14 @@ export function playFocusStartChime() {
 
     osc.connect(gain);
     gain.connect(ctx.destination);
+
+    osc.onended = () => {
+      try {
+        osc.disconnect();
+        gain.disconnect();
+      } catch {}
+    };
+
     osc.start(start);
     osc.stop(start + 0.4);
   });
@@ -322,6 +330,14 @@ export function playFocusCompleteGong() {
 
     osc.connect(gain);
     gain.connect(ctx.destination);
+
+    osc.onended = () => {
+      try {
+        osc.disconnect();
+        gain.disconnect();
+      } catch {}
+    };
+
     osc.start(now);
     osc.stop(now + decay + 0.05);
   });
@@ -347,7 +363,16 @@ export function playBreakOverChime() {
 
     osc.connect(gain);
     gain.connect(ctx.destination);
+
+    osc.onended = () => {
+      try {
+        osc.disconnect();
+        gain.disconnect();
+      } catch {}
+    };
+
     osc.start(start);
     osc.stop(start + 0.3);
   });
 }
+

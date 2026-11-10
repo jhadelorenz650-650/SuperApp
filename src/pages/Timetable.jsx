@@ -26,7 +26,10 @@ import { TimetableCourseList } from '../components/TimetableCourseList';
 import { TimetableDayAgenda } from '../components/TimetableDayAgenda';
 import { TimetableLiveRadar } from '../components/TimetableLiveRadar';
 import { TimetableWeeklyGrid } from '../components/TimetableWeeklyGrid';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import {
+  broadcastStorageChange,
+  useLocalStorage,
+} from '../hooks/useLocalStorage';
 import { createBlankPage, NOTEBOOK_COVERS } from '../utils/notebookPresets';
 import {
   downloadICSFile,
@@ -75,10 +78,14 @@ export function Timetable() {
     );
   }, [classes, searchQuery]);
 
-  // Open modal for new class
-  const handleOpenNewClass = () => {
+  // Open modal for new class (optionally pre-selecting day)
+  const handleOpenNewClass = (initialDay = null) => {
     playPenTapSound();
-    setEditingClass(null);
+    if (typeof initialDay === 'number') {
+      setEditingClass({ days: [initialDay] });
+    } else {
+      setEditingClass(null);
+    }
     setIsModalOpen(true);
   };
 
@@ -176,6 +183,7 @@ export function Timetable() {
 
         const updatedNotebooks = [match, ...notebooks];
         window.localStorage.setItem('superapp_notebooks_v1', JSON.stringify(updatedNotebooks));
+        broadcastStorageChange('superapp_notebooks_v1', updatedNotebooks);
       }
 
       window.sessionStorage.setItem('superapp_active_notebook_id_v1', match.id);

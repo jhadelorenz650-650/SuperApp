@@ -76,7 +76,7 @@ export const BREAK_ACTIVITIES = [
 
 // Format date into local YYYY-MM-DD
 export function getLocalDateKey(dateInput) {
-  if (!dateInput) return '';
+  if (!dateInput || typeof dateInput === 'boolean') return '';
   const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
   if (Number.isNaN(d.getTime())) return '';
   const year = d.getFullYear();
@@ -89,6 +89,15 @@ export function getLocalDateKey(dateInput) {
 export function calculateStudyStreak(history = [], now = new Date()) {
   if (!history || !Array.isArray(history) || history.length === 0) return 0;
 
+  const referenceDate =
+    now instanceof Date && !Number.isNaN(now.getTime())
+      ? now
+      : typeof now === 'number' || typeof now === 'string'
+        ? new Date(now)
+        : new Date();
+
+  if (Number.isNaN(referenceDate.getTime())) return 0;
+
   const dateSet = new Set();
   history.forEach((item) => {
     if (item && item.completedAt) {
@@ -97,8 +106,16 @@ export function calculateStudyStreak(history = [], now = new Date()) {
     }
   });
 
-  const todayStr = getLocalDateKey(now);
-  const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+  const todayStr = getLocalDateKey(referenceDate);
+  // Use noon to avoid any midnight daylight saving time (DST) shifts
+  const yesterday = new Date(
+    referenceDate.getFullYear(),
+    referenceDate.getMonth(),
+    referenceDate.getDate() - 1,
+    12,
+    0,
+    0
+  );
   const yesterdayStr = getLocalDateKey(yesterday);
 
   // If didn't study today or yesterday, streak is broken
@@ -108,8 +125,22 @@ export function calculateStudyStreak(history = [], now = new Date()) {
 
   let streak = 0;
   const checkDate = dateSet.has(todayStr)
-    ? new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    : new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    ? new Date(
+        referenceDate.getFullYear(),
+        referenceDate.getMonth(),
+        referenceDate.getDate(),
+        12,
+        0,
+        0
+      )
+    : new Date(
+        referenceDate.getFullYear(),
+        referenceDate.getMonth(),
+        referenceDate.getDate() - 1,
+        12,
+        0,
+        0
+      );
 
   while (true) {
     const curStr = getLocalDateKey(checkDate);
@@ -126,8 +157,9 @@ export function calculateStudyStreak(history = [], now = new Date()) {
 
 // Format seconds into MM:SS or HH:MM:SS
 export function formatTimerDigits(totalSeconds) {
-  if (totalSeconds == null || Number.isNaN(totalSeconds)) return '00:00';
-  const s = Math.max(0, Math.floor(totalSeconds));
+  const num = typeof totalSeconds === 'number' ? totalSeconds : Number(totalSeconds);
+  if (!Number.isFinite(num) || num <= 0) return '00:00';
+  const s = Math.floor(num);
   const hrs = Math.floor(s / 3600);
   const mins = Math.floor((s % 3600) / 60);
   const secs = s % 60;
@@ -137,3 +169,4 @@ export function formatTimerDigits(totalSeconds) {
   }
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
+

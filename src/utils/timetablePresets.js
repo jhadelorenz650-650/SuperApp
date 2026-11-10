@@ -111,15 +111,21 @@ export function getClassColor(colorKey) {
 
 // Convert "09:30" string to minutes from midnight
 export function timeToMinutes(timeStr) {
-  if (!timeStr) return 0;
-  const [h, m] = timeStr.split(':').map((n) => parseInt(n, 10) || 0);
-  return h * 60 + m;
+  if (!timeStr || typeof timeStr !== 'string') return 0;
+  const parts = timeStr.split(':');
+  const h = parseInt(parts[0], 10) || 0;
+  const m = parseInt(parts[1], 10) || 0;
+  return Math.max(0, h * 60 + m);
 }
 
 // Convert minutes from midnight to "9:30 AM" or "09:30"
 export function minutesToTime(minutes, format24 = false) {
-  const h = Math.floor(minutes / 60) % 24;
-  const m = minutes % 60;
+  if (!Number.isFinite(minutes) || minutes < 0) {
+    return format24 ? '00:00' : '12:00 AM';
+  }
+  const total = Math.floor(minutes);
+  const h = Math.floor(total / 60) % 24;
+  const m = total % 60;
   if (format24) {
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   }
@@ -136,7 +142,7 @@ export function formatTimeRange(startStr, endStr) {
 // Format duration into readable string like "1h 30m"
 export function formatDuration(startStr, endStr) {
   const diff = timeToMinutes(endStr) - timeToMinutes(startStr);
-  if (diff <= 0) return '0m';
+  if (!Number.isFinite(diff) || diff <= 0) return '0m';
   const h = Math.floor(diff / 60);
   const m = diff % 60;
   if (h === 0) return `${m}m`;
@@ -147,7 +153,7 @@ export function formatDuration(startStr, endStr) {
 // Find if any class conflicts with new timeslot on a given day
 export function findTimeConflict(existingClasses, candidate, candidateId = null) {
   if (!candidate || !existingClasses || !Array.isArray(existingClasses)) return null;
-  const candidateDays = candidate.days || [];
+  const candidateDays = Array.isArray(candidate.days) ? candidate.days : [];
   if (candidateDays.length === 0 || !candidate.startTime || !candidate.endTime) return null;
 
   const startMin = timeToMinutes(candidate.startTime);
@@ -161,10 +167,13 @@ export function findTimeConflict(existingClasses, candidate, candidateId = null)
 
     const clsStart = timeToMinutes(cls.startTime);
     const clsEnd = timeToMinutes(cls.endTime);
+    if (clsEnd <= clsStart) continue;
 
     // Overlap condition: start < otherEnd && end > otherStart
     if (startMin < clsEnd && endMin > clsStart) {
-      const dayNames = commonDays.map((d) => DAYS_OF_WEEK.find((item) => item.index === d)?.short).join(', ');
+      const dayNames = commonDays
+        .map((d) => DAYS_OF_WEEK.find((item) => item.index === d)?.short || `Day ${d}`)
+        .join(', ');
       return {
         conflictWith: cls,
         dayNames,
@@ -186,8 +195,25 @@ export function getLiveClassStatus(classes, currentDateTime = new Date()) {
     };
   }
 
-  const dayIndex = currentDateTime.getDay(); // 0 = Sun, 1 = Mon ...
-  const currentMinutes = currentDateTime.getHours() * 60 + currentDateTime.getMinutes();
+  const now =
+    currentDateTime instanceof Date && !Number.isNaN(currentDateTime.getTime())
+      ? currentDateTime
+      : typeof currentDateTime === 'number' || typeof currentDateTime === 'string'
+        ? new Date(currentDateTime)
+        : new Date();
+
+  if (Number.isNaN(now.getTime())) {
+    return {
+      status: 'no_classes_today',
+      todayClassesCount: 0,
+      activeClass: null,
+      nextClass: null,
+      breakMinutes: 0,
+    };
+  }
+
+  const dayIndex = now.getDay(); // 0 = Sun, 1 = Mon ...
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
   // Filter classes happening today
   const todayClasses = classes
@@ -214,8 +240,8 @@ export function getLiveClassStatus(classes, currentDateTime = new Date()) {
   if (activeClass) {
     const s = timeToMinutes(activeClass.startTime);
     const e = timeToMinutes(activeClass.endTime);
-    const progress = Math.min(100, Math.max(0, ((currentMinutes - s) / (e - s)) * 100));
-    const remainingMinutes = e - currentMinutes;
+    const progress = Math.min(100, Math.max(0, ((currentMinutes - s) / Math.max(1, e - s)) * 100));
+    const remainingMinutes = Math.max(0, e - currentMinutes);
 
     // Find class immediately after this one
     const subsequentClasses = todayClasses.filter((c) => timeToMinutes(c.startTime) >= e);
@@ -400,19 +426,23 @@ export function exportTimetableToICS(classes) {
     const dayDiff = (firstDayIndex - currentDay + 7) % 7;
     targetDate.setDate(targetDate.getDate() + dayDiff);
 
-    const [sh, sm] = (cls.startTime || '09:00').split(':').map(Number);
-    const [eh, em] = (cls.endTime || '10:00').split(':').map(Number);
+    const startMinutes = timeToMinutes(cls.startTime || '09:00');
+    const endMinutes = timeToMinutes(cls.endTime || '10:00');
+    const sh = Math.floor(startMinutes / 60);
+    const sm = startMinutes % 60;
+    const eh = Math.floor(endMinutes / 60);
+    const em = endMinutes % 60;
 
     const dtStart = `${targetDate.getFullYear()}${pad(targetDate.getMonth() + 1)}${pad(targetDate.getDate())}T${pad(sh)}${pad(sm)}00`;
     const dtEnd = `${targetDate.getFullYear()}${pad(targetDate.getMonth() + 1)}${pad(targetDate.getDate())}T${pad(eh)}${pad(em)}00`;
 
-    const summary = escapeICS(`${cls.courseCode ? `${cls.courseCode}: ` : ''}${cls.title || cls.subject}`);
+    const summary = escapeICS(`${cls.courseCode ? `${cls.courseCode}: ` : ''}${cls.title || cls.subject || 'Class'}`);
     const desc = escapeICS(`${cls.instructor ? `Instructor: ${cls.instructor}\n` : ''}${cls.notes || ''}`);
     const loc = escapeICS(cls.location || '');
 
     icsContent.push(
       'BEGIN:VEVENT',
-      `UID:${cls.id}@pulse-student-os`,
+      `UID:${cls.id || Date.now()}@pulse-student-os`,
       `DTSTAMP:${dtStamp}`,
       `DTSTART:${dtStart}`,
       `DTEND:${dtEnd}`,
@@ -431,12 +461,15 @@ export function exportTimetableToICS(classes) {
 
 // Trigger browser download of .ics file
 export function downloadICSFile(classes) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
   const icsString = exportTimetableToICS(classes);
   const blob = new Blob([icsString], { type: 'text/calendar;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', `pulse_timetable_${new Date().toISOString().slice(0, 10)}.ics`);
+  link.setAttribute('download', `pulse_timetable_${dateStr}.ics`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

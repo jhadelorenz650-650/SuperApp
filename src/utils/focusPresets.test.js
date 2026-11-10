@@ -21,6 +21,8 @@ describe('Focus Presets - Local Date Key Formatter', () => {
     assert.equal(getLocalDateKey(null), '');
     assert.equal(getLocalDateKey('invalid-date'), '');
     assert.equal(getLocalDateKey(undefined), '');
+    assert.equal(getLocalDateKey(true), '');
+    assert.equal(getLocalDateKey(false), '');
   });
 });
 
@@ -28,6 +30,8 @@ describe('Focus Presets - Study Streak Calculation', () => {
   it('returns 0 for empty or invalid history', () => {
     assert.equal(calculateStudyStreak([]), 0);
     assert.equal(calculateStudyStreak(null), 0);
+    assert.equal(calculateStudyStreak([], null), 0);
+    assert.equal(calculateStudyStreak(null, null), 0);
   });
 
   it('calculates continuous streak ending today', () => {
@@ -117,6 +121,10 @@ describe('Focus Presets - Timer Digits Formatting', () => {
     assert.equal(formatTimerDigits(null), '00:00');
     assert.equal(formatTimerDigits(undefined), '00:00');
     assert.equal(formatTimerDigits(NaN), '00:00');
+    assert.equal(formatTimerDigits(Infinity), '00:00');
+    assert.equal(formatTimerDigits(-Infinity), '00:00');
+    assert.equal(formatTimerDigits('abc'), '00:00');
+    assert.equal(formatTimerDigits({}), '00:00');
   });
 });
 
