@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BookOpen,
@@ -23,6 +23,31 @@ export function FocusSubjectPicker({
   const [tasks, setTasks] = useState([]);
   const [classes, setClasses] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown on outside click or Escape
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
 
   // Read tasks and timetable from localStorage
   useEffect(() => {
@@ -87,7 +112,7 @@ export function FocusSubjectPicker({
         {/* Right: Quick actions (Change Subject / Open Notebook) */}
         <div className="flex items-center gap-2">
           {/* Change subject picker dropdown button */}
-          <div className="relative">
+          <div ref={dropdownRef} className="relative">
             <button
               type="button"
               onClick={() => {

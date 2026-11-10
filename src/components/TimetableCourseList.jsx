@@ -244,6 +244,8 @@ export function TimetableCourseList({
                     {isAboveTarget ? (
                       totalCourseSessions === 0 ? (
                         'No sessions recorded yet'
+                      ) : safeCuts === 0 ? (
+                        `⚠️ On target threshold: any missed class will drop below ${target}%`
                       ) : (
                         `✓ Safe to miss ~${safeCuts} more class${safeCuts === 1 ? '' : 'es'} without dropping below ${target}%`
                       )

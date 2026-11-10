@@ -26,16 +26,25 @@ import { FocusBreakScreen } from '../components/FocusBreakScreen';
 import { FocusSubjectPicker } from '../components/FocusSubjectPicker';
 import { FocusTimerDisplay } from '../components/FocusTimerDisplay';
 import { PageTransition } from '../components/PageTransition';
-import { useLocalStorage } from '../hooks/useLocalStorage';
 import {
+  broadcastStorageChange,
+  useLocalStorage,
+} from '../hooks/useLocalStorage';
+import {
+  getCurrentSoundType,
+  getCurrentVolume,
+  playAmbientSound,
   playBreakOverChime,
   playFocusCompleteGong,
   playFocusStartChime,
+  setAmbientVolume,
+  stopAmbientSound,
 } from '../utils/focusAudio';
 import {
   calculateStudyStreak,
   FOCUS_MODES,
   formatTimerDigits,
+  getLocalDateKey,
 } from '../utils/focusPresets';
 import { createBlankPage } from '../utils/notebookPresets';
 import {
@@ -51,6 +60,9 @@ export function Focus() {
   // Focus history & streaks
   const [history, setHistory] = useLocalStorage('superapp_focus_history_v1', []);
 
+  // Shared reactive tasks state from storage
+  const [tasks, setTasks] = useLocalStorage('superapp_tasks_v1', []);
+
   // Mode: 'pomodoro' | 'deep_work' | 'ultradian' | 'flow'
   const [activeModeKey, setActiveModeKey] = useState('pomodoro');
   const currentMode = FOCUS_MODES.find((m) => m.key === activeModeKey) || FOCUS_MODES[0];
@@ -64,6 +76,32 @@ export function Focus() {
   const [totalSeconds, setTotalSeconds] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
 
+  // Shared ambient audio controls (persists across Zen toggle)
+  const [ambientSound, setAmbientSound] = useState(() => getCurrentSoundType());
+  const [ambientVolume, setAmbientVol] = useState(() => getCurrentVolume());
+
+  // Clean up ambient audio only when leaving the Focus page completely
+  useEffect(() => {
+    return () => {
+      stopAmbientSound();
+    };
+  }, []);
+
+  const handleSelectAmbientSound = (soundId) => {
+    if (ambientSound === soundId) {
+      setAmbientSound('none');
+      stopAmbientSound();
+    } else {
+      setAmbientSound(soundId);
+      playAmbientSound(soundId, ambientVolume);
+    }
+  };
+
+  const handleAmbientVolumeChange = (newVol) => {
+    setAmbientVol(newVol);
+    setAmbientVolume(newVol);
+  };
+
   // Selected subject & task
   const [selectedSubject, setSelectedSubject] = useState(() => {
     try {
@@ -73,6 +111,15 @@ export function Focus() {
     }
   });
   const [selectedTask, setSelectedTask] = useState(null);
+
+  // Keep sessionStorage in sync
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem('superapp_focus_subject_v1', selectedSubject);
+    } catch {
+      // Ignore
+    }
+  }, [selectedSubject]);
 
   // Zen distraction-free mode
   const [isZenMode, setIsZenMode] = useState(false);
@@ -100,28 +147,32 @@ export function Focus() {
 
   // Main countdown / stopwatch tick
   useEffect(() => {
-    let intervalId = null;
+    if (!isRunning) return undefined;
 
-    if (isRunning) {
-      intervalId = setInterval(() => {
-        if (currentMode.key === 'flow') {
-          // Flow mode counts upward
-          setSecondsLeft((prev) => prev + 1);
-        } else {
-          // Countdown mode
-          setSecondsLeft((prev) => {
-            if (prev <= 1) {
-              handleIntervalFinished();
-              return 0;
-            }
-            return prev - 1;
-          });
-        }
-      }, 1000);
-    }
+    const intervalId = setInterval(() => {
+      if (currentMode.key === 'flow') {
+        // Flow mode counts upward
+        setSecondsLeft((prev) => prev + 1);
+      } else {
+        // Countdown mode
+        setSecondsLeft((prev) => {
+          if (prev <= 1) {
+            return 0;
+          }
+          return prev - 1;
+        });
+      }
+    }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [isRunning, currentMode.key, timerState]);
+  }, [isRunning, currentMode.key]);
+
+  // When countdown hits 0, trigger interval transition safely outside state updater
+  useEffect(() => {
+    if (isRunning && currentMode.key !== 'flow' && secondsLeft === 0) {
+      handleIntervalFinished();
+    }
+  }, [secondsLeft, isRunning, currentMode.key]);
 
   // When interval finishes
   const handleIntervalFinished = () => {
@@ -171,6 +222,33 @@ export function Focus() {
       setSecondsLeft(workSec);
       setTotalSeconds(workSec);
     }
+  };
+
+  // Explicitly finish and log a Flow session
+  const handleFinishFlowSession = () => {
+    if (secondsLeft <= 0) return;
+    setIsRunning(false);
+    playFocusCompleteGong();
+
+    const durationMinutes = Math.max(1, Math.round(secondsLeft / 60));
+    const newRecord = {
+      id: `foc-${Date.now()}`,
+      subject: selectedSubject || 'General',
+      taskTitle: selectedTask?.title || null,
+      durationMin: durationMinutes,
+      mode: currentMode.label,
+      completedAt: Date.now(),
+    };
+    setHistory((prev) => [newRecord, ...prev]);
+
+    setCompletedSessionPrompt({
+      durationMinutes,
+      subject: selectedSubject,
+      task: selectedTask,
+    });
+
+    setSecondsLeft(0);
+    setTotalSeconds(0);
   };
 
   // Toggle play/pause
@@ -231,20 +309,13 @@ export function Focus() {
     if (!completedSessionPrompt?.task?.id) return;
     playTaskDoneSound();
 
-    try {
-      const raw = window.localStorage.getItem('superapp_tasks_v1');
-      if (raw) {
-        const tasks = JSON.parse(raw);
-        const updated = tasks.map((t) =>
-          t.id === completedSessionPrompt.task.id
-            ? { ...t, completed: true, completedAt: Date.now() }
-            : t
-        );
-        window.localStorage.setItem('superapp_tasks_v1', JSON.stringify(updated));
-      }
-    } catch {
-      // Ignore
-    }
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === completedSessionPrompt.task.id
+          ? { ...t, completed: true, completedAt: Date.now() }
+          : t
+      )
+    );
     setCompletedSessionPrompt(null);
     setSelectedTask(null);
   };
@@ -290,6 +361,7 @@ export function Focus() {
 
         const updatedNotebooks = [match, ...notebooks];
         window.localStorage.setItem('superapp_notebooks_v1', JSON.stringify(updatedNotebooks));
+        broadcastStorageChange('superapp_notebooks_v1', updatedNotebooks);
       }
 
       window.sessionStorage.setItem('superapp_active_notebook_id_v1', match.id);
@@ -302,29 +374,23 @@ export function Focus() {
 
   // Add task from Brain Dump
   const handleAddTaskFromDump = (taskTitle) => {
-    try {
-      const raw = window.localStorage.getItem('superapp_tasks_v1');
-      const tasks = raw ? JSON.parse(raw) : [];
-      const newTask = {
-        id: `task-${Date.now()}`,
-        title: taskTitle,
-        subject: selectedSubject || 'General',
-        dueDate: new Date().toISOString().slice(0, 10),
-        priority: 'medium',
-        completed: false,
-        createdAt: Date.now(),
-      };
-      window.localStorage.setItem('superapp_tasks_v1', JSON.stringify([newTask, ...tasks]));
-    } catch {
-      // Ignore
-    }
+    const newTask = {
+      id: `task-${Date.now()}`,
+      title: taskTitle,
+      subject: selectedSubject || 'General',
+      dueDate: getLocalDateKey(new Date()),
+      priority: 'medium',
+      completed: false,
+      createdAt: Date.now(),
+    };
+    setTasks((prev) => [newTask, ...prev]);
   };
 
-  // Compute daily stats & streak
-  const todayStr = new Date().toISOString().slice(0, 10);
+  // Compute daily stats & streak using local date keys
+  const todayStr = getLocalDateKey(new Date());
   const todayMinutes = useMemo(() => {
     return history
-      .filter((item) => new Date(item.completedAt).toISOString().slice(0, 10) === todayStr)
+      .filter((item) => getLocalDateKey(item.completedAt) === todayStr)
       .reduce((acc, cur) => acc + (cur.durationMin || 0), 0);
   }, [history, todayStr]);
 
@@ -392,6 +458,7 @@ export function Focus() {
                   onTogglePlay={handleTogglePlay}
                   onReset={handleReset}
                   onSkip={handleSkip}
+                  onFinishFlow={handleFinishFlowSession}
                   onToggleZen={() => setIsZenMode(false)}
                   isZenMode={true}
                 />
@@ -399,7 +466,14 @@ export function Focus() {
 
               {/* Zen Bottom Ambient Controls */}
               <div className="max-w-md mx-auto w-full">
-                <FocusAmbientBar isTimerRunning={isRunning} />
+                <FocusAmbientBar
+                  isTimerRunning={isRunning}
+                  isZenMode={true}
+                  selectedSound={ambientSound}
+                  onSelectSound={handleSelectAmbientSound}
+                  volume={ambientVolume}
+                  onVolumeChange={handleAmbientVolumeChange}
+                />
               </div>
             </motion.div>
           )}
@@ -550,6 +624,7 @@ export function Focus() {
               onTogglePlay={handleTogglePlay}
               onReset={handleReset}
               onSkip={handleSkip}
+              onFinishFlow={handleFinishFlowSession}
               onToggleZen={() => setIsZenMode(true)}
               isZenMode={false}
             />
@@ -564,7 +639,14 @@ export function Focus() {
 
           {/* Ambient procedural audio controls */}
           <div className="w-full max-w-xl">
-            <FocusAmbientBar isTimerRunning={isRunning} />
+            <FocusAmbientBar
+              isTimerRunning={isRunning}
+              isZenMode={false}
+              selectedSound={ambientSound}
+              onSelectSound={handleSelectAmbientSound}
+              volume={ambientVolume}
+              onVolumeChange={handleAmbientVolumeChange}
+            />
           </div>
         </div>
 

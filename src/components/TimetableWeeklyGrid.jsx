@@ -19,8 +19,8 @@ import {
 import { playPenTapSound } from '../utils/soundEffects';
 
 const HOUR_HEIGHT = 64; // px per hour
-const START_HOUR = 8;  // 8:00 AM
-const END_HOUR = 19;   // 7:00 PM
+const DEFAULT_START_HOUR = 8;  // 8:00 AM
+const DEFAULT_END_HOUR = 19;   // 7:00 PM
 
 export function TimetableWeeklyGrid({
   classes = [],
@@ -37,21 +37,38 @@ export function TimetableWeeklyGrid({
     return DAYS_OF_WEEK.filter((d) => d.index >= 1 && d.index <= 5); // Mon - Fri
   }, [includeWeekends]);
 
+  // Compute dynamic start and end hours to accommodate early morning or late evening classes
+  const { startHour, endHour } = useMemo(() => {
+    let minH = DEFAULT_START_HOUR;
+    let maxH = DEFAULT_END_HOUR;
+    classes.forEach((c) => {
+      if (c.startTime) {
+        const s = Math.floor(timeToMinutes(c.startTime) / 60);
+        if (s < minH) minH = Math.max(6, s);
+      }
+      if (c.endTime) {
+        const e = Math.ceil(timeToMinutes(c.endTime) / 60);
+        if (e > maxH) maxH = Math.min(23, e);
+      }
+    });
+    return { startHour: minH, endHour: maxH };
+  }, [classes]);
+
   // Determine today's day index (0 = Sun, 1 = Mon ... 6 = Sat)
   const todayIndex = new Date().getDay();
   const currentNow = new Date();
   const currentMinutes = currentNow.getHours() * 60 + currentNow.getMinutes();
-  const startDayMinutes = START_HOUR * 60;
-  const endDayMinutes = END_HOUR * 60;
+  const startDayMinutes = startHour * 60;
+  const endDayMinutes = endHour * 60;
 
-  // Generate hourly rows from START_HOUR to END_HOUR
+  // Generate hourly rows from startHour to endHour
   const hours = useMemo(() => {
     const list = [];
-    for (let h = START_HOUR; h <= END_HOUR; h += 1) {
+    for (let h = startHour; h <= endHour; h += 1) {
       list.push(h);
     }
     return list;
-  }, []);
+  }, [startHour, endHour]);
 
   // Compute position for current time line
   const currentTimeTop = useMemo(() => {

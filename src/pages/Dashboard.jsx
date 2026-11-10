@@ -357,7 +357,7 @@ export function Dashboard({ tasks }) {
                       />
                       <div className="min-w-0 flex-1">
                         <div className="text-xs font-semibold text-[#24252A] truncate group-hover:text-[#4E51BF] transition-colors">
-                          {nb.title}
+                          {nb.name || nb.title || 'Untitled Notebook'}
                         </div>
                         <div className="flex items-center gap-2 text-[10px] text-[#8A8F9E] mt-0.5">
                           <span>{nb.subject || 'General'}</span>

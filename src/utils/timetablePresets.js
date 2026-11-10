@@ -146,9 +146,13 @@ export function formatDuration(startStr, endStr) {
 
 // Find if any class conflicts with new timeslot on a given day
 export function findTimeConflict(existingClasses, candidate, candidateId = null) {
+  if (!candidate || !existingClasses || !Array.isArray(existingClasses)) return null;
   const candidateDays = candidate.days || [];
+  if (candidateDays.length === 0 || !candidate.startTime || !candidate.endTime) return null;
+
   const startMin = timeToMinutes(candidate.startTime);
   const endMin = timeToMinutes(candidate.endTime);
+  if (endMin <= startMin) return null;
 
   for (const cls of existingClasses) {
     if (candidateId && cls.id === candidateId) continue;
@@ -172,6 +176,16 @@ export function findTimeConflict(existingClasses, candidate, candidateId = null)
 
 // Live Status: determines current class, next class, and free break
 export function getLiveClassStatus(classes, currentDateTime = new Date()) {
+  if (!classes || !Array.isArray(classes)) {
+    return {
+      status: 'no_classes_today',
+      todayClassesCount: 0,
+      activeClass: null,
+      nextClass: null,
+      breakMinutes: 0,
+    };
+  }
+
   const dayIndex = currentDateTime.getDay(); // 0 = Sun, 1 = Mon ...
   const currentMinutes = currentDateTime.getHours() * 60 + currentDateTime.getMinutes();
 
@@ -339,8 +353,19 @@ export function getSampleTimetable() {
   ];
 }
 
+// Helper to escape special RFC 5545 characters in text fields
+function escapeICS(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,')
+    .replace(/\r?\n/g, '\\n');
+}
+
 // Generate standard RFC 5545 iCalendar (.ics) export file
 export function exportTimetableToICS(classes) {
+  if (!classes || !Array.isArray(classes)) return '';
   const pad = (n) => String(n).padStart(2, '0');
   const now = new Date();
   const dtStamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
@@ -381,6 +406,10 @@ export function exportTimetableToICS(classes) {
     const dtStart = `${targetDate.getFullYear()}${pad(targetDate.getMonth() + 1)}${pad(targetDate.getDate())}T${pad(sh)}${pad(sm)}00`;
     const dtEnd = `${targetDate.getFullYear()}${pad(targetDate.getMonth() + 1)}${pad(targetDate.getDate())}T${pad(eh)}${pad(em)}00`;
 
+    const summary = escapeICS(`${cls.courseCode ? `${cls.courseCode}: ` : ''}${cls.title || cls.subject}`);
+    const desc = escapeICS(`${cls.instructor ? `Instructor: ${cls.instructor}\n` : ''}${cls.notes || ''}`);
+    const loc = escapeICS(cls.location || '');
+
     icsContent.push(
       'BEGIN:VEVENT',
       `UID:${cls.id}@pulse-student-os`,
@@ -388,9 +417,9 @@ export function exportTimetableToICS(classes) {
       `DTSTART:${dtStart}`,
       `DTEND:${dtEnd}`,
       `RRULE:FREQ=WEEKLY;BYDAY=${daysList}`,
-      `SUMMARY:${cls.courseCode ? `${cls.courseCode}: ` : ''}${cls.title || cls.subject}`,
-      `DESCRIPTION:${cls.instructor ? `Instructor: ${cls.instructor}\\n` : ''}${cls.notes || ''}`,
-      `LOCATION:${cls.location || ''}`,
+      `SUMMARY:${summary}`,
+      `DESCRIPTION:${desc}`,
+      `LOCATION:${loc}`,
       'STATUS:CONFIRMED',
       'END:VEVENT'
     );

@@ -74,24 +74,32 @@ export const BREAK_ACTIVITIES = [
   },
 ];
 
+// Format date into local YYYY-MM-DD
+export function getLocalDateKey(dateInput) {
+  if (!dateInput) return '';
+  const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+  if (Number.isNaN(d.getTime())) return '';
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 // Calculate streak from previous logs
-export function calculateStudyStreak(history = []) {
-  if (!history || history.length === 0) return 0;
+export function calculateStudyStreak(history = [], now = new Date()) {
+  if (!history || !Array.isArray(history) || history.length === 0) return 0;
 
   const dateSet = new Set();
   history.forEach((item) => {
-    if (item.completedAt) {
-      const d = new Date(item.completedAt).toISOString().slice(0, 10);
-      dateSet.add(d);
+    if (item && item.completedAt) {
+      const key = getLocalDateKey(item.completedAt);
+      if (key) dateSet.add(key);
     }
   });
 
-  const today = new Date();
-  const todayStr = today.toISOString().slice(0, 10);
-
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().slice(0, 10);
+  const todayStr = getLocalDateKey(now);
+  const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+  const yesterdayStr = getLocalDateKey(yesterday);
 
   // If didn't study today or yesterday, streak is broken
   if (!dateSet.has(todayStr) && !dateSet.has(yesterdayStr)) {
@@ -99,10 +107,12 @@ export function calculateStudyStreak(history = []) {
   }
 
   let streak = 0;
-  const checkDate = new Date(dateSet.has(todayStr) ? today : yesterday);
+  const checkDate = dateSet.has(todayStr)
+    ? new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    : new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
   while (true) {
-    const curStr = checkDate.toISOString().slice(0, 10);
+    const curStr = getLocalDateKey(checkDate);
     if (dateSet.has(curStr)) {
       streak += 1;
       checkDate.setDate(checkDate.getDate() - 1);
@@ -116,6 +126,7 @@ export function calculateStudyStreak(history = []) {
 
 // Format seconds into MM:SS or HH:MM:SS
 export function formatTimerDigits(totalSeconds) {
+  if (totalSeconds == null || Number.isNaN(totalSeconds)) return '00:00';
   const s = Math.max(0, Math.floor(totalSeconds));
   const hrs = Math.floor(s / 3600);
   const mins = Math.floor((s % 3600) / 60);

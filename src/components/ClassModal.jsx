@@ -199,28 +199,39 @@ export function ClassModal({
     onSave(payload);
   };
 
-  if (!isOpen) return null;
+  // Prevent background scrolling while modal is open
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-        {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
-          className="fixed inset-0 bg-[#24252A]/40 backdrop-blur-sm"
-        />
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-[#24252A]/40 backdrop-blur-sm"
+          />
 
-        {/* Modal Window */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 12 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 12 }}
-          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-[#24252A]/10 overflow-hidden my-6 z-10"
-        >
+          {/* Modal Window */}
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 12 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-[#24252A]/10 overflow-hidden my-6 z-10"
+          >
           {/* Header */}
           <div className="px-5 sm:px-7 pt-6 pb-4 border-b border-[#24252A]/[0.07] flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -565,6 +576,7 @@ export function ClassModal({
           </div>
         </motion.div>
       </div>
+      )}
     </AnimatePresence>
   );
 }

@@ -2,7 +2,7 @@
 // 100% offline, zero audio asset dependencies, infinite organic ambiance
 
 let audioCtx = null;
-let currentSoundType = null;
+let currentSoundType = 'none';
 let currentNodes = null;
 let currentVolume = 0.5;
 
@@ -17,6 +17,14 @@ function getContext() {
     audioCtx.resume().catch(() => {});
   }
   return audioCtx;
+}
+
+export function getCurrentSoundType() {
+  return currentSoundType;
+}
+
+export function getCurrentVolume() {
+  return currentVolume;
 }
 
 // Generate organic white/pink/brown noise buffer
@@ -68,35 +76,46 @@ export const AMBIENT_SOUNDS = [
 
 export function stopAmbientSound() {
   if (currentNodes) {
+    const nodesToStop = currentNodes;
+    currentNodes = null;
+    currentSoundType = 'none';
+
     try {
-      if (currentNodes.gainNode && audioCtx) {
-        currentNodes.gainNode.gain.linearRampToValueAtTime(
+      if (nodesToStop.gainNode && audioCtx && audioCtx.state !== 'closed') {
+        nodesToStop.gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+        nodesToStop.gainNode.gain.linearRampToValueAtTime(
           0.0001,
-          audioCtx.currentTime + 0.5
+          audioCtx.currentTime + 0.35
         );
       }
       setTimeout(() => {
         try {
-          if (currentNodes) {
-            currentNodes.sources.forEach((s) => s.stop && s.stop());
-            currentNodes.sources.forEach((s) => s.disconnect && s.disconnect());
-            currentNodes = null;
+          if (nodesToStop.sources) {
+            nodesToStop.sources.forEach((s) => {
+              try { s.stop && s.stop(); } catch {}
+              try { s.disconnect && s.disconnect(); } catch {}
+            });
+          }
+          if (nodesToStop.gainNode) {
+            try { nodesToStop.gainNode.disconnect(); } catch {}
           }
         } catch {
           // Ignore
         }
-      }, 550);
+      }, 400);
     } catch {
-      currentNodes = null;
+      // Ignore
     }
+  } else {
+    currentSoundType = 'none';
   }
-  currentSoundType = null;
 }
 
 export function setAmbientVolume(vol) {
   currentVolume = Math.max(0, Math.min(1, vol));
-  if (currentNodes && currentNodes.gainNode && audioCtx) {
+  if (currentNodes && currentNodes.gainNode && audioCtx && audioCtx.state !== 'closed') {
     try {
+      currentNodes.gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
       currentNodes.gainNode.gain.setValueAtTime(currentVolume * 0.25, audioCtx.currentTime);
     } catch {
       // Ignore
@@ -179,17 +198,21 @@ export function playAmbientSound(type, volume = 0.5) {
     lfo.type = 'sine';
     lfo.frequency.setValueAtTime(0.08, now); // 12.5s cycle
 
-    const lfoGain = ctx.createGain();
-    lfoGain.gain.setValueAtTime(0.18, now);
+    const lfoDepth = ctx.createGain();
+    lfoDepth.gain.setValueAtTime(0.12, now);
+    lfo.connect(lfoDepth);
 
-    lfo.connect(lfoGain.gain);
+    const waveGain = ctx.createGain();
+    waveGain.gain.setValueAtTime(0.16, now);
+    lfoDepth.connect(waveGain.gain);
+
     source.connect(filter);
-    filter.connect(lfoGain);
-    lfoGain.connect(masterGain);
+    filter.connect(waveGain);
+    waveGain.connect(masterGain);
 
     source.start(now);
     lfo.start(now);
-    sources.push(source, lfo);
+    sources.push(source, lfo, lfoDepth, waveGain);
   } else if (type === 'cafe') {
     // Low brown ambient murmur with occasional muffled warmth
     const buffer = createNoiseBuffer(ctx, 5, 'brown');
