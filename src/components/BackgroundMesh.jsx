@@ -1,16 +1,20 @@
 export function BackgroundMesh() {
   return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden z-0" aria-hidden="true">
-      {/* Soft pastel radial washes */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(78,81,191,0.12),_transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(255,146,164,0.16),_transparent_58%)]" />
+    <div className="pointer-events-none fixed inset-0 overflow-hidden z-0 bg-[#F5F3EE]" aria-hidden="true">
+      {/* Subtle architectural paper dot grid */}
+      <div
+        className="absolute inset-0 opacity-[0.38]"
+        style={{
+          backgroundImage: 'radial-gradient(rgba(18, 19, 22, 0.14) 0.75px, transparent 0.75px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
 
-      {/* Slow drifting soft pastel blobs */}
-      <div className="animate-mesh-a absolute -top-36 -left-24 w-[36rem] h-[36rem] rounded-full bg-[#4E51BF]/14 blur-[120px]" />
-      <div className="animate-mesh-b absolute top-1/4 -right-32 w-[34rem] h-[34rem] rounded-full bg-[#FFE9CE]/80 blur-[120px]" />
-      <div className="animate-mesh-c absolute -bottom-40 left-1/3 w-[32rem] h-[32rem] rounded-full bg-[#FF92A4]/18 blur-[130px]" />
+      {/* Restrained 10% Cornflower Blue peripheral light */}
+      <div className="animate-mesh-a absolute -top-44 -right-28 w-[34rem] h-[34rem] rounded-full bg-[#5B8DEF]/[0.07] blur-[120px]" />
+      <div className="animate-mesh-b absolute -bottom-44 -left-24 w-[32rem] h-[32rem] rounded-full bg-[#121316]/[0.03] blur-[120px]" />
 
-      {/* Subtle noise / grain texture */}
+      {/* Fine paper fiber grain texture */}
       <svg className="absolute inset-0 w-full h-full opacity-[0.025] mix-blend-multiply">
         <filter id="pulse-noise">
           <feTurbulence

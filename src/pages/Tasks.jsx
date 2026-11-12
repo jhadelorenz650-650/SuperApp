@@ -177,29 +177,29 @@ export function Tasks({
       label: 'Due today',
       value: stats.dueToday,
       icon: CalendarClock,
-      iconBg: 'bg-[#4E51BF]/12',
-      iconColor: 'text-[#4E51BF]',
+      iconBg: 'bg-[#EAF0FC]',
+      iconColor: 'text-[#2F59B8]',
     },
     {
       label: 'Overdue',
       value: stats.overdue,
       icon: AlertCircle,
-      iconBg: stats.overdue > 0 ? 'bg-[#FF92A4]/25' : 'bg-emerald-500/12',
-      iconColor: stats.overdue > 0 ? 'text-[#9F1239]' : 'text-emerald-600',
+      iconBg: stats.overdue > 0 ? 'bg-rose-50' : 'bg-emerald-50',
+      iconColor: stats.overdue > 0 ? 'text-rose-700' : 'text-emerald-700',
     },
     {
       label: 'Done this week',
       value: stats.completedWeek,
       icon: CheckCircle2,
-      iconBg: 'bg-[#FFE9CE]',
-      iconColor: 'text-[#8A530D]',
+      iconBg: 'bg-[#ECE9E1]',
+      iconColor: 'text-[#121316]',
     },
     {
       label: 'Streak',
       value: `${stats.streak}d`,
       icon: Flame,
-      iconBg: 'bg-[#24252A]/10',
-      iconColor: 'text-[#24252A]',
+      iconBg: 'bg-[#121316]',
+      iconColor: 'text-[#5B8DEF]',
     },
   ];
 
@@ -225,10 +225,10 @@ export function Tasks({
                 <Icon className={`w-4 h-4 ${chip.iconColor}`} />
               </div>
               <div className="min-w-0">
-                <div className="font-display text-lg sm:text-xl font-bold text-[#24252A] leading-none">
+                <div className="font-display text-lg sm:text-xl font-bold text-[#121316] leading-none tabular-nums">
                   {chip.value}
                 </div>
-                <div className="text-[11px] text-[#5C6070] mt-1 truncate">
+                <div className="text-[11px] text-[#424652] mt-1 truncate">
                   {chip.label}
                 </div>
               </div>
@@ -254,22 +254,22 @@ export function Tasks({
                     onClick={() => setFilter(item.key)}
                     className={`relative flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
                       isActive
-                        ? 'text-white'
-                        : 'text-[#5C6070] hover:text-[#24252A]'
+                        ? 'text-[#FAF9F6]'
+                        : 'text-[#424652] hover:text-[#121316]'
                     }`}
                   >
                     {isActive && (
                       <motion.div
                         layoutId="taskFilterIndicator"
                         transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                        className="absolute inset-0 rounded-xl bg-[#24252A] shadow-sm"
+                        className="absolute inset-0 rounded-xl bg-[#121316] shadow-sm"
                       />
                     )}
                     <span className="relative z-10 inline-flex items-center justify-center gap-1.5">
                       {item.label}
                       <span
-                        className={`text-[11px] ${
-                          isActive ? 'text-[#FFE9CE]' : 'text-[#8A8F9E]'
+                        className={`text-[11px] tabular-nums ${
+                          isActive ? 'text-[#9EC0FF]' : 'text-[#6E7382]'
                         }`}
                       >
                         {stats.counts[item.key]}
@@ -281,12 +281,12 @@ export function Tasks({
             </div>
 
             {searchQuery.trim() && (
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#4E51BF]/10 border border-[#4E51BF]/20 text-xs text-[#4E51BF] font-medium">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EAF0FC] border border-[#5B8DEF]/35 text-xs text-[#2F59B8] font-medium">
                 <span>Filtering: “{searchQuery.trim()}”</span>
                 <button
                   type="button"
                   onClick={onClearSearch}
-                  className="text-[#24252A] hover:underline font-semibold cursor-pointer"
+                  className="text-[#121316] hover:underline font-semibold cursor-pointer"
                 >
                   Clear
                 </button>
@@ -315,17 +315,17 @@ export function Tasks({
                   animate={{ opacity: 1, y: 0 }}
                   className="glass-card rounded-card p-8 text-center"
                 >
-                  <SearchX className="w-8 h-8 text-[#8A8F9E] mx-auto mb-3" />
-                  <h3 className="font-display text-base font-semibold text-[#24252A]">
+                  <SearchX className="w-8 h-8 text-[#6E7382] mx-auto mb-3" />
+                  <h3 className="font-display text-base font-semibold text-[#121316]">
                     No matching tasks
                   </h3>
-                  <p className="text-xs text-[#5C6070] mt-1">
+                  <p className="text-xs text-[#424652] mt-1">
                     No tasks matched “{searchQuery.trim()}” in this view.
                   </p>
                   <button
                     type="button"
                     onClick={onClearSearch}
-                    className="mt-4 px-4 py-2 rounded-xl bg-[#24252A] hover:bg-[#33353D] text-xs font-semibold text-white transition-colors cursor-pointer"
+                    className="mt-4 px-4 py-2 rounded-xl bg-[#121316] hover:bg-[#23252C] text-xs font-semibold text-[#FAF9F6] transition-colors cursor-pointer"
                   >
                     Clear search
                   </button>
@@ -356,10 +356,10 @@ export function Tasks({
 
           <div className="glass-card rounded-panel p-5">
             <div className="flex items-center justify-between mb-3.5">
-              <h3 className="font-display text-sm font-semibold text-[#24252A]">
+              <h3 className="font-display text-sm font-semibold text-[#121316]">
                 Upcoming Deadlines
               </h3>
-              <span className="text-[11px] font-medium text-[#8A8F9E]">
+              <span className="text-[11px] font-medium text-[#6E7382] tabular-nums">
                 {upcomingDeadlines.length} active
               </span>
             </div>
@@ -378,27 +378,27 @@ export function Tasks({
                   return (
                     <div
                       key={task.id}
-                      className="rounded-xl bg-[#F6F7FC] border border-[#24252A]/[0.06] p-3"
+                      className="rounded-xl bg-white border border-[#121316]/[0.09] p-3"
                     >
                       <div className="flex items-start gap-2.5">
                         <span
                           className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${priorityMeta.dotClass}`}
                         />
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs font-semibold text-[#24252A] truncate">
+                          <div className="text-xs font-semibold text-[#121316] truncate">
                             {task.title}
                           </div>
                           <div className="flex items-center justify-between gap-2 mt-1.5">
-                            <span className="text-[11px] text-[#8A8F9E]">
+                            <span className="text-[11px] text-[#6E7382] tabular-nums">
                               {formatShortDate(task.dueDate)}
                             </span>
                             <span
                               className={`inline-flex items-center gap-1 text-[11px] font-semibold ${
                                 countdown.status === 'overdue'
-                                  ? 'text-[#9F1239]'
+                                  ? 'text-rose-700'
                                   : countdown.status === 'today'
-                                    ? 'text-[#9A5B13]'
-                                    : 'text-[#4E51BF]'
+                                    ? 'text-[#121316]'
+                                    : 'text-[#2F59B8]'
                               }`}
                             >
                               <Clock className="w-3 h-3" />
@@ -412,7 +412,7 @@ export function Tasks({
                 })}
               </div>
             ) : (
-              <p className="text-xs text-[#8A8F9E] py-3 text-center">
+              <p className="text-xs text-[#6E7382] py-3 text-center">
                 No upcoming deadlines yet.
               </p>
             )}

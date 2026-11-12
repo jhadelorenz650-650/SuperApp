@@ -183,8 +183,8 @@ function NotebookImageItem({
       } ${selected ? 'cursor-move z-10' : interactive ? 'cursor-pointer' : ''}`}
     >
       <div
-        className={`w-full h-full rounded-md overflow-hidden bg-white shadow-[0_6px_18px_-8px_rgba(36,37,42,0.35)] ring-1 transition-shadow ${
-          selected ? 'ring-2 ring-[#4E51BF]' : 'ring-black/[0.06]'
+        className={`w-full h-full rounded-md overflow-hidden bg-white shadow-[0_6px_18px_-8px_rgba(18,19,22,0.35)] ring-1 transition-shadow ${
+          selected ? 'ring-2 ring-[#5B8DEF]' : 'ring-[#121316]/[0.08]'
         }`}
       >
         {url ? (
@@ -195,14 +195,14 @@ function NotebookImageItem({
             className="w-full h-full object-cover pointer-events-none"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-1 bg-[#F6F1E6] text-[#8A8F9E] text-[11px]">
+          <div className="w-full h-full flex flex-col items-center justify-center gap-1 bg-[#ECE9E1] text-[#6E7382] text-[11px]">
             {missing ? (
               <>
                 <ImageOff className="w-5 h-5" />
                 <span>Photo unavailable</span>
               </>
             ) : (
-              <span className="w-5 h-5 rounded-full border-2 border-[#4E51BF]/30 border-t-[#4E51BF] animate-spin" />
+              <span className="w-5 h-5 rounded-full border-2 border-[#5B8DEF]/30 border-t-[#5B8DEF] animate-spin" />
             )}
           </div>
         )}
@@ -220,7 +220,7 @@ function NotebookImageItem({
             }}
             aria-label="Delete photo"
             title="Delete photo"
-            className="absolute -top-10 right-0 inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-[#FF92A4]/50 text-[11px] font-semibold text-[#9F1239] shadow-md hover:bg-[#FFF1F3] cursor-pointer"
+            className="absolute -top-10 right-0 inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#FAF9F6] border border-[#121316]/15 text-[11px] font-semibold text-[#121316] shadow-md hover:bg-[#121316] hover:text-white transition-colors cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Delete
@@ -235,7 +235,7 @@ function NotebookImageItem({
               style={{ touchAction: 'none' }}
               className={`absolute w-7 h-7 flex items-center justify-center ${CORNER_POSITION[corner]}`}
             >
-              <span className="w-3.5 h-3.5 rounded-full bg-white border-2 border-[#4E51BF] shadow-sm" />
+              <span className="w-3.5 h-3.5 rounded-full bg-white border-2 border-[#5B8DEF] shadow-sm" />
             </span>
           ))}
         </>

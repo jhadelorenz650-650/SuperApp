@@ -111,13 +111,13 @@ export function FocusBreakScreen({ onSkipBreak, onExtendBreak }) {
           <Sparkles className="w-4 h-4" />
         </div>
         <div>
-          <div className="text-xs font-bold text-[#24252A] flex items-center gap-2">
+          <div className="text-xs font-bold text-[#121316] flex items-center gap-2">
             <span>{currentActivity.title}</span>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
               {currentActivity.tag}
             </span>
           </div>
-          <p className="text-xs text-[#5C6070] mt-1 leading-relaxed">
+          <p className="text-xs text-[#424652] mt-1 leading-relaxed">
             {currentActivity.instruction}
           </p>
         </div>

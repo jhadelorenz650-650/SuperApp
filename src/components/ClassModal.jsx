@@ -219,7 +219,7 @@ export function ClassModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[#24252A]/40 backdrop-blur-sm"
+            className="fixed inset-0 bg-[#121316]/45 backdrop-blur-sm"
           />
 
           {/* Modal Window */}
@@ -230,22 +230,22 @@ export function ClassModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-[#24252A]/10 overflow-hidden my-6 z-10"
+            className="relative w-full max-w-xl bg-[#FAF9F6] rounded-3xl shadow-2xl border border-[#121316]/[0.14] overflow-hidden my-6 z-10"
           >
           {/* Header */}
-          <div className="px-5 sm:px-7 pt-6 pb-4 border-b border-[#24252A]/[0.07] flex items-center justify-between">
+          <div className="px-5 sm:px-7 pt-6 pb-4 border-b border-[#121316]/[0.09] flex items-center justify-between bg-white">
             <div className="flex items-center gap-3">
               <div
                 className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-sm"
-                style={{ backgroundColor: CLASS_COLORS[colorTheme]?.accentHex || '#4E51BF' }}
+                style={{ backgroundColor: CLASS_COLORS[colorTheme]?.accentHex || '#3762C4' }}
               >
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="font-display text-lg sm:text-xl font-bold text-[#24252A] tracking-tight">
+                <h2 className="font-display text-lg sm:text-xl font-bold text-[#121316] tracking-tight">
                   {isEditing ? 'Edit Class Details' : 'Add New Class'}
                 </h2>
-                <p className="text-xs text-[#5C6070]">
+                <p className="text-xs text-[#424652]">
                   Configure your weekly schedule, room location, and class times
                 </p>
               </div>
@@ -254,7 +254,7 @@ export function ClassModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-xl text-[#8A8F9E] hover:text-[#24252A] hover:bg-[#24252A]/[0.06] transition-colors cursor-pointer"
+              className="p-1.5 rounded-xl text-[#6E7382] hover:text-[#121316] hover:bg-[#121316]/[0.06] transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -266,9 +266,9 @@ export function ClassModal({
             {conflict && (
               <div
                 role="alert"
-                className="rounded-2xl bg-[#FFE9CE] border border-[#F6D1A2] p-3.5 flex items-start gap-3 text-xs text-[#8A530D]"
+                className="rounded-2xl bg-amber-50 border border-amber-300 p-3.5 flex items-start gap-3 text-xs text-amber-900"
               >
-                <AlertTriangle className="w-4 h-4 text-[#D97706] shrink-0 mt-0.5" />
+                <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
                 <div className="min-w-0">
                   <span className="font-bold">Schedule Overlap Notice: </span>
                   This class overlaps with{' '}
@@ -284,7 +284,7 @@ export function ClassModal({
             {Object.keys(errors).length > 0 && (
               <div
                 role="alert"
-                className="rounded-2xl bg-[#FFE1E6] border border-[#FF92A4]/60 p-3 flex items-center gap-2.5 text-xs text-[#9F1239]"
+                className="rounded-2xl bg-rose-50 border border-rose-300 p-3 flex items-center gap-2.5 text-xs text-rose-800"
               >
                 <AlertTriangle className="w-4 h-4 shrink-0" />
                 <span>{Object.values(errors)[0]}</span>
@@ -294,8 +294,8 @@ export function ClassModal({
             {/* Title & Course Code */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="sm:col-span-2 space-y-1">
-                <label htmlFor="class-title" className="text-xs font-semibold text-[#24252A]">
-                  Course Title <span className="text-rose-500">*</span>
+                <label htmlFor="class-title" className="text-xs font-semibold text-[#121316]">
+                  Course Title <span className="text-rose-600">*</span>
                 </label>
                 <input
                   id="class-title"
@@ -305,19 +305,19 @@ export function ClassModal({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Data Structures & Algorithms"
-                  className="w-full rounded-xl bg-[#F8F9FA] border border-[#24252A]/[0.08] px-3.5 py-2.5 text-xs sm:text-sm text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF] focus:bg-white"
+                  className="w-full rounded-xl bg-white border border-[#121316]/[0.12] px-3.5 py-2.5 text-xs sm:text-sm text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF]"
                 />
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="class-course-code" className="text-xs font-semibold text-[#24252A]">Course Code</label>
+                <label htmlFor="class-course-code" className="text-xs font-semibold text-[#121316]">Course Code</label>
                 <input
                   id="class-course-code"
                   type="text"
                   value={courseCode}
                   onChange={(e) => setCourseCode(e.target.value)}
                   placeholder="e.g. CS 201"
-                  className="w-full rounded-xl bg-[#F8F9FA] border border-[#24252A]/[0.08] px-3.5 py-2.5 text-xs sm:text-sm font-semibold uppercase text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF] focus:bg-white"
+                  className="w-full rounded-xl bg-white border border-[#121316]/[0.12] px-3.5 py-2.5 text-xs sm:text-sm font-semibold uppercase text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF]"
                 />
               </div>
             </div>
@@ -325,28 +325,28 @@ export function ClassModal({
             {/* Subject Tag & Instructor */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="class-subject" className="text-xs font-semibold text-[#24252A]">Subject / Department</label>
+                <label htmlFor="class-subject" className="text-xs font-semibold text-[#121316]">Subject / Department</label>
                 <input
                   id="class-subject"
                   type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="e.g. Computer Science"
-                  className="w-full rounded-xl bg-[#F8F9FA] border border-[#24252A]/[0.08] px-3.5 py-2.5 text-xs sm:text-sm text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF] focus:bg-white"
+                  className="w-full rounded-xl bg-white border border-[#121316]/[0.12] px-3.5 py-2.5 text-xs sm:text-sm text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF]"
                 />
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="class-instructor" className="text-xs font-semibold text-[#24252A]">Professor / Instructor</label>
+                <label htmlFor="class-instructor" className="text-xs font-semibold text-[#121316]">Professor / Instructor</label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8F9E]" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E7382]" />
                   <input
                     id="class-instructor"
                     type="text"
                     value={instructor}
                     onChange={(e) => setInstructor(e.target.value)}
                     placeholder="e.g. Dr. Alan Vance"
-                    className="w-full rounded-xl bg-[#F8F9FA] border border-[#24252A]/[0.08] pl-9 pr-3.5 py-2.5 text-xs sm:text-sm text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF] focus:bg-white"
+                    className="w-full rounded-xl bg-white border border-[#121316]/[0.12] pl-9 pr-3.5 py-2.5 text-xs sm:text-sm text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF]"
                   />
                 </div>
               </div>
@@ -354,7 +354,7 @@ export function ClassModal({
 
             {/* Class Type Selector */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#24252A]">Class Type</label>
+              <label className="text-xs font-semibold text-[#121316]">Class Type</label>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                 {CLASS_TYPES.map((t) => {
                   const Icon = TYPE_ICONS[t.icon] || BookOpen;
@@ -369,11 +369,11 @@ export function ClassModal({
                       }}
                       className={`flex flex-col items-center justify-center gap-1 p-2 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-[#4E51BF] text-white border-[#4E51BF] shadow-sm'
-                          : 'bg-[#F8F9FA] hover:bg-[#F0F1F5] text-[#5C6070] border-[#24252A]/[0.06]'
+                          ? 'bg-[#121316] text-[#FAF9F6] border-[#121316] shadow-sm'
+                          : 'bg-white hover:bg-[#ECE9E1]/60 text-[#424652] border-[#121316]/[0.1]'
                       }`}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className={`w-4 h-4 ${isSelected ? 'text-[#5B8DEF]' : ''}`} />
                       <span className="text-[11px] truncate">{t.label}</span>
                     </button>
                   );
@@ -384,8 +384,8 @@ export function ClassModal({
             {/* Meeting Days */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-[#24252A]">
-                  Meeting Days <span className="text-rose-500">*</span>
+                <label className="text-xs font-semibold text-[#121316]">
+                  Meeting Days <span className="text-rose-600">*</span>
                 </label>
                 <div className="flex items-center gap-1">
                   {QUICK_DAY_PATTERNS.map((p) => (
@@ -396,7 +396,7 @@ export function ClassModal({
                         playPenTapSound();
                         setDays(p.days);
                       }}
-                      className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#24252A]/[0.05] hover:bg-[#24252A]/10 text-[#5C6070] cursor-pointer"
+                      className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[#ECE9E1] hover:bg-[#121316]/10 text-[#424652] cursor-pointer"
                     >
                       {p.label}
                     </button>
@@ -414,8 +414,8 @@ export function ClassModal({
                       onClick={() => toggleDay(d.index)}
                       className={`py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-[#4E51BF] text-white shadow-sm'
-                          : 'bg-[#F8F9FA] hover:bg-[#F0F1F5] text-[#5C6070] border border-[#24252A]/[0.06]'
+                          ? 'bg-[#3762C4] text-white shadow-sm'
+                          : 'bg-white hover:bg-[#ECE9E1]/60 text-[#424652] border border-[#121316]/[0.1]'
                       }`}
                     >
                       {d.short}
@@ -426,10 +426,10 @@ export function ClassModal({
             </div>
 
             {/* Timeslot & Quick Duration */}
-            <div className="space-y-2 bg-[#F8F9FA] p-3.5 rounded-2xl border border-[#24252A]/[0.06]">
+            <div className="space-y-2 bg-white p-3.5 rounded-2xl border border-[#121316]/[0.1]">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-[#24252A]">
-                  <Clock className="w-3.5 h-3.5 text-[#4E51BF]" />
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-[#121316]">
+                  <Clock className="w-3.5 h-3.5 text-[#5B8DEF]" />
                   <span>Time Schedule ({durationLabel})</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -438,7 +438,7 @@ export function ClassModal({
                       key={qd.label}
                       type="button"
                       onClick={() => applyDuration(qd.minutes)}
-                      className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-white border border-[#24252A]/[0.08] text-[#5C6070] hover:text-[#24252A] cursor-pointer"
+                      className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#FAF9F6] border border-[#121316]/[0.12] text-[#424652] hover:text-[#121316] cursor-pointer"
                     >
                       +{qd.label}
                     </button>
@@ -448,7 +448,7 @@ export function ClassModal({
 
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <label htmlFor="class-start-time" className="text-[11px] text-[#8A8F9E] block mb-1">Start Time</label>
+                  <label htmlFor="class-start-time" className="text-[11px] text-[#6E7382] block mb-1">Start Time</label>
                   <input
                     id="class-start-time"
                     type="time"
@@ -456,11 +456,11 @@ export function ClassModal({
                     aria-required="true"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
-                    className="w-full rounded-xl bg-white border border-[#24252A]/[0.08] px-3 py-2 text-xs sm:text-sm font-semibold text-[#24252A] focus:outline-none focus:border-[#4E51BF]"
+                    className="w-full rounded-xl bg-[#FAF9F6] border border-[#121316]/[0.12] px-3 py-2 text-xs sm:text-sm font-semibold text-[#121316] focus:outline-none focus:border-[#5B8DEF]"
                   />
                 </div>
                 <div>
-                  <label htmlFor="class-end-time" className="text-[11px] text-[#8A8F9E] block mb-1">End Time</label>
+                  <label htmlFor="class-end-time" className="text-[11px] text-[#6E7382] block mb-1">End Time</label>
                   <input
                     id="class-end-time"
                     type="time"
@@ -468,7 +468,7 @@ export function ClassModal({
                     aria-required="true"
                     value={endTime}
                     onChange={(e) => setEndTime(e.target.value)}
-                    className="w-full rounded-xl bg-white border border-[#24252A]/[0.08] px-3 py-2 text-xs sm:text-sm font-semibold text-[#24252A] focus:outline-none focus:border-[#4E51BF]"
+                    className="w-full rounded-xl bg-[#FAF9F6] border border-[#121316]/[0.12] px-3 py-2 text-xs sm:text-sm font-semibold text-[#121316] focus:outline-none focus:border-[#5B8DEF]"
                   />
                 </div>
               </div>
@@ -477,31 +477,31 @@ export function ClassModal({
             {/* Location & Online Meeting Link */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label htmlFor="class-location" className="text-xs font-semibold text-[#24252A]">Room / Hall Location</label>
+                <label htmlFor="class-location" className="text-xs font-semibold text-[#121316]">Room / Hall Location</label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8F9E]" />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E7382]" />
                   <input
                     id="class-location"
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="e.g. Turing Hall, Room 304"
-                    className="w-full rounded-xl bg-[#F8F9FA] border border-[#24252A]/[0.08] pl-9 pr-3.5 py-2.5 text-xs sm:text-sm text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF] focus:bg-white"
+                    className="w-full rounded-xl bg-white border border-[#121316]/[0.12] pl-9 pr-3.5 py-2.5 text-xs sm:text-sm text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF]"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="class-online-link" className="text-xs font-semibold text-[#24252A]">Online Meeting Link (Optional)</label>
+                <label htmlFor="class-online-link" className="text-xs font-semibold text-[#121316]">Online Meeting Link (Optional)</label>
                 <div className="relative">
-                  <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8F9E]" />
+                  <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E7382]" />
                   <input
                     id="class-online-link"
                     type="url"
                     value={onlineLink}
                     onChange={(e) => setOnlineLink(e.target.value)}
                     placeholder="https://meet.google.com/..."
-                    className="w-full rounded-xl bg-[#F8F9FA] border border-[#24252A]/[0.08] pl-9 pr-3.5 py-2.5 text-xs sm:text-sm text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF] focus:bg-white"
+                    className="w-full rounded-xl bg-white border border-[#121316]/[0.12] pl-9 pr-3.5 py-2.5 text-xs sm:text-sm text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF]"
                   />
                 </div>
               </div>
@@ -509,7 +509,7 @@ export function ClassModal({
 
             {/* Color Theme Palette */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[#24252A]">Color Theme</label>
+              <label className="text-xs font-semibold text-[#121316]">Color Theme</label>
               <div className="flex items-center gap-2.5 flex-wrap">
                 {Object.values(CLASS_COLORS).map((c) => {
                   const isSelected = colorTheme === c.key;
@@ -524,7 +524,7 @@ export function ClassModal({
                       title={c.label}
                       className={`w-7 h-7 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
                         isSelected
-                          ? 'scale-110 ring-2 ring-offset-2 ring-[#4E51BF]'
+                          ? 'scale-110 ring-2 ring-offset-2 ring-[#5B8DEF]'
                           : 'opacity-80 hover:opacity-100 hover:scale-105'
                       }`}
                       style={{ backgroundColor: c.accentHex }}
@@ -538,20 +538,20 @@ export function ClassModal({
 
             {/* Notes & Syllabus Reminders */}
             <div className="space-y-1">
-              <label htmlFor="class-notes" className="text-xs font-semibold text-[#24252A]">Notes & Reminders</label>
+              <label htmlFor="class-notes" className="text-xs font-semibold text-[#121316]">Notes & Reminders</label>
               <textarea
                 id="class-notes"
                 rows={2}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Bring safety goggles, problem set due dates, exam guidelines..."
-                className="w-full rounded-xl bg-[#F8F9FA] border border-[#24252A]/[0.08] px-3.5 py-2 text-xs sm:text-sm text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF] focus:bg-white resize-none"
+                className="w-full rounded-xl bg-white border border-[#121316]/[0.12] px-3.5 py-2 text-xs sm:text-sm text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF] resize-none"
               />
             </div>
           </form>
 
           {/* Footer Actions */}
-          <div className="px-5 sm:px-7 py-4 bg-[#F8F9FA] border-t border-[#24252A]/[0.07] flex items-center justify-between gap-3">
+          <div className="px-5 sm:px-7 py-4 bg-white border-t border-[#121316]/[0.09] flex items-center justify-between gap-3">
             {isEditing && onDelete ? (
               <button
                 type="button"
@@ -559,7 +559,7 @@ export function ClassModal({
                   playTaskDeleteSound();
                   onDelete(classItem.id);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Delete</span>
@@ -572,16 +572,16 @@ export function ClassModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-[#5C6070] hover:bg-[#24252A]/[0.06] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-[#424652] hover:bg-[#121316]/[0.06] transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#4E51BF] hover:bg-[#3B3E9E] text-white text-xs font-semibold shadow-sm transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#121316] hover:bg-[#23252C] text-[#FAF9F6] text-xs font-semibold shadow-sm transition-all cursor-pointer"
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles className="w-3.5 h-3.5 text-[#5B8DEF]" />
                 <span>{isEditing ? 'Save Changes' : 'Create Class'}</span>
               </button>
             </div>

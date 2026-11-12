@@ -40,8 +40,8 @@ function drawStroke(ctx, stroke, width) {
   ctx.save();
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-  ctx.strokeStyle = stroke.color || '#24252A';
-  ctx.fillStyle = stroke.color || '#24252A';
+  ctx.strokeStyle = stroke.color || '#121316';
+  ctx.fillStyle = stroke.color || '#121316';
 
   if (stroke.tool === 'highlighter') {
     ctx.globalAlpha = 0.34;
@@ -84,7 +84,7 @@ export function NotebookInkCanvas({
   strokes = [],
   active = false,
   tool = 'pen',
-  color = '#24252A',
+  color = '#121316',
   strokeSize = 2.4,
   onAddStroke,
   onEraseStart,

@@ -59,16 +59,16 @@ function StaticSheetSurface({ page, bodyWidth, bodyHeight }) {
     <>
       {page.bookmarked && (
         <div
-          className="absolute top-0 right-6 sm:right-10 w-6 h-9 bg-[#FF92A4] shadow-sm z-20"
+          className="absolute top-0 right-6 sm:right-10 w-6 h-9 bg-[#5B8DEF] shadow-sm z-20"
           style={{
             clipPath: 'polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%)',
           }}
         />
       )}
 
-      <div className="relative px-4 sm:px-7 pt-5 pb-3 border-b-2 border-[#4E51BF]/25">
+      <div className="relative px-4 sm:px-7 pt-5 pb-3 border-b-2 border-[#5B8DEF]/25">
         {paperStyle === 'ruled' && (
-          <div className="pointer-events-none absolute top-0 bottom-0 left-7 sm:left-10 border-l-2 border-[#FF92A4]/50" />
+          <div className="pointer-events-none absolute top-0 bottom-0 left-7 sm:left-10 border-l-2 border-[#5B8DEF]/35" />
         )}
 
         <div className="pl-6 sm:pl-7">
@@ -82,17 +82,17 @@ function StaticSheetSurface({ page, bodyWidth, bodyHeight }) {
                 />
                 <span>{page.subject || 'General'}</span>
               </span>
-              <span className="text-[11px] text-[#8A8F9E]">
+              <span className="text-[11px] text-[#6E7382]">
                 {formatNoteTimestamp(page.updatedAt)}
               </span>
             </div>
             {page.bookmarked && (
-              <Bookmark className="w-3.5 h-3.5 text-[#FF92A4] fill-[#FF92A4]" />
+              <Bookmark className="w-3.5 h-3.5 text-[#3762C4] fill-[#5B8DEF]" />
             )}
           </div>
 
           <div
-            className={`mt-2 w-full text-[#24252A] truncate ${fontMeta.titleClass}`}
+            className={`mt-2 w-full text-[#121316] truncate ${fontMeta.titleClass}`}
           >
             {page.title || 'Untitled Discussion Note'}
           </div>
@@ -104,13 +104,13 @@ function StaticSheetSurface({ page, bodyWidth, bodyHeight }) {
         style={getPaperBackgroundStyle(paperStyle)}
       >
         {paperStyle === 'ruled' && (
-          <div className="pointer-events-none absolute top-0 bottom-0 left-7 sm:left-10 border-l-2 border-[#FF92A4]/50 z-10" />
+          <div className="pointer-events-none absolute top-0 bottom-0 left-7 sm:left-10 border-l-2 border-[#5B8DEF]/35 z-10" />
         )}
 
         <div
           style={{
             lineHeight: `${LINE_HEIGHT}px`,
-            color: page.textInkColor || '#24252A',
+            color: page.textInkColor || '#121316',
             minHeight: `${sheetHeight}px`,
           }}
           className={`relative z-10 whitespace-pre-wrap break-words pl-10 sm:pl-14 pr-5 sm:pr-8 py-0 ${fontMeta.bodyClass}`}
@@ -140,7 +140,7 @@ function StaticSheetSurface({ page, bodyWidth, bodyHeight }) {
                   key={stroke.id}
                   d={buildStrokeSvgPath(stroke.points, safeWidth)}
                   fill="none"
-                  stroke={stroke.color || '#24252A'}
+                  stroke={stroke.color || '#121316'}
                   strokeWidth={
                     isHighlighter
                       ? (stroke.size || 3) * 5.2
@@ -178,7 +178,7 @@ export function PageTurnOverlay({ turn, onComplete }) {
       {!isForward && backingPage && (
         <div
           aria-hidden="true"
-          className="pointer-events-none select-none absolute inset-0 z-20 bg-gradient-to-b from-[#FFFEFB] to-[#FFFAF2] overflow-hidden flex flex-col"
+          className="pointer-events-none select-none absolute inset-0 z-20 bg-gradient-to-b from-[#FFFFFF] to-[#FAF9F6] overflow-hidden flex flex-col"
         >
           <StaticSheetSurface
             page={backingPage}
@@ -197,7 +197,7 @@ export function PageTurnOverlay({ turn, onComplete }) {
         className="pointer-events-none absolute inset-0 z-30"
         style={{
           background:
-            'linear-gradient(90deg, rgba(36, 37, 42, 0.24) 0%, rgba(36, 37, 42, 0.08) 45%, transparent 85%)',
+            'linear-gradient(90deg, rgba(18, 19, 22, 0.24) 0%, rgba(18, 19, 22, 0.08) 45%, transparent 85%)',
         }}
       />
 
@@ -235,7 +235,7 @@ export function PageTurnOverlay({ turn, onComplete }) {
           transformStyle: 'preserve-3d',
           backfaceVisibility: 'hidden',
         }}
-        className="pointer-events-none select-none absolute inset-0 z-40 bg-gradient-to-b from-[#FFFEFB] to-[#FFFAF2] border-l border-[#DFD5C2]/70 shadow-[-12px_10px_28px_-14px_rgba(36,37,42,0.34)] overflow-hidden flex flex-col"
+        className="pointer-events-none select-none absolute inset-0 z-40 bg-gradient-to-b from-[#FFFFFF] to-[#FAF9F6] border-l border-[#121316]/12 shadow-[-12px_10px_28px_-14px_rgba(18,19,22,0.34)] overflow-hidden flex flex-col"
       >
         {/* Dynamic Light Curl Sweep Across Turning Paper */}
         <motion.div
@@ -249,7 +249,7 @@ export function PageTurnOverlay({ turn, onComplete }) {
           className="pointer-events-none absolute inset-0 z-30"
           style={{
             background:
-              'linear-gradient(90deg, rgba(36,37,42,0.14) 0%, rgba(255,255,255,0.52) 18%, rgba(230,222,200,0.22) 55%, rgba(36,37,42,0.06) 100%)',
+              'linear-gradient(90deg, rgba(18,19,22,0.14) 0%, rgba(255,255,255,0.55) 18%, rgba(236,233,225,0.22) 55%, rgba(18,19,22,0.06) 100%)',
           }}
         />
 

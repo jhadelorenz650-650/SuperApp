@@ -41,7 +41,7 @@ export function FocusBrainDump({ onAddTaskFromDump }) {
   };
 
   return (
-    <div className="glass-card rounded-2xl border border-[#24252A]/[0.07] overflow-hidden transition-all shadow-sm">
+    <div className="glass-card rounded-2xl overflow-hidden transition-all shadow-sm">
       {/* Header Toggle */}
       <button
         type="button"
@@ -49,25 +49,25 @@ export function FocusBrainDump({ onAddTaskFromDump }) {
           playPenTapSound();
           setIsOpen((prev) => !prev);
         }}
-        className="w-full px-4 py-3 flex items-center justify-between gap-3 text-left hover:bg-[#FFE9CE]/30 transition-colors cursor-pointer"
+        className="w-full px-4 py-3 flex items-center justify-between gap-3 text-left hover:bg-[#EAF0FC]/50 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-[#FFE9CE] flex items-center justify-center shrink-0 text-[#B45309]">
+          <div className="w-7 h-7 rounded-lg bg-[#121316] flex items-center justify-center shrink-0 text-[#5B8DEF]">
             <Lightbulb className="w-3.5 h-3.5" />
           </div>
           <div>
-            <span className="text-xs font-bold text-[#24252A] block">
+            <span className="text-xs font-bold text-[#121316] block">
               Anti-Distraction Brain Dump Scratchpad
             </span>
-            <span className="text-[10px] text-[#8A8F9E]">
-              Jot fleeting thoughts down so they don't break your study flow
+            <span className="text-[10px] text-[#6E7382]">
+              Jot fleeting thoughts down so they don&apos;t break your study flow
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-[#8A8F9E]">
+        <div className="flex items-center gap-2 text-[#6E7382]">
           {brainDumpText.trim() && (
-            <span className="w-2 h-2 rounded-full bg-[#4E51BF]" />
+            <span className="w-2 h-2 rounded-full bg-[#5B8DEF]" />
           )}
           {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </div>
@@ -75,13 +75,13 @@ export function FocusBrainDump({ onAddTaskFromDump }) {
 
       {/* Expandable Notepad Area */}
       {isOpen && (
-        <div className="p-4 pt-1 space-y-3 bg-[#FFFDF9] border-t border-[#24252A]/[0.05]">
+        <div className="p-4 pt-2 space-y-3 bg-[#FAF9F6] border-t border-[#121316]/[0.08]">
           <textarea
             rows={3}
             value={brainDumpText}
             onChange={(e) => setBrainDumpText(e.target.value)}
             placeholder="e.g. Email prof about lab question, submit problem set 2 on Friday..."
-            className="w-full rounded-xl bg-white border border-[#24252A]/[0.08] p-3 text-xs sm:text-sm text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF] resize-none"
+            className="w-full rounded-xl bg-white border border-[#121316]/[0.12] p-3 text-xs sm:text-sm text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF] resize-none"
           />
 
           <div className="flex items-center justify-between text-xs pt-1">
@@ -89,7 +89,7 @@ export function FocusBrainDump({ onAddTaskFromDump }) {
               type="button"
               onClick={handleClear}
               disabled={!brainDumpText.trim()}
-              className="inline-flex items-center gap-1 text-[11px] text-[#8A8F9E] hover:text-rose-600 disabled:opacity-40 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 text-[11px] text-[#6E7382] hover:text-rose-700 disabled:opacity-40 transition-colors cursor-pointer"
             >
               <Trash2 className="w-3 h-3" />
               <span>Clear notepad</span>
@@ -99,7 +99,7 @@ export function FocusBrainDump({ onAddTaskFromDump }) {
               <button
                 type="button"
                 onClick={handleConvertFirstLineToTask}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#4E51BF]/10 text-[#4E51BF] hover:bg-[#4E51BF]/20 text-[11px] font-semibold transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#EAF0FC] text-[#2F59B8] hover:bg-[#DCE7FB] border border-[#5B8DEF]/30 text-[11px] font-semibold transition-colors cursor-pointer"
               >
                 {addedNotice ? (
                   <>

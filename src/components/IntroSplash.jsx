@@ -17,23 +17,23 @@ const CONVERGE_MODULES = [
     icon: CheckSquare,
     x: -110,
     y: -90,
-    bg: 'bg-[#4E51BF]',
-    fg: 'text-white',
+    bg: 'bg-[#121316]',
+    fg: 'text-[#5B8DEF]',
     delay: 0.04,
   },
   {
     icon: CalendarDays,
     x: 110,
     y: -90,
-    bg: 'bg-[#FFE9CE]',
-    fg: 'text-[#24252A]',
+    bg: 'bg-[#FAF9F6] border border-[#121316]/15',
+    fg: 'text-[#121316]',
     delay: 0.08,
   },
   {
     icon: NotebookPen,
     x: -110,
     y: 90,
-    bg: 'bg-[#FF92A4]',
+    bg: 'bg-[#3762C4]',
     fg: 'text-white',
     delay: 0.12,
   },
@@ -41,30 +41,30 @@ const CONVERGE_MODULES = [
     icon: Timer,
     x: 110,
     y: 90,
-    bg: 'bg-[#24252A]',
-    fg: 'text-[#FFE9CE]',
+    bg: 'bg-[#121316]',
+    fg: 'text-[#FAF9F6]',
     delay: 0.16,
   },
 ];
 
 const POP_BURST_PARTICLES = [
-  { angle: 0, dist: 115, size: 10, color: '#4E51BF', shape: 'circle' },
-  { angle: 20, dist: 145, size: 8, color: '#FF92A4', shape: 'diamond' },
-  { angle: 40, dist: 105, size: 11, color: '#F59E0B', shape: 'pill' },
-  { angle: 60, dist: 150, size: 9, color: '#4E51BF', shape: 'circle' },
-  { angle: 82, dist: 120, size: 8, color: '#24252A', shape: 'diamond' },
-  { angle: 104, dist: 140, size: 10, color: '#FF92A4', shape: 'pill' },
-  { angle: 126, dist: 112, size: 9, color: '#10B981', shape: 'circle' },
-  { angle: 148, dist: 148, size: 8, color: '#4E51BF', shape: 'diamond' },
-  { angle: 170, dist: 118, size: 11, color: '#FF92A4', shape: 'circle' },
-  { angle: 192, dist: 142, size: 8, color: '#F59E0B', shape: 'pill' },
-  { angle: 214, dist: 108, size: 9, color: '#24252A', shape: 'diamond' },
-  { angle: 236, dist: 152, size: 10, color: '#4E51BF', shape: 'circle' },
-  { angle: 258, dist: 116, size: 8, color: '#FF92A4', shape: 'diamond' },
-  { angle: 280, dist: 144, size: 10, color: '#10B981', shape: 'pill' },
-  { angle: 302, dist: 110, size: 9, color: '#4E51BF', shape: 'circle' },
-  { angle: 324, dist: 148, size: 8, color: '#FF92A4', shape: 'diamond' },
-  { angle: 344, dist: 114, size: 9, color: '#F59E0B', shape: 'circle' },
+  { angle: 0, dist: 115, size: 10, color: '#5B8DEF', shape: 'circle' },
+  { angle: 20, dist: 145, size: 8, color: '#121316', shape: 'diamond' },
+  { angle: 40, dist: 105, size: 11, color: '#3762C4', shape: 'pill' },
+  { angle: 60, dist: 150, size: 9, color: '#5B8DEF', shape: 'circle' },
+  { angle: 82, dist: 120, size: 8, color: '#121316', shape: 'diamond' },
+  { angle: 104, dist: 140, size: 10, color: '#9EC0FF', shape: 'pill' },
+  { angle: 126, dist: 112, size: 9, color: '#121316', shape: 'circle' },
+  { angle: 148, dist: 148, size: 8, color: '#5B8DEF', shape: 'diamond' },
+  { angle: 170, dist: 118, size: 11, color: '#3762C4', shape: 'circle' },
+  { angle: 192, dist: 142, size: 8, color: '#121316', shape: 'pill' },
+  { angle: 214, dist: 108, size: 9, color: '#5B8DEF', shape: 'diamond' },
+  { angle: 236, dist: 152, size: 10, color: '#121316', shape: 'circle' },
+  { angle: 258, dist: 116, size: 8, color: '#9EC0FF', shape: 'diamond' },
+  { angle: 280, dist: 144, size: 10, color: '#3762C4', shape: 'pill' },
+  { angle: 302, dist: 110, size: 9, color: '#121316', shape: 'circle' },
+  { angle: 324, dist: 148, size: 8, color: '#5B8DEF', shape: 'diamond' },
+  { angle: 344, dist: 114, size: 9, color: '#424652', shape: 'circle' },
 ];
 
 // Build identical-command 3-crest SVG paths so Framer Motion morphs smoothly
@@ -95,7 +95,7 @@ const LIQUID_WAVES = [
   {
     id: 'wave-coral',
     fill: 'url(#grad-coral)',
-    crestStroke: '#FFF4E6',
+    crestStroke: '#FAF9F6',
     delay: 0.08,
     duration: 0.96,
     driftX: ['-3%', '1%'],
@@ -113,7 +113,7 @@ const LIQUID_WAVES = [
   {
     id: 'wave-indigo',
     fill: 'url(#grad-indigo)',
-    crestStroke: '#FFE9CE',
+    crestStroke: '#FAF9F6',
     innerHighlight: [
       buildRibbonPath([260, 320, 220, 290], [340, 410, 300, 370], -75, -70),
       buildRibbonPath([310, 210, 310, 230], [390, 300, 390, 320], 75, 70),
@@ -135,8 +135,8 @@ const LIQUID_WAVES = [
   },
   {
     id: 'wave-ink-crest',
-    fill: '#24252A',
-    crestStroke: '#FF92A4',
+    fill: '#121316',
+    crestStroke: '#5B8DEF',
     delay: 0.23,
     duration: 0.98,
     driftX: ['-4%', '0%'],
@@ -154,18 +154,18 @@ const LIQUID_WAVES = [
 ];
 
 const LIQUID_DROPLETS = [
-  { left: '8%', size: 18, color: '#FFE9CE', delay: 0.05, dur: 0.95, sway: 24 },
-  { left: '16%', size: 10, color: '#FF92A4', delay: 0.14, dur: 0.88, sway: -18 },
-  { left: '24%', size: 22, color: '#4E51BF', delay: 0.1, dur: 1.0, sway: 28 },
+  { left: '8%', size: 18, color: '#FAF9F6', delay: 0.05, dur: 0.95, sway: 24 },
+  { left: '16%', size: 10, color: '#5B8DEF', delay: 0.14, dur: 0.88, sway: -18 },
+  { left: '24%', size: 22, color: '#121316', delay: 0.1, dur: 1.0, sway: 28 },
   { left: '33%', size: 12, color: '#FFFFFF', delay: 0.2, dur: 0.9, sway: -22 },
-  { left: '41%', size: 16, color: '#FF92A4', delay: 0.08, dur: 0.96, sway: 16 },
-  { left: '49%', size: 9, color: '#24252A', delay: 0.24, dur: 0.86, sway: -14 },
-  { left: '56%', size: 20, color: '#FFE9CE', delay: 0.12, dur: 0.98, sway: 26 },
-  { left: '64%', size: 11, color: '#4E51BF', delay: 0.19, dur: 0.92, sway: -24 },
-  { left: '72%', size: 17, color: '#FF92A4', delay: 0.07, dur: 0.95, sway: 20 },
+  { left: '41%', size: 16, color: '#5B8DEF', delay: 0.08, dur: 0.96, sway: 16 },
+  { left: '49%', size: 9, color: '#121316', delay: 0.24, dur: 0.86, sway: -14 },
+  { left: '56%', size: 20, color: '#FAF9F6', delay: 0.12, dur: 0.98, sway: 26 },
+  { left: '64%', size: 11, color: '#3762C4', delay: 0.19, dur: 0.92, sway: -24 },
+  { left: '72%', size: 17, color: '#5B8DEF', delay: 0.07, dur: 0.95, sway: 20 },
   { left: '80%', size: 13, color: '#FFFFFF', delay: 0.22, dur: 0.89, sway: -16 },
-  { left: '88%', size: 19, color: '#4E51BF', delay: 0.15, dur: 0.99, sway: 22 },
-  { left: '93%', size: 10, color: '#FFE9CE', delay: 0.11, dur: 0.91, sway: -20 },
+  { left: '88%', size: 19, color: '#121316', delay: 0.15, dur: 0.99, sway: 22 },
+  { left: '93%', size: 10, color: '#9EC0FF', delay: 0.11, dur: 0.91, sway: -20 },
 ];
 
 // Preserved default opening animation (revert by passing variant="default")
@@ -216,13 +216,13 @@ export function DefaultIntroSplash({ show, onDismiss }) {
           aria-modal="true"
           tabIndex={0}
           aria-label="Click anywhere to continue into Pulse"
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 bg-[#F1F2F9]/95 backdrop-blur-2xl select-none cursor-pointer outline-none"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 bg-[#F5F3EE]/96 backdrop-blur-md select-none cursor-pointer outline-none"
         >
           <motion.div
             initial={{ scale: 0.45, opacity: 0 }}
             animate={{ scale: [0.45, 1.25, 1.08], opacity: [0, 0.9, 0.7] }}
             transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-            className="pointer-events-none absolute w-80 h-80 rounded-full bg-gradient-to-tr from-[#FFE9CE] via-[#FF92A4]/35 to-[#4E51BF]/30 blur-3xl"
+            className="pointer-events-none absolute w-80 h-80 rounded-full bg-gradient-to-tr from-[#5B8DEF]/20 via-[#FAF9F6] to-[#121316]/10 blur-3xl"
           />
 
           <div className="relative flex items-center justify-center mb-6">
@@ -230,15 +230,15 @@ export function DefaultIntroSplash({ show, onDismiss }) {
               initial={{ scale: 0.75, opacity: 0.85 }}
               animate={{ scale: 2.1, opacity: 0 }}
               transition={{ duration: 1.0, ease: 'easeOut' }}
-              className="absolute inset-0 rounded-2xl border border-[#4E51BF]/40"
+              className="absolute inset-0 rounded-2xl border border-[#5B8DEF]/50"
             />
             <motion.div
               initial={{ scale: 0.5, opacity: 0, rotate: -14 }}
               animate={{ scale: 1, opacity: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              className="relative w-16 h-16 rounded-2xl bg-[#4E51BF] flex items-center justify-center shadow-lg shadow-[#4E51BF]/25"
+              className="relative w-16 h-16 rounded-2xl bg-[#121316] flex items-center justify-center shadow-lg shadow-[#121316]/20"
             >
-              <Sparkles className="w-8 h-8 text-white" />
+              <Sparkles className="w-8 h-8 text-[#5B8DEF]" />
             </motion.div>
           </div>
 
@@ -247,35 +247,35 @@ export function DefaultIntroSplash({ show, onDismiss }) {
               initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{ delay: 0.12, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#24252A]"
+              className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#121316]"
             >
-              Hello, <span className="text-[#4E51BF]">Jhade</span>
+              Hello, <span className="text-[#2F59B8]">Jhade</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.32, duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-              className="text-sm sm:text-base text-[#5C6070] mt-2 font-medium"
+              className="text-sm sm:text-base text-[#424652] mt-2 font-medium"
             >
               Welcome. Ready to crush today?
             </motion.p>
           </div>
 
-          <div className="mt-7 w-40 h-[3px] rounded-full bg-[#24252A]/10 overflow-hidden">
+          <div className="mt-7 w-40 h-[3px] rounded-full bg-[#121316]/12 overflow-hidden">
             <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: '0%' }}
               transition={{ duration: 1.35, ease: [0.22, 1, 0.36, 1] }}
-              className="h-full w-full bg-gradient-to-r from-[#4E51BF] via-[#FF92A4] to-[#FFE9CE]"
+              className="h-full w-full bg-gradient-to-r from-[#121316] via-[#5B8DEF] to-[#3762C4]"
             />
           </div>
 
           <motion.span
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.7 }}
+            animate={{ opacity: 0.75 }}
             transition={{ delay: 0.55, duration: 0.4 }}
-            className="mt-4 text-[11px] text-[#8A8F9E]"
+            className="mt-4 text-[11px] text-[#6E7382]"
           >
             Tap anywhere to continue
           </motion.span>
@@ -381,9 +381,9 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
           delay: isExiting ? 0.2 : 0,
           ease: [0.22, 1, 0.36, 1],
         }}
-        className="absolute inset-0 flex flex-col items-center justify-center px-6 bg-[#F1F2F9]/96 backdrop-blur-2xl"
+        className="absolute inset-0 flex flex-col items-center justify-center px-6 bg-[#F5F3EE]/96 backdrop-blur-md"
       >
-        {/* Ambient Pastel Stage */}
+        {/* Subtle Paper & Cornflower Stage */}
         <motion.div
           initial={{ scale: 0.4, opacity: 0 }}
           animate={{
@@ -391,7 +391,7 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
             opacity: [0, 0.9, 0.75],
           }}
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          className="pointer-events-none absolute w-[28rem] h-[28rem] rounded-full bg-gradient-to-tr from-[#FFE9CE] via-[#FF92A4]/35 to-[#4E51BF]/30 blur-3xl"
+          className="pointer-events-none absolute w-[28rem] h-[28rem] rounded-full bg-gradient-to-tr from-[#5B8DEF]/18 via-[#FAF9F6] to-[#121316]/10 blur-3xl"
         />
 
         {/* Central Super App Emblem Stage */}
@@ -424,13 +424,13 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
             initial={{ scale: 0.3, opacity: 0 }}
             animate={{ scale: [0.3, 3.2], opacity: [0, 0.9, 0] }}
             transition={{ delay: 0.84, duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
-            className="pointer-events-none absolute w-20 h-20 rounded-full border-2 border-[#4E51BF]"
+            className="pointer-events-none absolute w-20 h-20 rounded-full border-2 border-[#5B8DEF]"
           />
           <motion.span
             initial={{ scale: 0.3, opacity: 0 }}
             animate={{ scale: [0.3, 2.5], opacity: [0, 0.85, 0] }}
             transition={{ delay: 0.9, duration: 0.65, ease: 'easeOut' }}
-            className="pointer-events-none absolute w-20 h-20 rounded-full border-2 border-[#FF92A4]"
+            className="pointer-events-none absolute w-20 h-20 rounded-full border-2 border-[#121316]"
           />
 
           {/* Pop Burst Particles */}
@@ -482,19 +482,19 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
               times: [0, 0.22, 0.32, 0.4, 0.48, 0.56, 0.68, 0.84, 1],
               ease: 'easeInOut',
             }}
-            className="relative w-20 h-20 rounded-[1.5rem] bg-[#4E51BF] p-[3px] shadow-xl shadow-[#4E51BF]/25 flex items-center justify-center"
+            className="relative w-20 h-20 rounded-[1.5rem] bg-[#121316] p-[3px] shadow-xl shadow-[#121316]/25 flex items-center justify-center"
           >
-            <div className="w-full h-full rounded-[1.35rem] bg-gradient-to-br from-[#4E51BF] via-[#5F62CF] to-[#24252A] flex items-center justify-center relative overflow-hidden">
-              <span className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-[#FFE9CE]/90" />
-              <span className="absolute -bottom-3 -left-3 w-8 h-8 rounded-full bg-[#FF92A4]/85" />
+            <div className="w-full h-full rounded-[1.35rem] bg-gradient-to-br from-[#121316] via-[#1B1D23] to-[#282B33] flex items-center justify-center relative overflow-hidden">
+              <span className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-[#FAF9F6]/90" />
+              <span className="absolute -bottom-3 -left-3 w-8 h-8 rounded-full bg-[#5B8DEF]/90" />
               <svg
                 viewBox="0 0 48 48"
                 className="relative z-10 w-10 h-10"
                 fill="none"
                 aria-hidden="true"
               >
-                <rect x="7" y="7" width="14" height="14" rx="4.5" fill="#FFE9CE" />
-                <rect x="27" y="7" width="14" height="14" rx="7" fill="#FF92A4" />
+                <rect x="7" y="7" width="14" height="14" rx="4.5" fill="#FAF9F6" />
+                <rect x="27" y="7" width="14" height="14" rx="7" fill="#5B8DEF" />
                 <rect
                   x="7"
                   y="27"
@@ -506,7 +506,7 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
                 />
                 <path
                   d="M28 34l4.5 4.5L41 29.5"
-                  stroke="#FFE9CE"
+                  stroke="#5B8DEF"
                   strokeWidth="3.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -527,13 +527,13 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
               ease: [0.22, 1, 0.36, 1],
             }}
           >
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFE9CE] border border-[#F2CFA4]/80 text-[11px] font-semibold text-[#24252A] mb-3">
-              <Sparkles className="w-3 h-3 text-[#4E51BF]" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF9F6] border border-[#121316]/15 text-[11px] font-semibold text-[#121316] mb-3 shadow-sm">
+              <Sparkles className="w-3 h-3 text-[#5B8DEF]" />
               Pulse Super App
             </div>
 
-            <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#24252A]">
-              Hello, <span className="text-[#4E51BF]">Jhade</span>
+            <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#121316]">
+              Hello, <span className="text-[#2F59B8]">Jhade</span>
             </h1>
           </motion.div>
 
@@ -541,19 +541,19 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="text-sm sm:text-base text-[#5C6070] mt-2 font-medium"
+            className="text-sm sm:text-base text-[#424652] mt-2 font-medium"
           >
             Welcome. Ready to crush today?
           </motion.p>
         </div>
 
         {/* Animated Progress Bar */}
-        <div className="mt-6 w-44 h-[3px] rounded-full bg-[#24252A]/10 overflow-hidden">
+        <div className="mt-6 w-44 h-[3px] rounded-full bg-[#121316]/12 overflow-hidden">
           <motion.div
             initial={{ x: '-100%' }}
             animate={{ x: '0%' }}
             transition={{ delay: 0.25, duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
-            className="h-full w-full bg-gradient-to-r from-[#4E51BF] via-[#FF92A4] to-[#FFE9CE]"
+            className="h-full w-full bg-gradient-to-r from-[#121316] via-[#5B8DEF] to-[#3762C4]"
           />
         </div>
 
@@ -567,9 +567,9 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
           <motion.span
             animate={{ opacity: [0.65, 1, 0.65], y: [0, -2, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/85 border border-[#24252A]/[0.08] text-xs font-medium text-[#24252A] shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#121316]/[0.14] text-xs font-medium text-[#121316] shadow-sm"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4E51BF]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#5B8DEF]" />
             Click anywhere to continue
           </motion.span>
         </motion.div>
@@ -588,13 +588,13 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
                 initial={{ scale: 0.2, opacity: 0.9 }}
                 animate={{ scale: 6, opacity: 0 }}
                 transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-                className="block w-14 h-14 rounded-full border-2 border-[#4E51BF]"
+                className="block w-14 h-14 rounded-full border-2 border-[#5B8DEF]"
               />
               <motion.span
                 initial={{ scale: 0.2, opacity: 0.8 }}
                 animate={{ scale: 4.2, opacity: 0 }}
                 transition={{ duration: 0.48, delay: 0.06, ease: 'easeOut' }}
-                className="absolute inset-0 rounded-full border-2 border-[#FF92A4]"
+                className="absolute inset-0 rounded-full border-2 border-[#121316]"
               />
             </div>
           )}
@@ -617,17 +617,17 @@ export function SuperAppIntroSplash({ show, onRevealStart, onDismiss }) {
             >
               <defs>
                 <linearGradient id={`grad-peach-${wave.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFE9CE" />
-                  <stop offset="100%" stopColor="#FCD8AA" />
+                  <stop offset="0%" stopColor="#FAF9F6" />
+                  <stop offset="100%" stopColor="#E6E2D8" />
                 </linearGradient>
                 <linearGradient id={`grad-coral-${wave.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FF92A4" />
-                  <stop offset="100%" stopColor="#FFB0BE" />
+                  <stop offset="0%" stopColor="#5B8DEF" />
+                  <stop offset="100%" stopColor="#8FB2F5" />
                 </linearGradient>
                 <linearGradient id={`grad-indigo-${wave.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#4E51BF" />
-                  <stop offset="55%" stopColor="#6366D1" />
-                  <stop offset="100%" stopColor="#3B3E9E" />
+                  <stop offset="0%" stopColor="#3762C4" />
+                  <stop offset="55%" stopColor="#5B8DEF" />
+                  <stop offset="100%" stopColor="#121316" />
                 </linearGradient>
               </defs>
 

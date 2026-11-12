@@ -38,14 +38,12 @@ export function FocusTimerDisplay({
       ? Math.max(0, Math.min(100, ((totalSeconds - secondsLeft) / totalSeconds) * 100))
       : 0;
 
-  // Colors based on state
+  // Colors based on state (90% Paper/Ink + 10% Cornflower Blue)
   const isBreak = timerState === 'short_break' || timerState === 'long_break';
-  const ringColor = isBreak ? '#10B981' : isFlow ? '#7C4DFF' : '#4E51BF';
+  const ringColor = isBreak ? '#10B981' : isFlow ? '#3762C4' : '#5B8DEF';
   const ringGlow = isBreak
-    ? 'rgba(16, 185, 129, 0.25)'
-    : isFlow
-      ? 'rgba(124, 77, 255, 0.28)'
-      : 'rgba(78, 81, 191, 0.28)';
+    ? 'rgba(16, 185, 129, 0.22)'
+    : 'rgba(91, 141, 239, 0.25)';
 
   // Circumference for 260px SVG circle (radius = 118 => 2 * pi * 118 ≈ 741.42)
   const radius = 118;
@@ -81,7 +79,7 @@ export function FocusTimerDisplay({
             fill="none"
             stroke="currentColor"
             strokeWidth="10"
-            className={isZenMode ? 'text-white/10' : 'text-[#24252A]/[0.06]'}
+            className={isZenMode ? 'text-white/12' : 'text-[#ECE9E1]'}
           />
           {/* Active Animated Progress Arc */}
           <motion.circle
@@ -105,12 +103,18 @@ export function FocusTimerDisplay({
           {/* Status Badge */}
           <div className="mb-2">
             {isBreak ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-600 border border-emerald-500/30">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
                 <Coffee className="w-3.5 h-3.5" />
                 <span>{timerState === 'long_break' ? 'Long Recharge' : 'Short Break'}</span>
               </span>
             ) : isFlow ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#7C4DFF]/20 text-[#A78BFA] border border-[#7C4DFF]/30">
+              <span
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
+                  isZenMode
+                    ? 'bg-[#5B8DEF]/20 text-[#9EC0FF] border-[#5B8DEF]/35'
+                    : 'bg-[#EAF0FC] text-[#2F59B8] border-[#5B8DEF]/35'
+                }`}
+              >
                 <InfinityIcon className="w-3.5 h-3.5" />
                 <span>Open Flowstate</span>
               </span>
@@ -118,8 +122,8 @@ export function FocusTimerDisplay({
               <span
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${
                   isZenMode
-                    ? 'bg-indigo-500/20 text-indigo-300 border-indigo-400/30'
-                    : 'bg-[#4E51BF]/12 text-[#4E51BF] border-[#4E51BF]/25'
+                    ? 'bg-[#5B8DEF]/20 text-[#9EC0FF] border-[#5B8DEF]/35'
+                    : 'bg-[#EAF0FC] text-[#2F59B8] border-[#5B8DEF]/35'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5" />
@@ -134,7 +138,7 @@ export function FocusTimerDisplay({
           {/* Huge Digits */}
           <div
             className={`font-display font-bold tracking-tight select-none tabular-nums ${
-              isZenMode ? 'text-white' : 'text-[#24252A]'
+              isZenMode ? 'text-[#FAF9F6]' : 'text-[#121316]'
             } ${
               isZenMode
                 ? 'text-6xl sm:text-7xl lg:text-8xl'
@@ -155,12 +159,12 @@ export function FocusTimerDisplay({
                     key={i}
                     className={`h-2 rounded-full transition-all ${
                       isFinished
-                        ? 'w-5 bg-emerald-400'
+                        ? 'w-5 bg-[#5B8DEF]'
                         : isCurrent && isRunning
-                          ? 'w-4 bg-[#7C4DFF] animate-pulse'
+                          ? 'w-4 bg-[#3762C4] animate-pulse'
                           : isZenMode
                             ? 'w-2 bg-white/20'
-                            : 'w-2 bg-[#24252A]/15'
+                            : 'w-2 bg-[#121316]/15'
                     }`}
                   />
                 );
@@ -183,8 +187,8 @@ export function FocusTimerDisplay({
           aria-label="Reset Interval"
           className={`p-3 rounded-2xl border transition-colors cursor-pointer ${
             isZenMode
-              ? 'bg-white/10 hover:bg-white/20 border-white/10 text-white'
-              : 'bg-white hover:bg-[#FFE9CE] border-[#24252A]/[0.08] text-[#5C6070] hover:text-[#24252A] shadow-sm'
+              ? 'bg-white/10 hover:bg-white/20 border-white/15 text-[#FAF9F6]'
+              : 'bg-white hover:bg-[#EAF0FC] border-[#121316]/[0.12] text-[#424652] hover:text-[#121316] shadow-sm'
           }`}
         >
           <RotateCcw className="w-4 h-4" />
@@ -208,10 +212,8 @@ export function FocusTimerDisplay({
           }}
           className={`flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl text-white font-semibold shadow-md transition-all cursor-pointer ${
             isBreak
-              ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/25'
-              : isFlow
-                ? 'bg-[#7C4DFF] hover:bg-[#651FFF] shadow-[#7C4DFF]/25'
-                : 'bg-[#4E51BF] hover:bg-[#3B3E9E] shadow-[#4E51BF]/25'
+              ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/25'
+              : 'bg-[#3762C4] hover:bg-[#2F59B8] shadow-[#3762C4]/25'
           }`}
         >
           {isRunning ? (
@@ -258,8 +260,8 @@ export function FocusTimerDisplay({
             aria-label={isBreak ? 'End Break early' : 'Skip to Break'}
             className={`p-3 rounded-2xl border transition-colors cursor-pointer ${
               isZenMode
-                ? 'bg-white/10 hover:bg-white/20 border-white/10 text-white'
-                : 'bg-white hover:bg-[#FFE9CE] border-[#24252A]/[0.08] text-[#5C6070] hover:text-[#24252A] shadow-sm'
+                ? 'bg-white/10 hover:bg-white/20 border-white/15 text-[#FAF9F6]'
+                : 'bg-white hover:bg-[#EAF0FC] border-[#121316]/[0.12] text-[#424652] hover:text-[#121316] shadow-sm'
             }`}
           >
             <SkipForward className="w-4 h-4" />
@@ -274,8 +276,8 @@ export function FocusTimerDisplay({
           aria-label={isZenMode ? 'Exit Zen Mode' : 'Enter Zen Fullscreen Focus'}
           className={`p-3 rounded-2xl border transition-colors cursor-pointer ${
             isZenMode
-              ? 'bg-white/10 hover:bg-white/20 border-white/10 text-white'
-              : 'bg-white hover:bg-[#FFE9CE] border-[#24252A]/[0.08] text-[#5C6070] hover:text-[#4E51BF] shadow-sm'
+              ? 'bg-white/10 hover:bg-white/20 border-white/15 text-[#FAF9F6]'
+              : 'bg-white hover:bg-[#EAF0FC] border-[#121316]/[0.12] text-[#424652] hover:text-[#2F59B8] shadow-sm'
           }`}
         >
           {isZenMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}

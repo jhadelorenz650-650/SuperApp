@@ -25,8 +25,8 @@ export function EmptyState({
             cx="60"
             cy="60"
             r="48"
-            stroke="#4E51BF"
-            strokeOpacity="0.3"
+            stroke="#5B8DEF"
+            strokeOpacity="0.35"
             strokeWidth="1.5"
             strokeDasharray="6 6"
           />
@@ -36,17 +36,18 @@ export function EmptyState({
             width="64"
             height="52"
             rx="14"
-            fill="#FFE9CE"
-            stroke="#4E51BF"
-            strokeOpacity="0.2"
+            fill="#FAF9F6"
+            stroke="#121316"
+            strokeOpacity="0.18"
+            strokeWidth="1.5"
           />
           <line
             x1="44"
             y1="52"
             x2="76"
             y2="52"
-            stroke="#4E51BF"
-            strokeOpacity="0.45"
+            stroke="#121316"
+            strokeOpacity="0.55"
             strokeWidth="3"
             strokeLinecap="round"
           />
@@ -55,8 +56,8 @@ export function EmptyState({
             y1="64"
             x2="66"
             y2="64"
-            stroke="#FF92A4"
-            strokeOpacity="0.7"
+            stroke="#5B8DEF"
+            strokeOpacity="0.85"
             strokeWidth="3"
             strokeLinecap="round"
           />
@@ -64,17 +65,17 @@ export function EmptyState({
         <motion.div
           animate={{ y: [0, -4, 0] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -right-1 top-2 w-8 h-8 rounded-xl bg-[#4E51BF] flex items-center justify-center shadow-sm"
+          className="absolute -right-1 top-2 w-8 h-8 rounded-xl bg-[#3762C4] flex items-center justify-center shadow-sm"
         >
           <CheckCircle2 className="w-4 h-4 text-white" />
         </motion.div>
-        <Sparkles className="absolute left-1 bottom-2 w-4 h-4 text-[#FF92A4]" />
+        <Sparkles className="absolute left-1 bottom-2 w-4 h-4 text-[#5B8DEF]" />
       </div>
 
-      <h3 className="font-display text-lg font-semibold text-[#24252A]">
+      <h3 className="font-display text-lg font-semibold text-[#121316]">
         {title}
       </h3>
-      <p className="text-xs sm:text-sm text-[#5C6070] max-w-sm mx-auto mt-1.5 leading-relaxed">
+      <p className="text-xs sm:text-sm text-[#424652] max-w-sm mx-auto mt-1.5 leading-relaxed">
         {description}
       </p>
 
@@ -84,9 +85,9 @@ export function EmptyState({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
           onClick={onAction}
-          className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-[#24252A] hover:bg-[#33353D] text-white text-xs sm:text-sm font-semibold px-4 py-2.5 shadow-sm transition-colors cursor-pointer"
+          className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-[#121316] hover:bg-[#23252C] text-[#FAF9F6] text-xs sm:text-sm font-semibold px-4 py-2.5 shadow-sm transition-colors cursor-pointer"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 text-[#5B8DEF]" />
           {ctaLabel}
         </motion.button>
       )}

@@ -72,7 +72,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-dvh flex bg-[var(--bg-canvas)] text-[#24252A]">
+    <div className="relative min-h-dvh flex bg-[var(--bg-canvas)] text-[#121316]">
       <BackgroundMesh />
       <IntroSplash
         show={showIntro}
@@ -125,7 +125,7 @@ export default function App() {
           {tasksStorageError && !dismissedStorageWarning && (
             <div
               role="alert"
-              className="mx-4 sm:mx-6 lg:mx-8 mt-4 rounded-xl bg-[#FFE1E6] border border-[#FF92A4]/60 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs text-[#9F1239]"
+              className="mx-4 sm:mx-6 lg:mx-8 mt-4 rounded-xl bg-[#FAF9F6] border border-[#121316]/20 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs text-[#121316]"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -135,7 +135,7 @@ export default function App() {
                 type="button"
                 onClick={() => setDismissedStorageWarning(true)}
                 aria-label="Dismiss storage warning"
-                className="p-1 rounded-md hover:bg-[#9F1239]/10 shrink-0 cursor-pointer"
+                className="p-1 rounded-md hover:bg-[#121316]/10 shrink-0 cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>

@@ -109,23 +109,23 @@ export function FocusSubjectPicker({
   }, [tasks]);
 
   return (
-    <div className="glass-card rounded-2xl p-4 border border-[#24252A]/[0.07] space-y-3">
+    <div className="glass-card rounded-2xl p-4 space-y-3">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Left: Current Target Subject Badge */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#FFE9CE] flex items-center justify-center shrink-0 text-[#4E51BF]">
+          <div className="w-10 h-10 rounded-2xl bg-[#121316] flex items-center justify-center shrink-0 text-[#5B8DEF]">
             <Target className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A8F9E] block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#6E7382] block">
               Current Focus Target
             </span>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="font-display text-sm sm:text-base font-bold text-[#24252A]">
+              <span className="font-display text-sm sm:text-base font-bold text-[#121316]">
                 {selectedSubject || 'General Deep Study'}
               </span>
               {selectedTask && (
-                <span className="text-xs text-[#5C6070] truncate max-w-[200px]">
+                <span className="text-xs text-[#424652] truncate max-w-[200px]">
                   • {selectedTask.title}
                 </span>
               )}
@@ -143,17 +143,17 @@ export function FocusSubjectPicker({
                 playPenTapSound();
                 setIsOpen((prev) => !prev);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#FFE9CE] border border-[#24252A]/[0.08] text-xs font-semibold text-[#24252A] shadow-sm transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#EAF0FC] border border-[#121316]/[0.12] text-xs font-semibold text-[#121316] shadow-sm transition-colors cursor-pointer"
             >
-              <Tag className="w-3.5 h-3.5 text-[#4E51BF]" />
+              <Tag className="w-3.5 h-3.5 text-[#5B8DEF]" />
               <span>Change Subject</span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#8A8F9E]" />
+              <ChevronDown className="w-3.5 h-3.5 text-[#6E7382]" />
             </button>
 
             {/* Dropdown Menu */}
             {isOpen && (
-              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white border border-[#24252A]/10 shadow-xl p-2 z-50 max-h-72 overflow-y-auto">
-                <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#8A8F9E]">
+              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-[#FAF9F6] border border-[#121316]/[0.14] shadow-xl p-2 z-50 max-h-72 overflow-y-auto">
+                <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#6E7382]">
                   Registered Subjects
                 </div>
                 <div className="space-y-0.5 mb-2">
@@ -169,13 +169,13 @@ export function FocusSubjectPicker({
                       }}
                       className={`w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer flex items-center justify-between ${
                         selectedSubject === sub
-                          ? 'bg-[#FFE9CE] text-[#5C4630]'
-                          : 'hover:bg-[#F4F5FB] text-[#24252A]'
+                          ? 'bg-[#EAF0FC] text-[#2F59B8]'
+                          : 'hover:bg-[#ECE9E1] text-[#121316]'
                       }`}
                     >
                       <span className="truncate">{sub}</span>
                       {selectedSubject === sub && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#4E51BF]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#5B8DEF]" />
                       )}
                     </button>
                   ))}
@@ -183,7 +183,7 @@ export function FocusSubjectPicker({
 
                 {pendingTasks.length > 0 && (
                   <>
-                    <div className="px-2 py-1 pt-2 border-t border-[#24252A]/[0.06] text-[10px] font-bold uppercase tracking-wider text-[#8A8F9E]">
+                    <div className="px-2 py-1 pt-2 border-t border-[#121316]/[0.08] text-[10px] font-bold uppercase tracking-wider text-[#6E7382]">
                       Link to an Assignment
                     </div>
                     <div className="space-y-0.5">
@@ -199,14 +199,14 @@ export function FocusSubjectPicker({
                           }}
                           className={`w-full text-left px-2.5 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
                             selectedTask?.id === task.id
-                              ? 'bg-[#FFE9CE] text-[#5C4630] font-semibold'
-                              : 'hover:bg-[#F4F5FB] text-[#5C6070]'
+                              ? 'bg-[#EAF0FC] text-[#2F59B8] font-semibold'
+                              : 'hover:bg-[#ECE9E1] text-[#424652]'
                           }`}
                         >
-                          <div className="truncate font-medium text-[#24252A]">
+                          <div className="truncate font-medium text-[#121316]">
                             {task.title}
                           </div>
-                          <div className="text-[10px] text-[#8A8F9E] truncate">
+                          <div className="text-[10px] text-[#6E7382] truncate">
                             {task.subject || 'General'}
                           </div>
                         </button>
@@ -222,9 +222,9 @@ export function FocusSubjectPicker({
           <button
             type="button"
             onClick={() => onOpenNotebookForSubject(selectedSubject)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#FFE9CE] border border-[#24252A]/[0.08] text-xs font-semibold text-[#24252A] shadow-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#EAF0FC] border border-[#121316]/[0.12] text-xs font-semibold text-[#121316] shadow-sm transition-colors cursor-pointer"
           >
-            <NotebookPen className="w-3.5 h-3.5 text-[#4E51BF]" />
+            <NotebookPen className="w-3.5 h-3.5 text-[#5B8DEF]" />
             <span className="hidden sm:inline">Open Notes</span>
           </button>
         </div>

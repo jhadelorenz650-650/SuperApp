@@ -9,14 +9,32 @@ export default {
       },
       colors: {
         canvas: 'var(--bg-canvas)',
+        paper: {
+          canvas: 'var(--bg-canvas)',
+          base: 'var(--bg-surface)',
+          elevated: 'var(--bg-surface-elevated)',
+          recessed: 'var(--bg-recessed)',
+        },
+        ink: {
+          DEFAULT: 'var(--ink-primary)',
+          secondary: 'var(--ink-secondary)',
+          muted: 'var(--ink-muted)',
+          subtle: 'var(--ink-subtle)',
+        },
+        cornflower: {
+          DEFAULT: 'var(--accent-cornflower)',
+          deep: 'var(--accent-cornflower-deep)',
+          text: 'var(--accent-cornflower-text)',
+          tint: 'var(--accent-cornflower-tint)',
+        },
         surface: {
           DEFAULT: 'var(--bg-surface)',
           elevated: 'var(--bg-surface-elevated)',
           hover: 'var(--bg-surface-hover)',
         },
         accent: {
-          violet: 'var(--accent-violet)',
-          cyan: 'var(--accent-cyan)',
+          violet: 'var(--accent-cornflower)',
+          cyan: 'var(--ink-primary)',
         },
         priority: {
           low: 'var(--priority-low)',

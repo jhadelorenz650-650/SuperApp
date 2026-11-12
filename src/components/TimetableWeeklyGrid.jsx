@@ -83,14 +83,14 @@ export function TimetableWeeklyGrid({
   }, [currentMinutes, startDayMinutes, endGridMinutes]);
 
   return (
-    <div className="glass-card rounded-panel overflow-hidden border border-[#24252A]/[0.08] shadow-sm">
+    <div className="glass-card rounded-panel overflow-hidden shadow-sm">
       {/* Scrollable Container for small screens */}
       <div className="overflow-x-auto">
         <div className="min-w-[680px]">
           {/* Header Row: Days of Week */}
-          <div className="grid grid-cols-[64px_repeat(auto-fit,minmax(0,1fr))] border-b border-[#24252A]/[0.08] bg-[#F8F9FA]/80 sticky top-0 z-20 backdrop-blur-md">
+          <div className="grid grid-cols-[64px_repeat(auto-fit,minmax(0,1fr))] border-b border-[#121316]/[0.1] bg-[#ECE9E1]/65 sticky top-0 z-20 backdrop-blur-md">
             {/* Corner Cell */}
-            <div className="p-3 text-[11px] font-semibold text-[#8A8F9E] text-center border-r border-[#24252A]/[0.06]">
+            <div className="p-3 text-[11px] font-semibold text-[#6E7382] text-center border-r border-[#121316]/[0.08]">
               Time
             </div>
 
@@ -108,23 +108,23 @@ export function TimetableWeeklyGrid({
                 return (
                   <div
                     key={day.index}
-                    className={`py-3 px-2 text-center border-r last:border-r-0 border-[#24252A]/[0.06] transition-colors ${
-                      isToday ? 'bg-[#FFE9CE]/50' : ''
+                    className={`py-3 px-2 text-center border-r last:border-r-0 border-[#121316]/[0.08] transition-colors ${
+                      isToday ? 'bg-[#EAF0FC]/80' : ''
                     }`}
                   >
                     <div className="flex items-center justify-center gap-1.5">
                       <span
                         className={`text-xs font-bold ${
-                          isToday ? 'text-[#4E51BF]' : 'text-[#24252A]'
+                          isToday ? 'text-[#2F59B8]' : 'text-[#121316]'
                         }`}
                       >
                         {day.short}
                       </span>
                       {isToday && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#4E51BF]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#5B8DEF]" />
                       )}
                     </div>
-                    <div className="text-[10px] text-[#8A8F9E] mt-0.5">
+                    <div className="text-[10px] text-[#6E7382] mt-0.5 tabular-nums">
                       {countToday} {countToday === 1 ? 'class' : 'classes'}
                     </div>
                   </div>
@@ -136,7 +136,7 @@ export function TimetableWeeklyGrid({
           {/* Grid Canvas */}
           <div className="relative grid grid-cols-[64px_1fr]">
             {/* Time Column (Left labels) */}
-            <div className="relative border-r border-[#24252A]/[0.06] bg-[#FDFEFE] select-none">
+            <div className="relative border-r border-[#121316]/[0.08] bg-[#FAF9F6] select-none">
               {hours.map((hour) => {
                 const period = hour >= 12 ? 'PM' : 'AM';
                 const displayH = hour % 12 === 0 ? 12 : hour % 12;
@@ -144,7 +144,7 @@ export function TimetableWeeklyGrid({
                   <div
                     key={hour}
                     style={{ height: `${HOUR_HEIGHT}px` }}
-                    className="relative border-b border-[#24252A]/[0.05] text-[10px] font-medium text-[#8A8F9E] pr-2 pt-1 text-right"
+                    className="relative border-b border-[#121316]/[0.06] text-[10px] font-medium text-[#6E7382] pr-2 pt-1 text-right tabular-nums"
                   >
                     {displayH} {period}
                   </div>
@@ -154,7 +154,7 @@ export function TimetableWeeklyGrid({
 
             {/* Days Grid Body */}
             <div
-              className="relative grid"
+              className="relative grid bg-white/75"
               style={{
                 gridTemplateColumns: `repeat(${displayedDays.length}, minmax(0, 1fr))`,
               }}
@@ -168,7 +168,7 @@ export function TimetableWeeklyGrid({
                   <div
                     key={hour}
                     style={{ height: `${HOUR_HEIGHT}px` }}
-                    className="border-b border-[#24252A]/[0.05] w-full"
+                    className="border-b border-[#121316]/[0.06] w-full"
                   />
                 ))}
               </div>
@@ -181,8 +181,8 @@ export function TimetableWeeklyGrid({
                 return (
                   <div
                     key={day.index}
-                    className={`relative border-r last:border-r-0 border-[#24252A]/[0.06] ${
-                      isToday ? 'bg-[#FFE9CE]/[0.15]' : ''
+                    className={`relative border-r last:border-r-0 border-[#121316]/[0.08] ${
+                      isToday ? 'bg-[#EAF0FC]/[0.3]' : ''
                     }`}
                     style={{ height: `${hours.length * HOUR_HEIGHT}px` }}
                   >
@@ -192,8 +192,8 @@ export function TimetableWeeklyGrid({
                         style={{ top: `${currentTimeTop}px` }}
                         className="absolute inset-x-0 z-30 pointer-events-none flex items-center"
                       >
-                        <span className="w-2.5 h-2.5 -ml-1.5 rounded-full bg-rose-500 ring-2 ring-white shadow-sm" />
-                        <div className="h-0.5 w-full bg-rose-500 shadow-sm" />
+                        <span className="w-2.5 h-2.5 -ml-1.5 rounded-full bg-[#3762C4] ring-2 ring-white shadow-sm" />
+                        <div className="h-0.5 w-full bg-[#5B8DEF] shadow-sm" />
                       </div>
                     )}
 
@@ -225,7 +225,7 @@ export function TimetableWeeklyGrid({
                           className={`absolute inset-x-1.5 rounded-xl border p-2 flex flex-col justify-between overflow-hidden cursor-pointer transition-shadow shadow-sm ${
                             theme.bannerBg
                           } ${theme.border} ${
-                            isHovered ? 'shadow-md ring-2 ring-[#4E51BF]/40' : ''
+                            isHovered ? 'shadow-md ring-2 ring-[#5B8DEF]/45' : ''
                           }`}
                         >
                           {/* Top Pill / Code */}
@@ -236,7 +236,7 @@ export function TimetableWeeklyGrid({
                               >
                                 {cls.courseCode || cls.subject}
                               </span>
-                              <span className="text-[9px] font-medium text-[#5C6070] shrink-0">
+                              <span className="text-[9px] font-medium text-[#424652] shrink-0 tabular-nums">
                                 {cls.startTime}
                               </span>
                             </div>
@@ -249,18 +249,18 @@ export function TimetableWeeklyGrid({
 
                           {/* Bottom metadata (only if height allows) */}
                           {heightPx > 50 && (
-                            <div className="flex items-center justify-between gap-1 text-[10px] text-[#5C6070] pt-1 mt-auto border-t border-black/[0.04]">
+                            <div className="flex items-center justify-between gap-1 text-[10px] text-[#424652] pt-1 mt-auto border-t border-black/[0.06]">
                               {cls.location ? (
                                 <span className="flex items-center gap-1 truncate">
-                                  <MapPin className="w-2.5 h-2.5 text-[#8A8F9E] shrink-0" />
+                                  <MapPin className="w-2.5 h-2.5 text-[#6E7382] shrink-0" />
                                   <span className="truncate">{cls.location}</span>
                                 </span>
                               ) : (
-                                <span className="capitalize text-[10px] text-[#8A8F9E]">
+                                <span className="capitalize text-[10px] text-[#6E7382]">
                                   {cls.type || 'Lecture'}
                                 </span>
                               )}
-                              <span className="font-semibold text-[9px] shrink-0">
+                              <span className="font-semibold text-[9px] shrink-0 tabular-nums">
                                 {formatDuration(cls.startTime, cls.endTime)}
                               </span>
                             </div>

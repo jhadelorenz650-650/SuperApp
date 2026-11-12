@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sparkles, Trash2 } from 'lucide-react';
 
-const DONE_COLORS = ['#4E51BF', '#FF92A4', '#F59E0B', '#10B981', '#24252A', '#6A6DD2'];
-const DELETE_COLORS = ['#FF92A4', '#E11D48', '#F59E0B', '#4E51BF', '#24252A', '#FB7185'];
+const DONE_COLORS = ['#5B8DEF', '#3762C4', '#121316', '#9EC0FF', '#424652', '#10B981'];
+const DELETE_COLORS = ['#E11D48', '#121316', '#5B8DEF', '#F43F5E', '#6E7382', '#FDA4AF'];
 
 const SPARK_TEMPLATES = [
   { angle: 0, dist: 56, size: 7, shape: 'circle' },
@@ -46,7 +46,7 @@ export function CompletionBurst({ bursts }) {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.62, ease: [0.16, 1, 0.3, 1] }}
                 className={`absolute -left-5 -top-5 w-10 h-10 rounded-full border-2 ${
-                  isDelete ? 'border-[#FF92A4]' : 'border-[#4E51BF]'
+                  isDelete ? 'border-rose-500' : 'border-[#5B8DEF]'
                 }`}
               />
               <motion.span
@@ -55,7 +55,7 @@ export function CompletionBurst({ bursts }) {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5, delay: 0.05, ease: 'easeOut' }}
                 className={`absolute -left-5 -top-5 w-10 h-10 rounded-full ${
-                  isDelete ? 'bg-[#FF92A4]/35' : 'bg-[#4E51BF]/25'
+                  isDelete ? 'bg-rose-500/30' : 'bg-[#5B8DEF]/25'
                 }`}
               />
 
@@ -108,8 +108,8 @@ export function CompletionBurst({ bursts }) {
                 }}
                 className={`absolute left-0 top-0 -translate-x-1/2 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-display font-bold whitespace-nowrap shadow-md ${
                   isDelete
-                    ? 'bg-[#FF92A4] text-[#24252A]'
-                    : 'bg-[#4E51BF] text-white'
+                    ? 'bg-[#121316] text-rose-300'
+                    : 'bg-[#3762C4] text-white'
                 }`}
               >
                 {isDelete ? (
@@ -119,7 +119,7 @@ export function CompletionBurst({ bursts }) {
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-3 h-3 text-[#FFE9CE]" />
+                    <Sparkles className="w-3 h-3 text-[#9EC0FF]" />
                     Done!
                   </>
                 )}

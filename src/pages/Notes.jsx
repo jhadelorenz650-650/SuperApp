@@ -69,8 +69,8 @@ import { getSubjectStyle } from '../utils/taskStyles';
 const MAX_HISTORY = 100;
 
 const INK_SWATCHES = [
-  { color: '#24252A', label: 'Charcoal Ink' },
-  { color: '#4E51BF', label: 'Cobalt Blue' },
+  { color: '#121316', label: 'Ink Black' },
+  { color: '#3762C4', label: 'Cornflower Ink' },
   { color: '#E11D48', label: 'Coral Pen' },
   { color: '#D97706', label: 'Warm Amber' },
 ];
@@ -92,7 +92,7 @@ function createNoteSnapshot(note, cursor = null) {
     images: note.images || [],
     paperStyle: note.paperStyle || 'ruled',
     fontStyle: note.fontStyle || 'handwriting',
-    textInkColor: note.textInkColor || '#24252A',
+    textInkColor: note.textInkColor || '#121316',
     bookmarked: Boolean(note.bookmarked),
     cursor,
     savedAt: Date.now(),
@@ -227,7 +227,7 @@ export function Notes() {
   // Writing vs Freehand Sketch state
   const [editorMode, setEditorMode] = useState('type'); // 'type' | 'draw'
   const [drawTool, setDrawTool] = useState('pen'); // 'pen' | 'highlighter' | 'eraser'
-  const [drawColor, setDrawColor] = useState('#24252A');
+  const [drawColor, setDrawColor] = useState('#121316');
   const [copiedId, setCopiedId] = useState(null);
   const [, setHistoryTick] = useState(0);
 
@@ -1455,17 +1455,17 @@ export function Notes() {
         {notebooksStorageError && !dismissedStorageWarning && (
           <div
             role="alert"
-            className="rounded-xl bg-[#FFE1E6] border border-[#FF92A4]/60 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs text-[#9F1239]"
+            className="rounded-xl bg-[#FAF9F6] border border-[#121316]/20 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs text-[#121316]"
           >
             <div className="flex items-center gap-2 min-w-0">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <AlertTriangle className="w-4 h-4 shrink-0 text-[#3762C4]" />
               <span className="truncate">{notebooksStorageError.message}</span>
             </div>
             <button
               type="button"
               onClick={() => setDismissedStorageWarning(true)}
               aria-label="Dismiss storage warning"
-              className="p-1 rounded-md hover:bg-[#9F1239]/10 shrink-0 cursor-pointer"
+              className="p-1 rounded-md hover:bg-[#121316]/10 shrink-0 cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -1475,17 +1475,17 @@ export function Notes() {
         {imageError && (
           <div
             role="alert"
-            className="rounded-xl bg-[#FFE1E6] border border-[#FF92A4]/60 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs text-[#9F1239]"
+            className="rounded-xl bg-[#FAF9F6] border border-[#121316]/20 px-3.5 py-2.5 flex items-center justify-between gap-3 text-xs text-[#121316]"
           >
             <div className="flex items-center gap-2 min-w-0">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <AlertTriangle className="w-4 h-4 shrink-0 text-[#3762C4]" />
               <span className="truncate">{imageError}</span>
             </div>
             <button
               type="button"
               onClick={() => setImageError(null)}
               aria-label="Dismiss photo error"
-              className="p-1 rounded-md hover:bg-[#9F1239]/10 shrink-0 cursor-pointer"
+              className="p-1 rounded-md hover:bg-[#121316]/10 shrink-0 cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -1497,10 +1497,10 @@ export function Notes() {
           <div className="space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h1 className="font-display text-xl sm:text-2xl font-bold text-[#24252A] tracking-tight">
+                <h1 className="font-display text-xl sm:text-2xl font-bold text-[#121316] tracking-tight">
                   Student Notebooks
                 </h1>
-                <p className="text-xs sm:text-sm text-[#5C6070] mt-0.5">
+                <p className="text-xs sm:text-sm text-[#424652] mt-0.5">
                   Organize lecture & discussion notes in separate spiral notebooks. Create your first one below to begin.
                 </p>
               </div>
@@ -1508,9 +1508,9 @@ export function Notes() {
                 <button
                   type="button"
                   onClick={handleUndo}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-[#24252A]/10 px-3 py-2 text-xs font-semibold text-[#24252A] hover:bg-[#FFE9CE]/50 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-[#121316]/12 px-3 py-2 text-xs font-semibold text-[#121316] hover:bg-[#EAF0FC] cursor-pointer"
                 >
-                  <Undo2 className="w-3.5 h-3.5 text-[#4E51BF]" />
+                  <Undo2 className="w-3.5 h-3.5 text-[#3762C4]" />
                   <span>Undo Delete (Ctrl+Z)</span>
                 </button>
               )}
@@ -1528,14 +1528,14 @@ export function Notes() {
           <div className="space-y-5">
             <div className="glass-card rounded-panel p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#FFE9CE] flex items-center justify-center shrink-0">
-                  <BookOpen className="w-5 h-5 text-[#4E51BF]" />
+                <div className="w-10 h-10 rounded-2xl bg-[#121316] flex items-center justify-center shrink-0">
+                  <BookOpen className="w-5 h-5 text-[#5B8DEF]" />
                 </div>
                 <div>
-                  <h1 className="font-display text-lg sm:text-xl font-bold text-[#24252A] tracking-tight">
+                  <h1 className="font-display text-lg sm:text-xl font-bold text-[#121316] tracking-tight">
                     My Notebooks
                   </h1>
-                  <p className="text-xs text-[#5C6070]">
+                  <p className="text-xs text-[#424652]">
                     {notebooks.length} notebook{notebooks.length === 1 ? '' : 's'} on your desk · Pick one to open or add a new subject
                   </p>
                 </div>
@@ -1543,21 +1543,21 @@ export function Notes() {
 
               <div className="flex items-center gap-2.5 flex-wrap w-full sm:w-auto">
                 <div className="relative flex-1 sm:w-56">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8A8F9E]" />
+                  <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6E7382]" />
                   <input
                     type="text"
                     value={shelfSearch}
                     onChange={(e) => setShelfSearch(e.target.value)}
                     placeholder="Search notebooks..."
                     aria-label="Search notebooks"
-                    className="w-full rounded-xl bg-white/95 border border-[#24252A]/[0.08] pl-8 pr-7 py-2 text-xs text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF]"
+                    className="w-full rounded-xl bg-white border border-[#121316]/10 pl-8 pr-7 py-2 text-xs text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF]"
                   />
                   {shelfSearch && (
                     <button
                       type="button"
                       onClick={() => setShelfSearch('')}
                       aria-label="Clear search"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8A8F9E] hover:text-[#24252A] cursor-pointer"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#6E7382] hover:text-[#121316] cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -1568,10 +1568,10 @@ export function Notes() {
                   <button
                     type="button"
                     onClick={handleUndo}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-[#24252A]/10 px-3 py-2 text-xs font-semibold text-[#24252A] hover:bg-[#FFE9CE]/50 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-[#121316]/12 px-3 py-2 text-xs font-semibold text-[#121316] hover:bg-[#EAF0FC] cursor-pointer"
                     title="Restore deleted notebook (Ctrl+Z)"
                   >
-                    <Undo2 className="w-3.5 h-3.5 text-[#4E51BF]" />
+                    <Undo2 className="w-3.5 h-3.5 text-[#3762C4]" />
                     <span className="hidden sm:inline">Undo</span>
                   </button>
                 )}
@@ -1580,10 +1580,10 @@ export function Notes() {
                   <button
                     type="button"
                     onClick={handleRedo}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-[#24252A]/10 px-3 py-2 text-xs font-semibold text-[#24252A] hover:bg-[#FFE9CE]/50 cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-white border border-[#121316]/12 px-3 py-2 text-xs font-semibold text-[#121316] hover:bg-[#EAF0FC] cursor-pointer"
                     title="Redo notebook deletion (Ctrl+Y)"
                   >
-                    <Redo2 className="w-3.5 h-3.5 text-[#4E51BF]" />
+                    <Redo2 className="w-3.5 h-3.5 text-[#3762C4]" />
                     <span className="hidden sm:inline">Redo</span>
                   </button>
                 )}
@@ -1596,7 +1596,7 @@ export function Notes() {
                     playPenTapSound();
                     setIsCreatorModalOpen(true);
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#4E51BF] hover:bg-[#3B3E9E] text-white text-xs font-semibold px-4 py-2.5 shadow-sm transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#3762C4] hover:bg-[#2F59B8] text-white text-xs font-semibold px-4 py-2.5 shadow-sm transition-colors cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>New Notebook</span>
@@ -1662,12 +1662,12 @@ export function Notes() {
                     </div>
 
                     {/* Stitched Ivory Cover Nameplate */}
-                    <div className="relative my-4 mr-4 rounded-xl bg-[#FFFCF5]/96 border border-black/10 p-3.5 shadow-sm">
-                      <div className="text-[9px] uppercase tracking-widest text-[#8A8F9E] font-semibold">
+                    <div className="relative my-4 mr-4 rounded-xl bg-[#FAF9F6]/96 border border-[#121316]/10 p-3.5 shadow-sm">
+                      <div className="text-[9px] uppercase tracking-widest text-[#6E7382] font-semibold">
                         Notebook
                       </div>
                       <h2
-                        className={`mt-1 text-[#24252A] leading-snug line-clamp-2 ${fontMeta.fontClass} ${
+                        className={`mt-1 text-[#121316] leading-snug line-clamp-2 ${fontMeta.fontClass} ${
                           fontMeta.key === 'mono'
                             ? 'text-base font-semibold'
                             : 'text-xl font-bold'
@@ -1675,7 +1675,7 @@ export function Notes() {
                       >
                         {nb.name}
                       </h2>
-                      <div className="mt-2.5 pt-2 border-t border-[#E6DEC8] flex items-center justify-between text-[11px] text-[#5C6070]">
+                      <div className="mt-2.5 pt-2 border-t border-[#121316]/10 flex items-center justify-between text-[11px] text-[#424652]">
                         <span>
                           {totalPages} page{totalPages === 1 ? '' : 's'} ·{' '}
                           {totalWords} words
@@ -1709,16 +1709,16 @@ export function Notes() {
                   playPenTapSound();
                   setIsCreatorModalOpen(true);
                 }}
-                className="min-h-[248px] rounded-2xl border-2 border-dashed border-[#4E51BF]/30 hover:border-[#4E51BF]/65 bg-white/55 hover:bg-white/85 p-6 flex flex-col items-center justify-center gap-3 text-center transition-all cursor-pointer"
+                className="min-h-[248px] rounded-2xl border-2 border-dashed border-[#5B8DEF]/45 hover:border-[#3762C4] bg-[#FAF9F6]/70 hover:bg-[#FFFFFF] p-6 flex flex-col items-center justify-center gap-3 text-center transition-all cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-2xl bg-[#FFE9CE] flex items-center justify-center">
-                  <Plus className="w-6 h-6 text-[#4E51BF]" />
+                <div className="w-12 h-12 rounded-2xl bg-[#EAF0FC] border border-[#5B8DEF]/25 flex items-center justify-center">
+                  <Plus className="w-6 h-6 text-[#3762C4]" />
                 </div>
                 <div>
-                  <div className="font-display text-sm font-bold text-[#24252A]">
+                  <div className="font-display text-sm font-bold text-[#121316]">
                     Add Another Notebook
                   </div>
-                  <p className="text-xs text-[#5C6070] mt-1 max-w-[180px]">
+                  <p className="text-xs text-[#424652] mt-1 max-w-[180px]">
                     Start a separate notebook for another class or discussion
                   </p>
                 </div>
@@ -1739,9 +1739,9 @@ export function Notes() {
                     setSwitcherOpen(false);
                     setActiveNotebookId(null);
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-white/95 hover:bg-[#FFE9CE]/70 border border-[#24252A]/[0.08] px-3 py-1.5 text-xs font-semibold text-[#24252A] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-white hover:bg-[#EAF0FC] border border-[#121316]/10 px-3 py-1.5 text-xs font-semibold text-[#121316] transition-colors cursor-pointer"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5 text-[#4E51BF]" />
+                  <ArrowLeft className="w-3.5 h-3.5 text-[#3762C4]" />
                   <span>All Notebooks</span>
                 </button>
 
@@ -1753,7 +1753,7 @@ export function Notes() {
                       playPenTapSound();
                       setSwitcherOpen((o) => !o);
                     }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#24252A]/[0.04] hover:bg-[#24252A]/[0.08] px-3 py-1.5 text-xs font-semibold text-[#24252A] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#ECE9E1]/80 hover:bg-[#ECE9E1] px-3 py-1.5 text-xs font-semibold text-[#121316] transition-colors cursor-pointer"
                   >
                     <span
                       className="w-3 h-3 rounded-sm shrink-0"
@@ -1762,19 +1762,19 @@ export function Notes() {
                     <span className="truncate max-w-[160px] sm:max-w-[240px]">
                       {activeNotebook.name}
                     </span>
-                    <span className="hidden sm:inline text-[10px] font-medium text-[#5C6070] bg-white px-2 py-0.5 rounded-full border border-[#24252A]/[0.06]">
+                    <span className="hidden sm:inline text-[10px] font-medium text-[#424652] bg-white px-2 py-0.5 rounded-full border border-[#121316]/[0.08]">
                       {activeNotebook.subject || 'General'}
                     </span>
                     <ChevronDown
-                      className={`w-3.5 h-3.5 text-[#5C6070] transition-transform ${
+                      className={`w-3.5 h-3.5 text-[#424652] transition-transform ${
                         switcherOpen ? 'rotate-180' : ''
                       }`}
                     />
                   </button>
 
                   {switcherOpen && (
-                    <div className="absolute left-0 mt-2 w-64 rounded-2xl bg-white border border-[#24252A]/10 shadow-xl p-1.5 z-50">
-                      <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#8A8F9E]">
+                    <div className="absolute left-0 mt-2 w-64 rounded-2xl bg-[#FFFFFF] border border-[#121316]/12 shadow-xl p-1.5 z-50">
+                      <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#6E7382]">
                         Switch Notebook
                       </div>
                       <div className="max-h-56 overflow-y-auto space-y-0.5">
@@ -1788,8 +1788,8 @@ export function Notes() {
                               onClick={() => handleOpenNotebook(nb)}
                               className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-left text-xs transition-colors cursor-pointer ${
                                 isCurr
-                                  ? 'bg-[#FFE9CE]/70 font-semibold text-[#24252A]'
-                                  : 'hover:bg-[#F1F2F9] text-[#24252A]'
+                                  ? 'bg-[#EAF0FC] font-semibold text-[#121316]'
+                                  : 'hover:bg-[#F5F3EE] text-[#121316]'
                               }`}
                             >
                               <div className="flex items-center gap-2 min-w-0">
@@ -1799,21 +1799,21 @@ export function Notes() {
                                 />
                                 <span className="truncate">{nb.name}</span>
                               </div>
-                              <span className="text-[10px] text-[#8A8F9E] shrink-0">
+                              <span className="text-[10px] text-[#6E7382] shrink-0">
                                 {nb.pages?.length || 0}p
                               </span>
                             </button>
                           );
                         })}
                       </div>
-                      <div className="mt-1 pt-1 border-t border-[#24252A]/[0.06]">
+                      <div className="mt-1 pt-1 border-t border-[#121316]/[0.08]">
                         <button
                           type="button"
                           onClick={() => {
                             setSwitcherOpen(false);
                             setIsCreatorModalOpen(true);
                           }}
-                          className="w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-xs font-semibold text-[#4E51BF] hover:bg-[#4E51BF]/10 cursor-pointer"
+                          className="w-full flex items-center gap-2 px-2.5 py-2 rounded-xl text-xs font-semibold text-[#2F59B8] hover:bg-[#EAF0FC] cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>New Notebook</span>
@@ -1827,18 +1827,18 @@ export function Notes() {
               {/* Quick Page Flipper Stepper */}
               {activePages.length > 0 && (
                 <div className="flex items-center gap-1.5 ml-auto">
-                  <div className="inline-flex items-center rounded-xl bg-white/90 border border-[#24252A]/[0.08] p-0.5">
+                  <div className="inline-flex items-center rounded-xl bg-white border border-[#121316]/10 p-0.5">
                     <button
                       type="button"
                       onClick={() => handleFlipStep(-1)}
                       disabled={!hasPrevPage}
                       title="Turn to previous page"
                       aria-label="Turn to previous page"
-                      className="p-1.5 rounded-lg text-[#24252A] hover:bg-[#FFE9CE]/60 disabled:opacity-35 cursor-pointer disabled:cursor-not-allowed"
+                      className="p-1.5 rounded-lg text-[#121316] hover:bg-[#EAF0FC] disabled:opacity-35 cursor-pointer disabled:cursor-not-allowed"
                     >
                       <ChevronLeft className="w-3.5 h-3.5" />
                     </button>
-                    <span className="px-2.5 text-[11px] font-semibold text-[#24252A] tabular-nums">
+                    <span className="px-2.5 text-[11px] font-semibold text-[#121316] tabular-nums">
                       Page {activePageIndex + 1} of {activePages.length}
                     </span>
                     <button
@@ -1847,7 +1847,7 @@ export function Notes() {
                       disabled={!hasNextPage}
                       title="Turn to next page"
                       aria-label="Turn to next page"
-                      className="p-1.5 rounded-lg text-[#24252A] hover:bg-[#FFE9CE]/60 disabled:opacity-35 cursor-pointer disabled:cursor-not-allowed"
+                      className="p-1.5 rounded-lg text-[#121316] hover:bg-[#EAF0FC] disabled:opacity-35 cursor-pointer disabled:cursor-not-allowed"
                     >
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
@@ -1857,7 +1857,7 @@ export function Notes() {
                     type="button"
                     whileTap={{ scale: 0.96 }}
                     onClick={handleCreatePage}
-                    className="inline-flex items-center gap-1 rounded-xl bg-[#4E51BF] hover:bg-[#3B3E9E] text-white text-xs font-semibold px-3 py-1.5 shadow-sm cursor-pointer"
+                    className="inline-flex items-center gap-1 rounded-xl bg-[#3762C4] hover:bg-[#2F59B8] text-white text-xs font-semibold px-3 py-1.5 shadow-sm cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>New Page</span>
@@ -1876,21 +1876,21 @@ export function Notes() {
                   className="flex-1 glass-card rounded-2xl px-4 py-2.5 flex items-center justify-between gap-2 text-left cursor-pointer"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-8 h-8 rounded-xl bg-[#FFE9CE] flex items-center justify-center shrink-0">
-                      <NotebookPen className="w-4 h-4 text-[#4E51BF]" />
+                    <div className="w-8 h-8 rounded-xl bg-[#121316] flex items-center justify-center shrink-0">
+                      <NotebookPen className="w-4 h-4 text-[#5B8DEF]" />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold text-[#24252A] truncate">
+                      <div className="text-xs font-semibold text-[#121316] truncate">
                         {activeNote?.title || 'Pages in Notebook'}
                       </div>
-                      <div className="text-[11px] text-[#5C6070]">
+                      <div className="text-[11px] text-[#424652]">
                         {activePages.length} page
                         {activePages.length === 1 ? '' : 's'}
                       </div>
                     </div>
                   </div>
                   <ChevronDown
-                    className={`w-4 h-4 text-[#5C6070] transition-transform ${
+                    className={`w-4 h-4 text-[#424652] transition-transform ${
                       mobileListOpen ? 'rotate-180' : ''
                     }`}
                   />
@@ -1912,10 +1912,10 @@ export function Notes() {
                       <NotebookPen className="w-4 h-4" />
                     </div>
                     <div className="min-w-0">
-                      <h2 className="font-display text-sm font-bold text-[#24252A] truncate">
+                      <h2 className="font-display text-sm font-bold text-[#121316] truncate">
                         {activeNotebook.name}
                       </h2>
-                      <p className="text-[11px] text-[#5C6070]">
+                      <p className="text-[11px] text-[#424652]">
                         {activePages.length} page
                         {activePages.length === 1 ? '' : 's'} inside
                       </p>
@@ -1927,7 +1927,7 @@ export function Notes() {
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.96 }}
                     onClick={handleCreatePage}
-                    className="hidden lg:inline-flex items-center gap-1 rounded-xl bg-[#4E51BF] hover:bg-[#3B3E9E] text-white text-xs font-semibold px-3 py-1.5 shadow-sm transition-colors cursor-pointer shrink-0"
+                    className="hidden lg:inline-flex items-center gap-1 rounded-xl bg-[#3762C4] hover:bg-[#2F59B8] text-white text-xs font-semibold px-3 py-1.5 shadow-sm transition-colors cursor-pointer shrink-0"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Page</span>
@@ -1936,21 +1936,21 @@ export function Notes() {
 
                 {/* Search Pages Inside Current Notebook */}
                 <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8A8F9E]" />
+                  <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6E7382]" />
                   <input
                     type="text"
                     value={pageSearch}
                     onChange={(e) => setPageSearch(e.target.value)}
                     placeholder="Search pages in notebook..."
                     aria-label="Search pages in current notebook"
-                    className="w-full rounded-xl bg-white/90 border border-[#24252A]/[0.08] pl-8 pr-7 py-2 text-xs text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF]"
+                    className="w-full rounded-xl bg-white border border-[#121316]/10 pl-8 pr-7 py-2 text-xs text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF]"
                   />
                   {pageSearch && (
                     <button
                       type="button"
                       onClick={() => setPageSearch('')}
                       aria-label="Clear page search"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8A8F9E] hover:text-[#24252A] cursor-pointer"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[#6E7382] hover:text-[#121316] cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -1958,7 +1958,7 @@ export function Notes() {
                 </div>
 
                 {/* All / Bookmarked Filter */}
-                <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-[#24252A]/[0.05]">
+                <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-[#ECE9E1]">
                   {[
                     { key: 'all', label: 'All Pages' },
                     { key: 'bookmarked', label: 'Bookmarked' },
@@ -1969,8 +1969,8 @@ export function Notes() {
                       onClick={() => setListFilter(tab.key)}
                       className={`py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                         listFilter === tab.key
-                          ? 'bg-white text-[#24252A] shadow-sm'
-                          : 'text-[#5C6070] hover:text-[#24252A]'
+                          ? 'bg-[#FFFFFF] text-[#121316] shadow-sm'
+                          : 'text-[#424652] hover:text-[#121316]'
                       }`}
                     >
                       {tab.label}
@@ -2000,43 +2000,43 @@ export function Notes() {
                           }}
                           className={`group relative rounded-2xl border p-3 text-left transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-[#FFFDF8] border-[#4E51BF]/40 shadow-sm'
-                              : 'bg-white/75 hover:bg-white border-[#24252A]/[0.06]'
+                              ? 'bg-[#FFFFFF] border-[#5B8DEF] shadow-sm'
+                              : 'bg-[#FAF9F6]/80 hover:bg-[#FFFFFF] border-[#121316]/[0.08]'
                           }`}
                         >
                           <span
                             aria-hidden="true"
                             className={`absolute left-1.5 top-3 bottom-3 w-1 rounded-full ${
-                              isSelected ? 'bg-[#4E51BF]' : 'bg-[#24252A]/10'
+                              isSelected ? 'bg-[#3762C4]' : 'bg-[#121316]/10'
                             }`}
                           />
 
                           <div className="pl-2.5">
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex items-center gap-1.5 min-w-0">
-                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#FFE9CE] text-[#5C4630] shrink-0">
+                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#EAF0FC] text-[#2F59B8] shrink-0">
                                   p.{pageNumber}
                                 </span>
-                                <h3 className="text-xs sm:text-sm font-semibold text-[#24252A] truncate">
+                                <h3 className="text-xs sm:text-sm font-semibold text-[#121316] truncate">
                                   {page.title || `Page ${pageNumber}`}
                                 </h3>
                               </div>
                               <div className="flex items-center gap-1 shrink-0">
                                 {page.bookmarked && (
-                                  <Bookmark className="w-3.5 h-3.5 text-[#FF92A4] fill-[#FF92A4]" />
+                                  <Bookmark className="w-3.5 h-3.5 text-[#3762C4] fill-[#5B8DEF]" />
                                 )}
                                 <button
                                   type="button"
                                   onClick={(e) => handleDeletePage(page.id, e)}
                                   aria-label={`Delete ${page.title || 'page'}`}
-                                  className="touch-reveal opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded-md text-[#8A8F9E] hover:text-[#9F1239] hover:bg-[#FF92A4]/15 transition-all cursor-pointer"
+                                  className="touch-reveal opacity-0 group-hover:opacity-100 focus:opacity-100 p-1 rounded-md text-[#6E7382] hover:text-[#121316] hover:bg-[#121316]/[0.07] transition-all cursor-pointer"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                               </div>
                             </div>
 
-                            <p className="text-[11px] text-[#5C6070] line-clamp-2 mt-1 min-h-[1rem]">
+                            <p className="text-[11px] text-[#424652] line-clamp-2 mt-1 min-h-[1rem]">
                               {snippet ||
                                 (page.images?.length && page.strokes?.length
                                   ? `${page.images.length} photo${page.images.length === 1 ? '' : 's'} · ${page.strokes.length} ink`
@@ -2055,7 +2055,7 @@ export function Notes() {
                               >
                                 {page.subject || 'General'}
                               </span>
-                              <span className="text-[10px] text-[#8A8F9E] shrink-0">
+                              <span className="text-[10px] text-[#6E7382] shrink-0">
                                 {formatNoteTimestamp(page.updatedAt)}
                               </span>
                             </div>
@@ -2065,8 +2065,8 @@ export function Notes() {
                     })
                   ) : (
                     <div className="text-center py-8 px-3">
-                      <FileText className="w-6 h-6 text-[#8A8F9E] mx-auto mb-2" />
-                      <p className="text-xs font-medium text-[#5C6070]">
+                      <FileText className="w-6 h-6 text-[#6E7382] mx-auto mb-2" />
+                      <p className="text-xs font-medium text-[#424652]">
                         No matching pages
                       </p>
                     </div>
@@ -2082,7 +2082,7 @@ export function Notes() {
                     <div className="glass-card rounded-2xl p-2.5 sm:px-4 flex flex-wrap items-center justify-between gap-2.5 relative z-20">
                       <div className="flex items-center gap-2 flex-wrap">
                         {/* Mode Toggle: Type vs Handwrite */}
-                        <div className="inline-flex items-center p-1 rounded-xl bg-[#24252A]/[0.06]">
+                        <div className="inline-flex items-center p-1 rounded-xl bg-[#ECE9E1]">
                           <button
                             type="button"
                             onClick={() => {
@@ -2091,11 +2091,11 @@ export function Notes() {
                             }}
                             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                               editorMode === 'type'
-                                ? 'bg-white text-[#24252A] shadow-sm'
-                                : 'text-[#5C6070] hover:text-[#24252A]'
+                                ? 'bg-[#FFFFFF] text-[#121316] shadow-sm'
+                                : 'text-[#424652] hover:text-[#121316]'
                             }`}
                           >
-                            <Type className="w-3.5 h-3.5 text-[#4E51BF]" />
+                            <Type className="w-3.5 h-3.5 text-[#3762C4]" />
                             <span>Type Notes</span>
                           </button>
 
@@ -2108,8 +2108,8 @@ export function Notes() {
                             }}
                             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                               editorMode === 'draw'
-                                ? 'bg-[#4E51BF] text-white shadow-sm'
-                                : 'text-[#5C6070] hover:text-[#24252A]'
+                                ? 'bg-[#3762C4] text-white shadow-sm'
+                                : 'text-[#424652] hover:text-[#121316]'
                             }`}
                           >
                             <PenTool className="w-3.5 h-3.5" />
@@ -2128,14 +2128,14 @@ export function Notes() {
                             title="Change notebook font"
                             aria-haspopup="listbox"
                             aria-expanded={fontMenuOpen}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFE9CE]/85 hover:bg-[#FFE9CE] border border-[#F2CFA4]/70 text-xs font-semibold text-[#24252A] transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EAF0FC] hover:bg-[#DCE7FA] border border-[#5B8DEF]/30 text-xs font-semibold text-[#121316] transition-colors cursor-pointer"
                           >
-                            <NotebookPen className="w-3.5 h-3.5 text-[#4E51BF]" />
+                            <NotebookPen className="w-3.5 h-3.5 text-[#3762C4]" />
                             <span className={activeFontMeta.fontClass}>
                               {activeFontMeta.label}
                             </span>
                             <ChevronDown
-                              className={`w-3.5 h-3.5 text-[#5C6070] transition-transform ${
+                              className={`w-3.5 h-3.5 text-[#424652] transition-transform ${
                                 fontMenuOpen ? 'rotate-180' : ''
                               }`}
                             />
@@ -2145,9 +2145,9 @@ export function Notes() {
                             <div
                               role="listbox"
                               aria-label="Choose notebook font"
-                              className="absolute left-0 mt-2 w-64 rounded-2xl bg-white border border-[#24252A]/10 shadow-xl p-1.5 z-50"
+                              className="absolute left-0 mt-2 w-64 rounded-2xl bg-[#FFFFFF] border border-[#121316]/12 shadow-xl p-1.5 z-50"
                             >
-                              <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#8A8F9E]">
+                              <div className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#6E7382]">
                                 Notebook Fonts
                               </div>
                               {NOTEBOOK_FONTS.map((font) => {
@@ -2165,8 +2165,8 @@ export function Notes() {
                                     }}
                                     className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-left transition-colors cursor-pointer ${
                                       selected
-                                        ? 'bg-[#FFE9CE]/70 text-[#24252A]'
-                                        : 'hover:bg-[#F1F2F9] text-[#24252A]'
+                                        ? 'bg-[#EAF0FC] text-[#121316]'
+                                        : 'hover:bg-[#F5F3EE] text-[#121316]'
                                     }`}
                                   >
                                     <div className="min-w-0">
@@ -2175,12 +2175,12 @@ export function Notes() {
                                       >
                                         {font.label}
                                       </div>
-                                      <div className="text-[10px] text-[#5C6070] truncate">
+                                      <div className="text-[10px] text-[#424652] truncate">
                                         {font.category} · {font.preview}
                                       </div>
                                     </div>
                                     {selected && (
-                                      <Check className="w-3.5 h-3.5 text-[#4E51BF] shrink-0" />
+                                      <Check className="w-3.5 h-3.5 text-[#3762C4] shrink-0" />
                                     )}
                                   </button>
                                 );
@@ -2215,16 +2215,16 @@ export function Notes() {
                           }}
                           disabled={isInsertingImage}
                           title="Add photo or paste screenshot (Ctrl+V)"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/90 hover:bg-[#FFE9CE]/80 border border-[#24252A]/[0.08] text-xs font-semibold text-[#24252A] transition-colors cursor-pointer disabled:opacity-60"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-[#EAF0FC] border border-[#121316]/10 text-xs font-semibold text-[#121316] transition-colors cursor-pointer disabled:opacity-60"
                         >
-                          <ImagePlus className="w-3.5 h-3.5 text-[#4E51BF]" />
+                          <ImagePlus className="w-3.5 h-3.5 text-[#3762C4]" />
                           <span>{isInsertingImage ? 'Adding...' : 'Photo'}</span>
                         </button>
 
                         {/* Type Stamps or Draw Controls */}
                         {editorMode === 'type' ? (
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <div className="hidden sm:block h-5 w-px bg-[#24252A]/10 mx-0.5" />
+                            <div className="hidden sm:block h-5 w-px bg-[#121316]/12 mx-0.5" />
                             {DISCUSSION_STAMPS.map(
                               ({ label, icon: Icon, ...rest }) => (
                                 <button
@@ -2233,10 +2233,10 @@ export function Notes() {
                                   onClick={() =>
                                     handleInsertStamp({ label, ...rest })
                                   }
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white/90 hover:bg-[#FFE9CE]/80 border border-[#24252A]/[0.07] text-[11px] font-medium text-[#24252A] transition-colors cursor-pointer"
+                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#EAF0FC] border border-[#121316]/10 text-[11px] font-medium text-[#121316] transition-colors cursor-pointer"
                                   title={`Insert ${label.toLowerCase()} marker`}
                                 >
-                                  <Icon className="w-3 h-3 text-[#4E51BF]" />
+                                  <Icon className="w-3 h-3 text-[#3762C4]" />
                                   <span className="hidden sm:inline">
                                     {label}
                                   </span>
@@ -2246,7 +2246,7 @@ export function Notes() {
                           </div>
                         ) : (
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <div className="hidden sm:block h-5 w-px bg-[#24252A]/10 mx-0.5" />
+                            <div className="hidden sm:block h-5 w-px bg-[#121316]/12 mx-0.5" />
                             {[
                               { key: 'pen', label: 'Pen', icon: PenTool },
                               {
@@ -2265,8 +2265,8 @@ export function Notes() {
                                 }}
                                 className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition-colors cursor-pointer ${
                                   drawTool === key
-                                    ? 'bg-[#24252A] border-[#24252A] text-white'
-                                    : 'bg-white/90 border-[#24252A]/[0.08] text-[#24252A] hover:bg-white'
+                                    ? 'bg-[#121316] border-[#121316] text-white'
+                                    : 'bg-white border-[#121316]/10 text-[#121316] hover:bg-[#FAF9F6]'
                                 }`}
                               >
                                 <Icon className="w-3.5 h-3.5" />
@@ -2275,7 +2275,7 @@ export function Notes() {
                             ))}
 
                             {drawTool !== 'eraser' && (
-                              <div className="inline-flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg bg-white/90 border border-[#24252A]/[0.08]">
+                              <div className="inline-flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg bg-white border border-[#121316]/10">
                                 {INK_SWATCHES.map((swatch) => (
                                   <button
                                     key={swatch.color}
@@ -2289,7 +2289,7 @@ export function Notes() {
                                     style={{ backgroundColor: swatch.color }}
                                     className={`w-4 h-4 rounded-full transition-transform cursor-pointer ${
                                       drawColor === swatch.color
-                                        ? 'scale-110 ring-2 ring-[#4E51BF] ring-offset-2'
+                                        ? 'scale-110 ring-2 ring-[#5B8DEF] ring-offset-2'
                                         : 'hover:scale-110 opacity-85'
                                     }`}
                                   />
@@ -2301,7 +2301,7 @@ export function Notes() {
                               <button
                                 type="button"
                                 onClick={handleClearInk}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#FF92A4]/15 hover:bg-[#FF92A4]/25 border border-[#FF92A4]/40 text-[11px] font-semibold text-[#9F1239] cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#FAF9F6] hover:bg-[#121316] border border-[#121316]/15 text-[11px] font-semibold text-[#121316] hover:text-white transition-colors cursor-pointer"
                               >
                                 Clear Ink
                               </button>
@@ -2312,14 +2312,14 @@ export function Notes() {
 
                       {/* Right Controls: Undo/Redo, Paper Lining, Copy, Bookmark */}
                       <div className="flex items-center gap-1.5 ml-auto flex-wrap">
-                        <div className="inline-flex items-center p-0.5 rounded-xl bg-[#24252A]/[0.05]">
+                        <div className="inline-flex items-center p-0.5 rounded-xl bg-[#ECE9E1]">
                           <button
                             type="button"
                             onClick={handleUndo}
                             disabled={!canUndo}
                             aria-label="Undo (Ctrl+Z)"
                             title="Undo (Ctrl+Z)"
-                            className="p-1.5 rounded-lg text-[#24252A] hover:bg-white disabled:opacity-35 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                            className="p-1.5 rounded-lg text-[#121316] hover:bg-white disabled:opacity-35 transition-colors cursor-pointer disabled:cursor-not-allowed"
                           >
                             <Undo2 className="w-3.5 h-3.5" />
                           </button>
@@ -2329,13 +2329,13 @@ export function Notes() {
                             disabled={!canRedo}
                             aria-label="Redo (Ctrl+Y)"
                             title="Redo (Ctrl+Y)"
-                            className="p-1.5 rounded-lg text-[#24252A] hover:bg-white disabled:opacity-35 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                            className="p-1.5 rounded-lg text-[#121316] hover:bg-white disabled:opacity-35 transition-colors cursor-pointer disabled:cursor-not-allowed"
                           >
                             <Redo2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
 
-                        <div className="inline-flex items-center p-0.5 rounded-xl bg-[#24252A]/[0.05]">
+                        <div className="inline-flex items-center p-0.5 rounded-xl bg-[#ECE9E1]">
                           {PAPER_STYLES.map((style) => (
                             <button
                               key={style.key}
@@ -2346,8 +2346,8 @@ export function Notes() {
                               }}
                               className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
                                 (activeNote.paperStyle || 'ruled') === style.key
-                                  ? 'bg-white text-[#24252A] shadow-sm'
-                                  : 'text-[#5C6070] hover:text-[#24252A]'
+                                  ? 'bg-[#FFFFFF] text-[#121316] shadow-sm'
+                                  : 'text-[#424652] hover:text-[#121316]'
                               }`}
                             >
                               {style.label}
@@ -2359,12 +2359,12 @@ export function Notes() {
                           type="button"
                           onClick={handleCopyPage}
                           title="Copy note text"
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/90 hover:bg-white border border-[#24252A]/[0.08] text-[11px] font-medium text-[#5C6070] hover:text-[#24252A] cursor-pointer"
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-[#FAF9F6] border border-[#121316]/10 text-[11px] font-medium text-[#424652] hover:text-[#121316] cursor-pointer"
                         >
                           {copiedId === activeNote.id ? (
                             <>
-                              <Check className="w-3.5 h-3.5 text-emerald-600" />
-                              <span className="hidden sm:inline text-emerald-700">
+                              <Check className="w-3.5 h-3.5 text-[#3762C4]" />
+                              <span className="hidden sm:inline text-[#2F59B8] font-semibold">
                                 Copied
                               </span>
                             </>
@@ -2396,14 +2396,14 @@ export function Notes() {
                           }
                           className={`p-1.5 rounded-xl border transition-colors cursor-pointer ${
                             activeNote.bookmarked
-                              ? 'bg-[#FF92A4]/20 border-[#FF92A4]/50 text-[#9F1239]'
-                              : 'bg-white/90 border-[#24252A]/[0.08] text-[#5C6070] hover:text-[#24252A]'
+                              ? 'bg-[#EAF0FC] border-[#5B8DEF]/45 text-[#2F59B8]'
+                              : 'bg-white border-[#121316]/10 text-[#424652] hover:text-[#121316]'
                           }`}
                         >
                           <Bookmark
                             className={`w-4 h-4 ${
                               activeNote.bookmarked
-                                ? 'fill-[#FF92A4] text-[#FF92A4]'
+                                ? 'fill-[#5B8DEF] text-[#3762C4]'
                                 : ''
                             }`}
                           />
@@ -2412,7 +2412,7 @@ export function Notes() {
                     </div>
 
                     {/* Physical Spiral-Bound Notebook with 3D Page-Turn Stage */}
-                    <div className="notebook-paper relative rounded-r-3xl rounded-l-xl border border-[#E6DEC8] flex overflow-hidden">
+                    <div className="notebook-paper relative rounded-r-3xl rounded-l-xl border border-[#121316]/12 flex overflow-hidden">
                       {/* Hardcover Back Lip Accent Matching Chosen Cover */}
                       <div
                         aria-hidden="true"
@@ -2423,7 +2423,7 @@ export function Notes() {
                       {/* Realistic Repeating Twin-Wire Spiral Binding Spine */}
                       <div
                         aria-hidden="true"
-                        className="relative w-7 sm:w-9 shrink-0 bg-gradient-to-r from-[#EDE6D6] via-[#F7F2E7] to-[#EFE8D8] border-r border-[#DFD5C2] select-none z-30"
+                        className="relative w-7 sm:w-9 shrink-0 bg-gradient-to-r from-[#ECE9E1] via-[#F5F3EE] to-[#ECE9E1] border-r border-[#121316]/12 select-none z-30"
                       >
                         <svg className="absolute inset-0 w-full h-full block">
                           <defs>
@@ -2434,9 +2434,9 @@ export function Notes() {
                               x2="100%"
                               y2="100%"
                             >
-                              <stop offset="0%" stopColor="#4C5061" />
-                              <stop offset="45%" stopColor="#ECEFF7" />
-                              <stop offset="100%" stopColor="#24252A" />
+                              <stop offset="0%" stopColor="#424652" />
+                              <stop offset="45%" stopColor="#FAF9F6" />
+                              <stop offset="100%" stopColor="#121316" />
                             </linearGradient>
                             <pattern
                               id={spiralPatternId}
@@ -2448,8 +2448,8 @@ export function Notes() {
                                 cx="24"
                                 cy="22"
                                 r="4.8"
-                                fill="#D8DCEB"
-                                stroke="#C4B8A3"
+                                fill="#E2DFD6"
+                                stroke="#B9B5AC"
                                 strokeWidth="1"
                               />
                               <path
@@ -2461,7 +2461,7 @@ export function Notes() {
                               />
                               <path
                                 d="M 2,24 C 9,28 19,27 24,23"
-                                stroke="#24252A"
+                                stroke="#121316"
                                 strokeOpacity="0.35"
                                 strokeWidth="1.5"
                                 strokeLinecap="round"
@@ -2485,7 +2485,7 @@ export function Notes() {
                           transformStyle: 'preserve-3d',
                         }}
                       >
-                        {/* Active Interactive Ivory Paper Sheet */}
+                        {/* Active Interactive Archival Paper Sheet */}
                         <motion.div
                           key={activeNote.id}
                           initial={{ opacity: 0.78, scale: 0.994 }}
@@ -2494,13 +2494,13 @@ export function Notes() {
                             duration: 0.34,
                             ease: [0.22, 1, 0.36, 1],
                           }}
-                          className="relative z-10 bg-gradient-to-b from-[#FFFEFB] to-[#FFFAF2]"
+                          className="relative z-10 bg-gradient-to-b from-[#FFFFFF] to-[#FAF9F6]"
                         >
-                          {/* Physical Coral Bookmark Ribbon Tab */}
+                          {/* Physical Cornflower Bookmark Ribbon Tab */}
                           {activeNote.bookmarked && (
                             <div
                               aria-hidden="true"
-                              className="pointer-events-none absolute top-0 right-6 sm:right-10 w-6 h-9 bg-[#FF92A4] shadow-sm z-20"
+                              className="pointer-events-none absolute top-0 right-6 sm:right-10 w-6 h-9 bg-[#5B8DEF] shadow-sm z-20"
                               style={{
                                 clipPath:
                                   'polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%)',
@@ -2509,11 +2509,11 @@ export function Notes() {
                           )}
 
                           {/* Top Notebook Margin Header */}
-                          <div className="relative px-4 sm:px-7 pt-5 pb-3 border-b-2 border-[#4E51BF]/25">
+                          <div className="relative px-4 sm:px-7 pt-5 pb-3 border-b-2 border-[#5B8DEF]/25">
                             {(activeNote.paperStyle || 'ruled') === 'ruled' && (
                               <div
                                 aria-hidden="true"
-                                className="pointer-events-none absolute top-0 bottom-0 left-7 sm:left-10 border-l-2 border-[#FF92A4]/50"
+                                className="pointer-events-none absolute top-0 bottom-0 left-7 sm:left-10 border-l-2 border-[#5B8DEF]/35"
                               />
                             )}
 
@@ -2541,12 +2541,12 @@ export function Notes() {
                                       className="bg-transparent w-24 sm:w-32 focus:outline-none text-[11px] font-semibold placeholder:opacity-60"
                                     />
                                   </span>
-                                  <span className="text-[11px] text-[#8A8F9E]">
+                                  <span className="text-[11px] text-[#6E7382]">
                                     {formatNoteTimestamp(activeNote.updatedAt)}
                                   </span>
                                 </div>
 
-                                <div className="flex items-center gap-2 text-[11px] text-[#8A8F9E]">
+                                <div className="flex items-center gap-2 text-[11px] text-[#6E7382] tabular-nums">
                                   <span>{wordCount} words</span>
                                   {imageCount > 0 && (
                                     <span>
@@ -2557,8 +2557,8 @@ export function Notes() {
                                   {strokeCount > 0 && (
                                     <span>· {strokeCount} ink</span>
                                   )}
-                                  <span className="inline-flex items-center gap-1 text-emerald-700 font-medium">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                  <span className="inline-flex items-center gap-1 text-[#2F59B8] font-medium">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#5B8DEF]" />
                                     Saved
                                   </span>
                                 </div>
@@ -2573,7 +2573,7 @@ export function Notes() {
                                 }
                                 placeholder="Discussion Title..."
                                 aria-label="Note title"
-                                className={`mt-2 w-full bg-transparent text-[#24252A] placeholder:text-[#8A8F9E]/70 focus:outline-none ${activeFontMeta.titleClass}`}
+                                className={`mt-2 w-full bg-transparent text-[#121316] placeholder:text-[#6E7382]/70 focus:outline-none ${activeFontMeta.titleClass}`}
                               />
                             </div>
                           </div>
@@ -2610,7 +2610,7 @@ export function Notes() {
                             }}
                             className={`relative transition-shadow ${
                               isDragOverSheet
-                                ? 'ring-2 ring-inset ring-[#4E51BF]/45 bg-[#4E51BF]/[0.03]'
+                                ? 'ring-2 ring-inset ring-[#5B8DEF]/55 bg-[#5B8DEF]/[0.04]'
                                 : ''
                             }`}
                             style={getPaperBackgroundStyle(
@@ -2620,7 +2620,7 @@ export function Notes() {
                             {(activeNote.paperStyle || 'ruled') === 'ruled' && (
                               <div
                                 aria-hidden="true"
-                                className="pointer-events-none absolute top-0 bottom-0 left-7 sm:left-10 border-l-2 border-[#FF92A4]/50 z-10"
+                                className="pointer-events-none absolute top-0 bottom-0 left-7 sm:left-10 border-l-2 border-[#5B8DEF]/35 z-10"
                               />
                             )}
 
@@ -2656,9 +2656,9 @@ export function Notes() {
                               aria-label="Notebook page content"
                               style={{
                                 lineHeight: `${LINE_HEIGHT}px`,
-                                color: activeNote.textInkColor || '#24252A',
+                                color: activeNote.textInkColor || '#121316',
                               }}
-                              className={`relative z-10 block w-full min-h-[704px] bg-transparent pl-10 sm:pl-14 pr-5 sm:pr-8 py-0 resize-none overflow-hidden focus:outline-none placeholder:text-[#8A8F9E]/65 ${activeFontMeta.bodyClass}`}
+                              className={`relative z-10 block w-full min-h-[704px] bg-transparent pl-10 sm:pl-14 pr-5 sm:pr-8 py-0 resize-none overflow-hidden focus:outline-none placeholder:text-[#6E7382]/65 ${activeFontMeta.bodyClass}`}
                             />
 
                             {/* Resizable / Movable Discussion Photos Layer */}
@@ -2685,17 +2685,17 @@ export function Notes() {
                           </div>
 
                           {/* Paper Footer: Text Ink Colors + Tactile Page Flipper + Folded Dog-Ear */}
-                          <div className="relative px-5 sm:px-8 py-3 bg-[#FAF4E8]/85 border-t border-[#E6DEC8]/80 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#5C6070]">
+                          <div className="relative px-5 sm:px-8 py-3 bg-[#F5F3EE]/90 border-t border-[#121316]/10 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#424652]">
                             <div className="flex items-center gap-3.5 flex-wrap">
                               {editorMode === 'type' && (
                                 <div className="flex items-center gap-2.5">
-                                  <span className="text-[#8A8F9E]">
+                                  <span className="text-[#6E7382]">
                                     Text ink:
                                   </span>
                                   <div className="inline-flex items-center gap-2.5 px-0.5">
                                     {[
-                                      { color: '#24252A', label: 'Charcoal' },
-                                      { color: '#3B3E9E', label: 'Blue Pen' },
+                                      { color: '#121316', label: 'Ink Black' },
+                                      { color: '#2F59B8', label: 'Cornflower Ink' },
                                     ].map((ink) => (
                                       <button
                                         key={ink.color}
@@ -2710,9 +2710,9 @@ export function Notes() {
                                         title={ink.label}
                                         style={{ backgroundColor: ink.color }}
                                         className={`w-3.5 h-3.5 rounded-full cursor-pointer transition-transform ${
-                                          (activeNote.textInkColor || '#24252A') ===
+                                          (activeNote.textInkColor || '#121316') ===
                                           ink.color
-                                            ? 'scale-110 ring-2 ring-[#4E51BF] ring-offset-2'
+                                            ? 'scale-110 ring-2 ring-[#5B8DEF] ring-offset-2'
                                             : 'opacity-75 hover:opacity-100'
                                         }`}
                                       />
@@ -2720,7 +2720,7 @@ export function Notes() {
                                   </div>
                                 </div>
                               )}
-                              <span className="text-[#8A8F9E]">
+                              <span className="text-[#6E7382]">
                                 Ctrl+V paste photo · Ctrl+Z undo · Font: {activeFontMeta.label}
                               </span>
                             </div>
@@ -2730,13 +2730,13 @@ export function Notes() {
                                 type="button"
                                 onClick={() => handleFlipStep(-1)}
                                 disabled={!hasPrevPage}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/80 hover:bg-white border border-[#24252A]/10 text-[11px] font-semibold text-[#24252A] disabled:opacity-35 cursor-pointer disabled:cursor-not-allowed"
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white hover:bg-[#FAF9F6] border border-[#121316]/12 text-[11px] font-semibold text-[#121316] disabled:opacity-35 cursor-pointer disabled:cursor-not-allowed"
                               >
                                 <ChevronLeft className="w-3.5 h-3.5" />
                                 <span>Prev</span>
                               </button>
 
-                              <span className="font-semibold text-[#24252A] tabular-nums px-1">
+                              <span className="font-semibold text-[#121316] tabular-nums px-1">
                                 p.{activePageIndex + 1} / {activePages.length}
                               </span>
 
@@ -2744,7 +2744,7 @@ export function Notes() {
                                 <button
                                   type="button"
                                   onClick={() => handleFlipStep(1)}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/80 hover:bg-white border border-[#24252A]/10 text-[11px] font-semibold text-[#24252A] cursor-pointer"
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white hover:bg-[#FAF9F6] border border-[#121316]/12 text-[11px] font-semibold text-[#121316] cursor-pointer"
                                 >
                                   <span>Next</span>
                                   <ChevronRight className="w-3.5 h-3.5" />
@@ -2753,9 +2753,9 @@ export function Notes() {
                                 <button
                                   type="button"
                                   onClick={handleCreatePage}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FFE9CE] hover:bg-[#FCE0BA] border border-[#E5C192] text-[11px] font-semibold text-[#24252A] cursor-pointer"
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#EAF0FC] hover:bg-[#DCE7FA] border border-[#5B8DEF]/35 text-[11px] font-semibold text-[#121316] cursor-pointer"
                                 >
-                                  <Plus className="w-3.5 h-3.5 text-[#4E51BF]" />
+                                  <Plus className="w-3.5 h-3.5 text-[#3762C4]" />
                                   <span>Next New Page</span>
                                 </button>
                               )}

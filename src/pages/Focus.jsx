@@ -486,25 +486,25 @@ export function Focus() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-[#17181C]/96 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-10 text-white"
+              className="fixed inset-0 z-50 bg-[#121316]/97 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-10 text-[#FAF9F6]"
             >
               {/* Zen Top Header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#5B8DEF] animate-pulse" />
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#959AA8]">
                     Zen Immersion Mode
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-zinc-400 hidden sm:inline">
+                  <span className="text-xs text-[#959AA8] hidden sm:inline">
                     Press Esc to exit
                   </span>
                   <button
                     type="button"
                     onClick={() => setIsZenMode(false)}
-                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-[#FAF9F6] transition-colors cursor-pointer"
                   >
                     <Minimize2 className="w-5 h-5" />
                   </button>
@@ -513,7 +513,7 @@ export function Focus() {
 
               {/* Zen Center Display */}
               <div className="flex flex-col items-center justify-center my-auto">
-                <div className="text-sm font-semibold text-indigo-300 mb-2">
+                <div className="text-sm font-semibold text-[#9EC0FF] mb-2">
                   {selectedSubject} {selectedTask ? `• ${selectedTask.title}` : ''}
                 </div>
                 <FocusTimerDisplay
@@ -551,36 +551,36 @@ export function Focus() {
         {/* Normal Page View Header */}
         <div className="glass-card rounded-panel p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#FFE9CE] flex items-center justify-center shrink-0">
-              <Timer className="w-5 h-5 text-[#4E51BF]" />
+            <div className="w-10 h-10 rounded-2xl bg-[#121316] flex items-center justify-center shrink-0">
+              <Timer className="w-5 h-5 text-[#5B8DEF]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-display text-lg sm:text-xl font-bold text-[#24252A] tracking-tight">
+                <h1 className="font-display text-lg sm:text-xl font-bold text-[#121316] tracking-tight">
                   Deep Focus Timer
                 </h1>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#4E51BF]/10 text-[#4E51BF]">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EAF0FC] text-[#2F59B8] border border-[#5B8DEF]/30">
                   v2 Unlocked
                 </span>
               </div>
-              <p className="text-xs text-[#5C6070] mt-0.5">
+              <p className="text-xs text-[#424652] mt-0.5">
                 Pomodoro intervals, procedural study soundscapes & distraction-free flow
               </p>
             </div>
           </div>
 
           {/* Quick Metrics (Today Minutes & Streak) */}
-          <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#24252A]/[0.08] text-xs">
-              <Clock className="w-4 h-4 text-[#4E51BF]" />
-              <span className="font-bold text-[#24252A]">
+          <div className="flex items-center gap-2.5 tabular-nums">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-[#121316]/[0.12] text-xs">
+              <Clock className="w-4 h-4 text-[#5B8DEF]" />
+              <span className="font-bold text-[#121316]">
                 {Math.floor(todayMinutes / 60)}h {todayMinutes % 60}m
               </span>
-              <span className="text-[#8A8F9E]">today</span>
+              <span className="text-[#6E7382]">today</span>
             </div>
 
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFE9CE] border border-[#F2CFA4] text-xs font-bold text-[#5C4630]">
-              <Flame className="w-4 h-4 text-[#D97706] fill-current" />
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#121316] border border-[#121316] text-xs font-bold text-[#FAF9F6]">
+              <Flame className="w-4 h-4 text-[#5B8DEF] fill-current" />
               <span>{streakDays} Day Streak</span>
             </div>
           </div>
@@ -650,14 +650,14 @@ export function Focus() {
                 onClick={() => handleSelectMode(m.key)}
                 className={`flex flex-col items-center justify-center py-2.5 px-3 rounded-xl transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-[#4E51BF] text-white shadow-sm'
-                    : 'text-[#5C6070] hover:text-[#24252A] hover:bg-[#24252A]/[0.04]'
+                    ? 'bg-[#121316] text-[#FAF9F6] shadow-sm'
+                    : 'text-[#424652] hover:text-[#121316] hover:bg-[#121316]/[0.05]'
                 }`}
               >
                 <span className="text-xs font-bold leading-tight">{m.label}</span>
                 <span
-                  className={`text-[10px] mt-0.5 line-clamp-1 ${
-                    isSelected ? 'text-indigo-100' : 'text-[#8A8F9E]'
+                  className={`text-[10px] mt-0.5 line-clamp-1 tabular-nums ${
+                    isSelected ? 'text-[#9EC0FF]' : 'text-[#6E7382]'
                   }`}
                 >
                   {m.shortLabel === 'Flow' ? 'Stopwatch' : `${m.workMinutes}m / ${m.shortBreakMinutes}m break`}
@@ -726,15 +726,15 @@ export function Focus() {
           <FocusBrainDump onAddTaskFromDump={handleAddTaskFromDump} />
 
           {/* Today's Completed Sessions History Log */}
-          <div className="glass-card rounded-2xl p-4 sm:p-5 border border-[#24252A]/[0.07] space-y-3">
+          <div className="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <History className="w-4 h-4 text-[#4E51BF]" />
-                <h3 className="font-display text-xs sm:text-sm font-bold text-[#24252A]">
+                <History className="w-4 h-4 text-[#5B8DEF]" />
+                <h3 className="font-display text-xs sm:text-sm font-bold text-[#121316]">
                   Recent Focus Sessions
                 </h3>
               </div>
-              <span className="text-[11px] text-[#8A8F9E]">
+              <span className="text-[11px] text-[#6E7382] tabular-nums">
                 {history.length} completed
               </span>
             </div>
@@ -749,23 +749,23 @@ export function Focus() {
                   return (
                     <div
                       key={rec.id}
-                      className="rounded-xl bg-[#F8F9FA] p-2.5 flex items-center justify-between text-xs border border-[#24252A]/[0.05]"
+                      className="rounded-xl bg-white p-2.5 flex items-center justify-between text-xs border border-[#121316]/[0.09]"
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="font-semibold text-[#24252A] truncate">
+                        <div className="font-semibold text-[#121316] truncate">
                           {rec.subject}
                         </div>
                         {rec.taskTitle && (
-                          <div className="text-[10px] text-[#5C6070] truncate">
+                          <div className="text-[10px] text-[#424652] truncate">
                             {rec.taskTitle}
                           </div>
                         )}
                       </div>
-                      <div className="text-right shrink-0 ml-2">
-                        <span className="font-bold text-[#4E51BF]">
+                      <div className="text-right shrink-0 ml-2 tabular-nums">
+                        <span className="font-bold text-[#2F59B8]">
                           +{rec.durationMin}m
                         </span>
-                        <span className="text-[10px] text-[#8A8F9E] block">
+                        <span className="text-[10px] text-[#6E7382] block">
                           {timeStr}
                         </span>
                       </div>
@@ -774,7 +774,7 @@ export function Focus() {
                 })}
               </div>
             ) : (
-              <div className="py-6 text-center text-xs text-[#8A8F9E]">
+              <div className="py-6 text-center text-xs text-[#6E7382]">
                 No completed sessions yet. Start the timer to log your first study block!
               </div>
             )}

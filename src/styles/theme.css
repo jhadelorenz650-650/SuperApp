@@ -1,88 +1,89 @@
 :root {
-  /* Core Palette Tokens */
-  --brand-indigo: #4e51bf;
-  --brand-peach: #ffe9ce;
-  --brand-coral: #ff92a4;
-  --brand-ink: #24252a;
+  /* Core 90/10 Editorial Palette: Paper White + Ink Black (90%) & Cornflower Blue (10%) */
+  --paper-canvas: #f5f3ee;
+  --paper-base: #faf9f6;
+  --paper-elevated: #ffffff;
+  --paper-recessed: #ece9e1;
 
-  /* Airy Light Surfaces */
-  --bg-canvas: #f1f2f9;
-  --bg-surface: rgba(255, 255, 255, 0.86);
-  --bg-surface-elevated: rgba(255, 255, 255, 0.96);
-  --bg-surface-hover: #ffffff;
+  --ink-primary: #121316;
+  --ink-secondary: #424652;
+  --ink-muted: #6e7382;
+  --ink-subtle: #959aa8;
+
+  --accent-cornflower: #5b8def;
+  --accent-cornflower-deep: #3762c4;
+  --accent-cornflower-text: #2f59b8;
+  --accent-cornflower-tint: #eaf0fc;
+
+  /* Surface & Canvas Aliases */
+  --bg-canvas: var(--paper-canvas);
+  --bg-surface: rgba(250, 249, 246, 0.96);
+  --bg-surface-elevated: var(--paper-elevated);
+  --bg-surface-hover: var(--paper-elevated);
+  --bg-recessed: var(--paper-recessed);
 
   /* Text Hierarchy */
-  --text-primary: #24252a;
-  --text-secondary: #5c6070;
-  --text-muted: #8a8f9e;
+  --text-primary: var(--ink-primary);
+  --text-secondary: var(--ink-secondary);
+  --text-muted: var(--ink-muted);
 
-  /* Accents */
-  --accent-violet: #4e51bf;
-  --accent-cyan: #ff92a4;
-  --accent-gradient: linear-gradient(135deg, #4e51bf 0%, #ff92a4 100%);
+  /* Legacy / Semantic Accents */
+  --accent-violet: var(--accent-cornflower);
+  --accent-cyan: var(--ink-primary);
+  --accent-gradient: linear-gradient(135deg, #5b8def 0%, #3762c4 100%);
 
   /* Priority Tokens */
-  --priority-low: #4e51bf;
-  --priority-medium: #f59e0b;
-  --priority-high: #ff92a4;
+  --priority-low: #5b8def;
+  --priority-medium: #121316;
+  --priority-high: #d9485f;
 
-  /* Borders & Glass */
-  --border-subtle: rgba(36, 37, 42, 0.08);
-  --border-gradient: linear-gradient(
-    135deg,
-    rgba(78, 81, 191, 0.28) 0%,
-    rgba(255, 233, 206, 0.65) 50%,
-    rgba(255, 146, 164, 0.3) 100%
-  );
+  /* Crisp Editorial Hairline Borders */
+  --border-subtle: rgba(18, 19, 22, 0.1);
+  --border-hairline: rgba(18, 19, 22, 0.11);
+  --border-strong: rgba(18, 19, 22, 0.22);
 
   /* Radii & Spacing */
-  --radius-card: 1.25rem;
-  --radius-panel: 1.5rem;
+  --radius-card: 1.15rem;
+  --radius-panel: 1.35rem;
   --radius-pill: 9999px;
   --width-sidebar: 16.5rem;
   --width-sidebar-collapsed: 5rem;
 
-  /* Soft Ambient Shadows */
-  --shadow-glass: 0 14px 36px -18px rgba(78, 81, 191, 0.16), 0 4px 12px -6px rgba(36, 37, 42, 0.06);
-  --shadow-glow-accent: 0 8px 20px -10px rgba(36, 37, 42, 0.25);
+  /* Tactile Paper Shadows */
+  --shadow-glass: 0 1px 2px rgba(18, 19, 22, 0.04), 0 12px 28px -18px rgba(18, 19, 22, 0.14);
+  --shadow-glow-accent: 0 8px 20px -10px rgba(55, 98, 196, 0.35);
 }
 
-/* Reusable translucent glass card with 1px subtle gradient border */
+/* Tactile Paper Card with crisp hairline ink border */
 .glass-card {
   position: relative;
   background: var(--bg-surface);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-hairline);
   box-shadow: var(--shadow-glass);
-  transition: box-shadow 220ms ease, background-color 220ms ease, transform 220ms ease;
-}
-
-.glass-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    rgba(78, 81, 191, 0.14) 0%,
-    rgba(255, 255, 255, 0.9) 48%,
-    rgba(255, 146, 164, 0.16) 100%
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  transition: opacity 220ms ease;
+  transition: box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease;
 }
 
 .glass-card-interactive:hover {
   background: var(--bg-surface-elevated);
-  box-shadow: 0 18px 40px -16px rgba(78, 81, 191, 0.22), 0 6px 14px -6px rgba(36, 37, 42, 0.08);
+  border-color: var(--border-strong);
+  box-shadow: 0 2px 6px rgba(18, 19, 22, 0.05), 0 18px 36px -18px rgba(18, 19, 22, 0.18);
 }
 
-.glass-card-interactive:hover::before {
-  background: var(--border-gradient);
+*:focus-visible {
+  outline: 2px solid var(--accent-cornflower);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-mesh-a,
+  .animate-mesh-b,
+  .animate-mesh-c {
+    animation: none !important;
+  }
+
+  * {
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Slow drifting gradient mesh blobs */

@@ -208,9 +208,9 @@ export function Timetable() {
       .filter((c) => (c.days || []).includes(today))
       .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-    let text = `📅 My Class Schedule for Today:\n`;
+    let text = `My Class Schedule for Today:\n`;
     if (todayClasses.length === 0) {
-      text += `No classes scheduled today! 🎉\n`;
+      text += `No classes scheduled today.\n`;
     } else {
       todayClasses.forEach((c) => {
         text += `• ${formatTimeRange(c.startTime, c.endTime)}: ${c.courseCode ? `${c.courseCode} - ` : ''}${c.title} (${c.location || 'Online'})\n`;
@@ -236,19 +236,19 @@ export function Timetable() {
         {/* Top Header & View Controls Bar */}
         <div className="glass-card rounded-panel p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#FFE9CE] flex items-center justify-center shrink-0">
-              <CalendarDays className="w-5 h-5 text-[#4E51BF]" />
+            <div className="w-10 h-10 rounded-2xl bg-[#121316] flex items-center justify-center shrink-0">
+              <CalendarDays className="w-5 h-5 text-[#5B8DEF]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-display text-lg sm:text-xl font-bold text-[#24252A] tracking-tight">
+                <h1 className="font-display text-lg sm:text-xl font-bold text-[#121316] tracking-tight">
                   Class Timetable
                 </h1>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#4E51BF]/10 text-[#4E51BF]">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EAF0FC] text-[#2F59B8] border border-[#5B8DEF]/30">
                   v2 Unlocked
                 </span>
               </div>
-              <p className="text-xs text-[#5C6070] mt-0.5">
+              <p className="text-xs text-[#424652] mt-0.5">
                 {classes.length} registered course{classes.length === 1 ? '' : 's'} • Live class radar & attendance tracker
               </p>
             </div>
@@ -257,7 +257,7 @@ export function Timetable() {
           {/* Action Tools & Switchers */}
           <div className="flex items-center gap-2 flex-wrap">
             {/* View Mode Toggle: Grid, Agenda, Directory */}
-            <div className="inline-flex items-center p-1 rounded-xl bg-[#24252A]/[0.05] border border-[#24252A]/[0.06]">
+            <div className="inline-flex items-center p-1 rounded-xl bg-[#ECE9E1] border border-[#121316]/[0.08]">
               <button
                 type="button"
                 onClick={() => {
@@ -266,11 +266,11 @@ export function Timetable() {
                 }}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-white text-[#24252A] shadow-sm'
-                    : 'text-[#5C6070] hover:text-[#24252A]'
+                    ? 'bg-white text-[#121316] shadow-sm'
+                    : 'text-[#424652] hover:text-[#121316]'
                 }`}
               >
-                <LayoutGrid className="w-3.5 h-3.5 text-[#4E51BF]" />
+                <LayoutGrid className="w-3.5 h-3.5 text-[#5B8DEF]" />
                 <span className="hidden sm:inline">Weekly Grid</span>
                 <span className="sm:hidden">Grid</span>
               </button>
@@ -283,11 +283,11 @@ export function Timetable() {
                 }}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   viewMode === 'agenda'
-                    ? 'bg-white text-[#24252A] shadow-sm'
-                    : 'text-[#5C6070] hover:text-[#24252A]'
+                    ? 'bg-white text-[#121316] shadow-sm'
+                    : 'text-[#424652] hover:text-[#121316]'
                 }`}
               >
-                <List className="w-3.5 h-3.5 text-[#4E51BF]" />
+                <List className="w-3.5 h-3.5 text-[#5B8DEF]" />
                 <span className="hidden sm:inline">Day Agenda</span>
                 <span className="sm:hidden">Agenda</span>
               </button>
@@ -300,11 +300,11 @@ export function Timetable() {
                 }}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   viewMode === 'courses'
-                    ? 'bg-white text-[#24252A] shadow-sm'
-                    : 'text-[#5C6070] hover:text-[#24252A]'
+                    ? 'bg-white text-[#121316] shadow-sm'
+                    : 'text-[#424652] hover:text-[#121316]'
                 }`}
               >
-                <Layers className="w-3.5 h-3.5 text-[#4E51BF]" />
+                <Layers className="w-3.5 h-3.5 text-[#5B8DEF]" />
                 <span className="hidden sm:inline">Attendance & Courses</span>
                 <span className="sm:hidden">Courses</span>
               </button>
@@ -320,8 +320,8 @@ export function Timetable() {
                 }}
                 className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                   includeWeekends
-                    ? 'bg-[#FFE9CE] text-[#5C4630] border-[#F2CFA4]'
-                    : 'bg-white text-[#5C6070] border-[#24252A]/[0.08] hover:bg-[#F8F9FA]'
+                    ? 'bg-[#EAF0FC] text-[#2F59B8] border-[#5B8DEF]/40'
+                    : 'bg-white text-[#424652] border-[#121316]/[0.1] hover:bg-[#ECE9E1]/60'
                 }`}
               >
                 {includeWeekends ? '7 Days (All)' : '5 Days (Mon–Fri)'}
@@ -333,9 +333,9 @@ export function Timetable() {
               type="button"
               onClick={handleExportICS}
               title="Export schedule to Apple/Google Calendar (.ics)"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#FFE9CE] border border-[#24252A]/[0.08] text-xs font-semibold text-[#24252A] shadow-sm transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#EAF0FC] border border-[#121316]/[0.1] text-xs font-semibold text-[#121316] shadow-sm transition-colors cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-[#4E51BF]" />
+              <Download className="w-3.5 h-3.5 text-[#5B8DEF]" />
               <span className="hidden md:inline">Export .ICS</span>
             </button>
 
@@ -343,16 +343,16 @@ export function Timetable() {
               type="button"
               onClick={handleCopyScheduleText}
               title="Copy today's schedule summary to clipboard"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#FFE9CE] border border-[#24252A]/[0.08] text-xs font-semibold text-[#24252A] shadow-sm transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#EAF0FC] border border-[#121316]/[0.1] text-xs font-semibold text-[#121316] shadow-sm transition-colors cursor-pointer"
             >
               {copiedToast ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-emerald-700">Copied!</span>
+                  <Check className="w-3.5 h-3.5 text-emerald-700" />
+                  <span className="text-emerald-800">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3.5 h-3.5 text-[#5C6070]" />
+                  <Copy className="w-3.5 h-3.5 text-[#424652]" />
                   <span className="hidden md:inline">Share</span>
                 </>
               )}
@@ -364,9 +364,9 @@ export function Timetable() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.96 }}
               onClick={handleOpenNewClass}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#4E51BF] hover:bg-[#3B3E9E] text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#121316] hover:bg-[#23252C] text-[#FAF9F6] text-xs font-semibold shadow-sm transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 text-[#5B8DEF]" />
               <span>Add Class</span>
             </motion.button>
           </div>
@@ -382,19 +382,19 @@ export function Timetable() {
         {/* Search Bar & Schedule Reset Hint */}
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="relative w-full sm:w-72">
-            <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A8F9E]" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6E7382]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Filter by course, room, instructor..."
-              className="w-full rounded-xl bg-white/90 border border-[#24252A]/[0.08] pl-9 pr-8 py-2 text-xs text-[#24252A] placeholder:text-[#8A8F9E] focus:outline-none focus:border-[#4E51BF]"
+              className="w-full rounded-xl bg-white border border-[#121316]/[0.12] pl-9 pr-8 py-2 text-xs text-[#121316] placeholder:text-[#6E7382] focus:outline-none focus:border-[#5B8DEF] focus:ring-2 focus:ring-[#5B8DEF]/20"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8A8F9E] hover:text-[#24252A] cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6E7382] hover:text-[#121316] cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -406,7 +406,7 @@ export function Timetable() {
               <button
                 type="button"
                 onClick={handleResetSample}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#4E51BF] hover:underline cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2F59B8] hover:underline cursor-pointer"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Load Sample Semester Schedule</span>
@@ -415,7 +415,7 @@ export function Timetable() {
               <button
                 type="button"
                 onClick={handleResetSample}
-                className="text-xs font-medium text-[#8A8F9E] hover:text-[#24252A] transition-colors cursor-pointer"
+                className="text-xs font-medium text-[#6E7382] hover:text-[#121316] transition-colors cursor-pointer"
                 title="Restore default sample courses"
               >
                 Reset to Sample
@@ -461,12 +461,12 @@ export function Timetable() {
           </div>
         ) : (
           <div className="glass-card rounded-panel p-10 text-center space-y-4">
-            <CalendarDays className="w-12 h-12 text-[#8A8F9E] mx-auto" />
+            <CalendarDays className="w-12 h-12 text-[#6E7382] mx-auto" />
             <div>
-              <h3 className="font-display text-lg font-bold text-[#24252A]">
+              <h3 className="font-display text-lg font-bold text-[#121316]">
                 {searchQuery ? 'No matching classes found' : 'Your timetable is empty'}
               </h3>
-              <p className="text-xs sm:text-sm text-[#5C6070] mt-1 max-w-sm mx-auto">
+              <p className="text-xs sm:text-sm text-[#424652] mt-1 max-w-sm mx-auto">
                 {searchQuery
                   ? `No classes matching "${searchQuery}". Try clearing your search.`
                   : 'Add your courses to activate the weekly timetable, live schedule radar, and class notebook links.'}
@@ -478,7 +478,7 @@ export function Timetable() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="px-4 py-2 rounded-xl bg-white border border-[#24252A]/[0.08] text-xs font-semibold text-[#24252A] cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-white border border-[#121316]/[0.12] text-xs font-semibold text-[#121316] cursor-pointer"
                 >
                   Clear Search
                 </button>
@@ -487,14 +487,14 @@ export function Timetable() {
                   <button
                     type="button"
                     onClick={handleResetSample}
-                    className="px-4 py-2 rounded-xl bg-[#FFE9CE] text-[#5C4630] border border-[#F2CFA4] text-xs font-semibold cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-[#ECE9E1] text-[#121316] border border-[#121316]/[0.12] text-xs font-semibold cursor-pointer"
                   >
                     Load Sample Schedule
                   </button>
                   <button
                     type="button"
                     onClick={handleOpenNewClass}
-                    className="px-4 py-2 rounded-xl bg-[#4E51BF] text-white text-xs font-semibold cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-[#121316] text-[#FAF9F6] text-xs font-semibold cursor-pointer"
                   >
                     Add Class (+)
                   </button>

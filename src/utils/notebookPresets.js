@@ -67,13 +67,13 @@ export function getFontMeta(fontKey) {
 export const NOTEBOOK_COVERS = [
   {
     key: 'indigo',
-    label: 'Cobalt Classic',
-    coverBg: 'from-[#4E51BF] via-[#4548B4] to-[#373A9B]',
-    spineBg: 'bg-[#2B2D7A]',
-    swatch: '#4E51BF',
-    strapBg: 'bg-[#FFE9CE]',
+    label: 'Cornflower Classic',
+    coverBg: 'from-[#5B8DEF] via-[#3762C4] to-[#284B9E]',
+    spineBg: 'bg-[#121316]',
+    swatch: '#3762C4',
+    strapBg: 'bg-[#F5F3EE]',
     labelText: 'text-white',
-    mutedText: 'text-indigo-100/85',
+    mutedText: 'text-[#EAF0FC]/85',
     badgeBg: 'bg-white/16 text-white border-white/25',
   },
   {
@@ -82,21 +82,21 @@ export const NOTEBOOK_COVERS = [
     coverBg: 'from-[#FF92A4] via-[#F4728A] to-[#DC4E6D]',
     spineBg: 'bg-[#AF3150]',
     swatch: '#F4728A',
-    strapBg: 'bg-[#FFE9CE]',
+    strapBg: 'bg-[#F5F3EE]',
     labelText: 'text-white',
     mutedText: 'text-rose-50/90',
     badgeBg: 'bg-white/20 text-white border-white/30',
   },
   {
     key: 'peach',
-    label: 'Warm Kraft',
-    coverBg: 'from-[#FFE9CE] via-[#F7D7B0] to-[#EAC08E]',
-    spineBg: 'bg-[#C4823E]',
-    swatch: '#F3C794',
-    strapBg: 'bg-[#24252A]',
-    labelText: 'text-[#24252A]',
-    mutedText: 'text-[#5C4630]',
-    badgeBg: 'bg-[#24252A]/10 text-[#24252A] border-[#24252A]/15',
+    label: 'Archival Kraft',
+    coverBg: 'from-[#F5F3EE] via-[#ECE9E1] to-[#DED9CE]',
+    spineBg: 'bg-[#121316]',
+    swatch: '#ECE9E1',
+    strapBg: 'bg-[#5B8DEF]',
+    labelText: 'text-[#121316]',
+    mutedText: 'text-[#424652]',
+    badgeBg: 'bg-[#121316]/[0.08] text-[#121316] border-[#121316]/15',
   },
   {
     key: 'sage',
@@ -104,18 +104,18 @@ export const NOTEBOOK_COVERS = [
     coverBg: 'from-[#14968A] via-[#0F766E] to-[#0B5B55]',
     spineBg: 'bg-[#084440]',
     swatch: '#0F766E',
-    strapBg: 'bg-[#FFE9CE]',
+    strapBg: 'bg-[#F5F3EE]',
     labelText: 'text-white',
     mutedText: 'text-teal-50/85',
     badgeBg: 'bg-white/16 text-white border-white/25',
   },
   {
     key: 'charcoal',
-    label: 'Matte Ink',
-    coverBg: 'from-[#2D2F36] via-[#24252A] to-[#17181C]',
-    spineBg: 'bg-[#101114]',
-    swatch: '#24252A',
-    strapBg: 'bg-[#FF92A4]',
+    label: 'Ink Black',
+    coverBg: 'from-[#1D1F25] via-[#121316] to-[#0A0B0D]',
+    spineBg: 'bg-[#000000]',
+    swatch: '#121316',
+    strapBg: 'bg-[#5B8DEF]',
     labelText: 'text-white',
     mutedText: 'text-zinc-300',
     badgeBg: 'bg-white/14 text-white border-white/20',
@@ -126,7 +126,7 @@ export const NOTEBOOK_COVERS = [
     coverBg: 'from-[#7C4DFF] via-[#6538D8] to-[#4E28B3]',
     spineBg: 'bg-[#3C1C8E]',
     swatch: '#6538D8',
-    strapBg: 'bg-[#FFE9CE]',
+    strapBg: 'bg-[#F5F3EE]',
     labelText: 'text-white',
     mutedText: 'text-violet-100/85',
     badgeBg: 'bg-white/16 text-white border-white/25',
@@ -159,7 +159,7 @@ export function getPaperBackgroundStyle(paperStyle) {
   if (paperStyle === 'grid') {
     return {
       backgroundImage:
-        'linear-gradient(to right, rgba(78, 81, 191, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(78, 81, 191, 0.14) 1px, transparent 1px)',
+        'linear-gradient(to right, rgba(91, 141, 239, 0.11) 1px, transparent 1px), linear-gradient(to bottom, rgba(91, 141, 239, 0.14) 1px, transparent 1px)',
       backgroundSize: `${LINE_HEIGHT}px ${LINE_HEIGHT}px`,
       backgroundPosition: '0 0',
     };
@@ -167,7 +167,7 @@ export function getPaperBackgroundStyle(paperStyle) {
   if (paperStyle === 'dots') {
     return {
       backgroundImage:
-        'radial-gradient(rgba(78, 81, 191, 0.28) 1.25px, transparent 1.25px)',
+        'radial-gradient(rgba(91, 141, 239, 0.30) 1.25px, transparent 1.25px)',
       backgroundSize: `24px ${LINE_HEIGHT}px`,
       backgroundPosition: '12px 26px',
     };
@@ -177,7 +177,7 @@ export function getPaperBackgroundStyle(paperStyle) {
   }
   return {
     backgroundImage:
-      'repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, rgba(78, 81, 191, 0.16) 31px, rgba(78, 81, 191, 0.16) 32px)',
+      'repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, rgba(91, 141, 239, 0.18) 31px, rgba(91, 141, 239, 0.18) 32px)',
     backgroundPosition: '0 0',
   };
 }
@@ -195,7 +195,7 @@ export function createBlankPage({
     subject,
     paperStyle,
     fontStyle,
-    textInkColor: '#24252A',
+    textInkColor: '#121316',
     bookmarked: false,
     content: '',
     strokes: [],

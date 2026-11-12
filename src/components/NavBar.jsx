@@ -37,7 +37,7 @@ export function NavBar({
         initial={false}
         animate={{ width: collapsed ? 84 : 264 }}
         transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-        className="hidden md:flex md:flex-col md:shrink-0 md:self-start md:sticky md:top-0 md:h-dvh md:overflow-y-auto bg-white/85 backdrop-blur-2xl border-r border-[#24252A]/[0.07] py-5 px-3 z-30 select-none"
+        className="hidden md:flex md:flex-col md:shrink-0 md:self-start md:sticky md:top-0 md:h-dvh md:overflow-y-auto bg-[#FAF9F6]/90 backdrop-blur-2xl border-r border-[#121316]/[0.09] py-5 px-3 z-30 select-none"
       >
         {/* Brand + Collapse Toggle */}
         <div
@@ -48,7 +48,7 @@ export function NavBar({
           <div className="flex items-center gap-3 min-w-0">
             <motion.div
               whileHover={{ rotate: 8, scale: 1.05 }}
-              className="w-9 h-9 rounded-xl shrink-0 bg-[#4E51BF] flex items-center justify-center shadow-sm"
+              className="w-9 h-9 rounded-xl shrink-0 bg-[#3762C4] flex items-center justify-center shadow-sm"
             >
               <Sparkles className="w-4 h-4 text-white" />
             </motion.div>
@@ -61,10 +61,10 @@ export function NavBar({
                   transition={{ duration: 0.16 }}
                   className="min-w-0"
                 >
-                  <div className="font-display font-bold text-base tracking-tight text-[#24252A] leading-tight truncate">
+                  <div className="font-display font-bold text-base tracking-tight text-[#121316] leading-tight truncate">
                     Pulse
                   </div>
-                  <div className="text-[11px] text-[#8A8F9E] truncate">
+                  <div className="text-[11px] text-[#6E7382] truncate">
                     Student OS
                   </div>
                 </motion.div>
@@ -79,7 +79,7 @@ export function NavBar({
             whileTap={{ scale: 0.92 }}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="p-1.5 rounded-lg text-[#5C6070] hover:text-[#24252A] hover:bg-[#24252A]/[0.06] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-[#424652] hover:text-[#121316] hover:bg-[#121316]/[0.06] transition-colors cursor-pointer"
           >
             {collapsed ? (
               <PanelLeftOpen className="w-4 h-4" />
@@ -109,14 +109,14 @@ export function NavBar({
                   } ${
                     isActive
                       ? 'text-white'
-                      : 'text-[#5C6070] hover:text-[#24252A]'
+                      : 'text-[#424652] hover:text-[#121316]'
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="desktopActiveTab"
                       transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                      className="absolute inset-0 rounded-xl bg-[#4E51BF] shadow-sm"
+                      className="absolute inset-0 rounded-xl bg-[#121316] shadow-sm"
                     />
                   )}
 
@@ -134,7 +134,7 @@ export function NavBar({
                         className={`w-[18px] h-[18px] transition-colors ${
                           isActive
                             ? 'text-white'
-                            : 'text-[#5C6070] group-hover:text-[#4E51BF]'
+                            : 'text-[#424652] group-hover:text-[#3762C4]'
                         }`}
                       />
                     </motion.span>
@@ -145,8 +145,8 @@ export function NavBar({
                     <span
                       className={`relative z-10 text-[11px] font-semibold px-2 py-0.5 rounded-full ${
                         isActive
-                          ? 'bg-[#FFE9CE] text-[#24252A]'
-                          : 'bg-[#4E51BF]/12 text-[#4E51BF]'
+                          ? 'bg-[#5B8DEF] text-[#121316]'
+                          : 'bg-[#EAF0FC] text-[#2F59B8]'
                       }`}
                     >
                       {activeTaskCount}
@@ -154,13 +154,13 @@ export function NavBar({
                   )}
 
                   {collapsed && to === '/tasks' && activeTaskCount > 0 && (
-                    <span className="absolute top-1.5 right-2.5 w-2 h-2 rounded-full bg-[#FF92A4]" />
+                    <span className="absolute top-1.5 right-2.5 w-2 h-2 rounded-full bg-[#5B8DEF]" />
                   )}
                 </motion.div>
 
                 {/* Tooltip in icon-only mode */}
                 {collapsed && (
-                  <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#24252A] text-xs font-medium text-white whitespace-nowrap opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 shadow-lg z-50">
+                  <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#121316] text-xs font-medium text-[#FAF9F6] whitespace-nowrap opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-150 shadow-lg z-50">
                     {label}
                     {to === '/tasks' && activeTaskCount > 0
                       ? ` (${activeTaskCount})`
@@ -173,31 +173,31 @@ export function NavBar({
         </nav>
 
         {/* Bottom User Avatar & Level Badge */}
-        <div className="pt-4 border-t border-[#24252A]/[0.07]">
+        <div className="pt-4 border-t border-[#121316]/[0.09]">
           <div
-            className={`group relative rounded-2xl bg-[#FFE9CE]/70 border border-[#F2CFA4]/60 p-2.5 flex items-center ${
+            className={`group relative rounded-2xl bg-[#ECE9E1]/85 border border-[#121316]/[0.10] p-2.5 flex items-center ${
               collapsed ? 'justify-center' : 'gap-3'
             }`}
           >
-            <div className="relative shrink-0 w-9 h-9 rounded-full bg-[#4E51BF] flex items-center justify-center text-xs font-display font-bold text-white shadow-sm">
+            <div className="relative shrink-0 w-9 h-9 rounded-full bg-[#121316] flex items-center justify-center text-xs font-display font-bold text-[#FAF9F6] shadow-sm">
               JH
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#FFE9CE]" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#5B8DEF] border-2 border-[#ECE9E1]" />
             </div>
 
             {!collapsed && (
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold text-[#24252A] truncate">
+                  <span className="text-xs font-semibold text-[#121316] truncate">
                     Jhade
                   </span>
-                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-white/85 text-[#24252A]">
-                    <Award className="w-2.5 h-2.5 text-[#4E51BF]" />
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FAF9F6] text-[#121316] border border-[#121316]/10">
+                    <Award className="w-2.5 h-2.5 text-[#3762C4]" />
                     Lvl {level}
                   </span>
                 </div>
-                <div className="mt-1.5 h-1.5 w-full rounded-full bg-[#24252A]/10 overflow-hidden">
+                <div className="mt-1.5 h-1.5 w-full rounded-full bg-[#121316]/12 overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-[#4E51BF] to-[#FF92A4] transition-all duration-500"
+                    className="h-full rounded-full bg-[#3762C4] transition-all duration-500"
                     style={{ width: `${Math.max(12, levelProgress)}%` }}
                   />
                 </div>
@@ -205,7 +205,7 @@ export function NavBar({
             )}
 
             {collapsed && (
-              <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#24252A] text-xs font-medium text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-lg z-50">
+              <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#121316] text-xs font-medium text-[#FAF9F6] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 shadow-lg z-50">
                 Jhade · Lvl {level}
               </div>
             )}
@@ -232,21 +232,21 @@ export function NavBar({
                       <motion.div
                         layoutId="mobileActiveTab"
                         transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                        className="absolute inset-0 rounded-xl bg-[#4E51BF]"
+                        className="absolute inset-0 rounded-xl bg-[#121316]"
                       />
                     )}
                     <div className="relative z-10">
                       <Icon
                         className={`w-[18px] h-[18px] transition-colors ${
-                          isActive ? 'text-white' : 'text-[#5C6070]'
+                          isActive ? 'text-white' : 'text-[#424652]'
                         }`}
                       />
                       {to === '/tasks' && activeTaskCount > 0 && (
                         <span
                           className={`absolute -top-1.5 -right-2.5 min-w-[15px] h-[15px] px-1 rounded-full text-[9px] font-bold flex items-center justify-center ${
                             isActive
-                              ? 'bg-[#FFE9CE] text-[#24252A]'
-                              : 'bg-[#FF92A4] text-white'
+                              ? 'bg-[#5B8DEF] text-[#121316]'
+                              : 'bg-[#3762C4] text-white'
                           }`}
                         >
                           {activeTaskCount > 9 ? '9+' : activeTaskCount}
@@ -255,7 +255,7 @@ export function NavBar({
                     </div>
                     <span
                       className={`relative z-10 text-[10px] mt-1 font-medium tracking-tight transition-colors ${
-                        isActive ? 'text-white' : 'text-[#5C6070]'
+                        isActive ? 'text-white' : 'text-[#424652]'
                       }`}
                     >
                       {label}

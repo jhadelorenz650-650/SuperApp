@@ -21,9 +21,8 @@ export function ProgressRing({
         <svg width={size} height={size} className="-rotate-90">
           <defs>
             <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#4E51BF" />
-              <stop offset="55%" stopColor="#FF92A4" />
-              <stop offset="100%" stopColor="#F5B971" />
+              <stop offset="0%" stopColor="#5B8DEF" />
+              <stop offset="100%" stopColor="#3762C4" />
             </linearGradient>
           </defs>
           <circle
@@ -31,7 +30,7 @@ export function ProgressRing({
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="#ECEEF7"
+            stroke="#E6E2D8"
             strokeWidth={strokeWidth}
           />
           <motion.circle
@@ -50,21 +49,21 @@ export function ProgressRing({
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-          <span className="font-display text-2xl font-bold tracking-tight text-[#24252A]">
+          <span className="font-display text-2xl font-bold tracking-tight text-[#121316] tabular-nums">
             {clamped}%
           </span>
-          <span className="text-[11px] text-[#8A8F9E]">done</span>
+          <span className="text-[11px] text-[#6E7382]">done</span>
         </div>
       </div>
 
       <div className="min-w-0">
-        <div className="text-xs font-medium uppercase tracking-wider text-[#8A8F9E]">
+        <div className="text-xs font-medium uppercase tracking-wider text-[#6E7382]">
           Completion
         </div>
-        <div className="font-display text-xl font-semibold text-[#24252A] mt-0.5">
+        <div className="font-display text-xl font-semibold text-[#121316] mt-0.5 tabular-nums">
           {completedCount} of {totalCount}
         </div>
-        <div className="text-xs text-[#5C6070] mt-1">
+        <div className="text-xs text-[#424652] mt-1">
           {totalCount === 0
             ? 'Add tasks to track progress'
             : completedCount === totalCount
